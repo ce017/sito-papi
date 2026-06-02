@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-30 5 1070 360" width="1070" height="360">
+  <defs>
+    <clipPath id="globeClip">
+      <circle cx="188" cy="138" r="58"/>
+    </clipPath>
+  </defs>
+
+  <!-- ── SUN RAYS (behind globe) ── -->
+  <g stroke="#F5B800" stroke-width="1.6" stroke-linecap="round">
+    <line x1="188" y1="138" x2="188" y2="28"/>
+    <line x1="188" y1="138" x2="243" y2="38"/>
+    <line x1="188" y1="138" x2="288" y2="72"/>
+    <line x1="188" y1="138" x2="312" y2="120"/>
+    <line x1="188" y1="138" x2="302" y2="178"/>
+    <line x1="188" y1="138" x2="268" y2="212"/>
+    <line x1="188" y1="138" x2="222" y2="232"/>
+    <line x1="188" y1="138" x2="155" y2="235"/>
+    <line x1="188" y1="138" x2="114" y2="215"/>
+    <line x1="188" y1="138" x2="78" y2="180"/>
+    <line x1="188" y1="138" x2="64" y2="135"/>
+    <line x1="188" y1="138" x2="74" y2="90"/>
+    <line x1="188" y1="138" x2="108" y2="55"/>
+    <line x1="188" y1="138" x2="148" y2="33"/>
+  </g>
+
+  <!-- Globe fill (covers ray centres) - matches page bg -->
+  <circle cx="188" cy="138" r="58" fill="#111111"/>
+
+  <!-- Globe grid lines (clipped to sphere) -->
+  <g clip-path="url(#globeClip)" stroke="#F5B800" stroke-width="1.5" fill="none">
+    <ellipse cx="188" cy="118" rx="54" ry="16"/>
+    <ellipse cx="188" cy="138" rx="58" ry="22"/>
+    <ellipse cx="188" cy="158" rx="54" ry="16"/>
+    <ellipse cx="188" cy="138" rx="28" ry="58"/>
+    <ellipse cx="188" cy="138" rx="10" ry="58"/>
+  </g>
+
+  <!-- Globe outer circle -->
+  <circle cx="188" cy="138" r="58" fill="none" stroke="#F5B800" stroke-width="1.8"/>
+
+  <!-- ── PALM TREE ── -->
+  <g stroke="#F5B800" stroke-width="2" stroke-linecap="round" fill="none">
+    <path d="M 108 340 Q 118 295 128 258 Q 138 220 148 192"/>
+    <line x1="113" y1="318" x2="123" y2="314"/>
+    <line x1="118" y1="298" x2="128" y2="294"/>
+    <line x1="123" y1="278" x2="133" y2="274"/>
+    <line x1="128" y1="258" x2="138" y2="254"/>
+    <line x1="133" y1="238" x2="143" y2="234"/>
+    <line x1="138" y1="218" x2="148" y2="214"/>
+    <path d="M 148 192 Q 112 170 75 182"/>
+    <path d="M 148 192 Q 120 158 102 128"/>
+    <path d="M 148 192 Q 148 155 155 122"/>
+    <path d="M 148 192 Q 168 158 198 148"/>
+    <path d="M 148 192 Q 178 182 208 188"/>
+    <path d="M 148 192 Q 168 205 192 220"/>
+    <path d="M 148 192 Q 122 205 95 218"/>
+  </g>
+
+  <!-- ── WAVES ── -->
+  <g stroke="#F5B800" stroke-width="1.8" fill="none" stroke-linecap="round">
+    <path d="M 55 268 Q 82 256 110 268 Q 138 280 165 268 Q 192 256 220 268 Q 248 280 275 268 Q 302 256 320 263"/>
+    <path d="M 55 288 Q 82 276 110 288 Q 138 300 165 288 Q 192 276 220 288 Q 248 300 275 288 Q 302 276 320 283"/>
+    <path d="M 55 308 Q 82 296 110 308 Q 138 320 165 308 Q 192 296 220 308 Q 248 320 275 308 Q 302 296 320 303"/>
+  </g>
+
+  <!-- ── DIVIDER LINE ── -->
+  <line x1="358" y1="24" x2="358" y2="336" stroke="#F5B800" stroke-width="2.2"/>
+
+  <!-- ── PAPI ── -->
+  <text
+    x="384" y="278"
+    font-family="Impact, 'Arial Black', 'Franklin Gothic Heavy', sans-serif"
+    font-size="226"
+    font-weight="900"
+    fill="#F5B800"
+    letter-spacing="2"
+  >PAPI</text>
+
+  <!-- ── ON THE BEACH ── -->
+  <text
+    x="390" y="322"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="30"
+    font-weight="400"
+    fill="#F5B800"
+    letter-spacing="11"
+  >ON THE BEACH</text>
+</svg>

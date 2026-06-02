@@ -1,0 +1,2 @@
+var SUPABASE_URL = 'https://hrdvikkafvvfwgwvrdzz.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhyZHZpa2thZnZ2Zndnd3ZyZHp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODcyNzYsImV4cCI6MjA5NTU2MzI3Nn0.8nBYu373wUmLUPkQeMcBHlTABx4DEGI71qkUb4i8LPg';

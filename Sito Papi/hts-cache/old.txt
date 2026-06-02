@@ -1,0 +1,3 @@
+date	size'/'remotesize	flags(request:Update,Range state:File response:Modified,Chunked,gZipped)	statuscode	status ('servermsg')	MIME	Etag|Date	URL	localfile	(from URL)
+15:14:03	0/0	---M--	308	error ('Permanent%20Redirect')	text/html	date:Mon,%2025%20May%202026%2013:14:03%20GMT	http://www.kubarcelona.com/robots.txt		(from )
+15:14:03	0/0	---M--	308	error ('Permanent%20Redirect')	text/html	date:Mon,%2025%20May%202026%2013:14:03%20GMT	http://www.kubarcelona.com/	D:/websites/KUBbarcellona/Sito%20Papi/www.kubarcelona.com/index.html	(from )

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Papi Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body { background: #0a0a0a; color: #fff; font-family: Arial, Helvetica, sans-serif; min-height: 100vh; }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      background: #111; border-bottom: 1px solid rgba(245,184,0,0.2);
+      padding: 14px 20px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 10;
+    }
+    .topbar-logo { font-family: Impact,'Arial Black',sans-serif; font-size: 20px; color: #F5B800; letter-spacing: 2px; }
+    .topbar-logo span { color: rgba(255,255,255,0.35); font-size: 12px; font-family: Arial; letter-spacing: 0; margin-left: 8px; }
+    .btn-logout { background: none; border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.45); padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; min-height: 44px; }
+
+    /* ── MAIN ── */
+    .main { padding: 20px; max-width: 1100px; margin: 0 auto; }
+
+    /* ── SECTION LABEL ── */
+    .section-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #F5B800; font-family: monospace; margin-bottom: 14px; }
+
+    /* ── TABS ── */
+    .tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+    .tab { padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(245,184,0,0.2); background: none; color: rgba(255,255,255,0.4); font-size: 13px; cursor: pointer; min-height: 44px; }
+    .tab.active { background: #F5B800; color: #111; font-weight: 700; border-color: #F5B800; }
+
+    /* ── STAT CARDS ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 22px; }
+    @media(min-width:600px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+    .stat-card { background: #161616; border: 1px solid rgba(245,184,0,0.15); border-radius: 12px; padding: 16px 18px; }
+    .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 8px; font-family: monospace; }
+    .stat-value { font-family: Impact,'Arial Black',sans-serif; font-size: 34px; color: #F5B800; line-height: 1; }
+    .stat-sub { font-size: 11px; color: rgba(255,255,255,0.25); margin-top: 4px; }
+
+    /* ── PAGE BREAKDOWN ── */
+    .breakdown { background: #161616; border: 1px solid rgba(245,184,0,0.15); border-radius: 12px; padding: 18px 20px; margin-bottom: 24px; }
+    .page-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .page-row:last-child { margin-bottom: 0; }
+    .page-name { font-size: 13px; color: rgba(255,255,255,0.6); width: 80px; flex-shrink: 0; text-transform: capitalize; }
+    .bar-track { flex: 1; background: rgba(255,255,255,0.05); border-radius: 4px; height: 8px; }
+    .bar-fill { height: 8px; border-radius: 4px; background: #F5B800; transition: width 0.4s ease; }
+    .page-count { font-size: 13px; color: #F5B800; font-weight: 700; width: 36px; text-align: right; flex-shrink: 0; }
+
+    /* ── DIVIDER ── */
+    hr { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 24px 0; }
+
+    /* ── EVENTS HEADER ── */
+    .events-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+    .btn-add { background: #F5B800; color: #111; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; min-height: 44px; white-space: nowrap; }
+
+    /* ── EVENT CARD ── */
+    .event-card { background: #161616; border: 1px solid rgba(245,184,0,0.15); border-radius: 12px; padding: 16px; display: flex; gap: 14px; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; }
+    .event-thumb { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: rgba(245,184,0,0.08); display: flex; align-items: center; justify-content: center; font-size: 26px; }
+    .event-info { flex: 1; min-width: 0; }
+    .event-title { font-family: Impact,'Arial Black',sans-serif; font-size: 17px; color: #fff; letter-spacing: 1px; word-break: break-word; }
+    .event-meta { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 4px; }
+    .event-desc { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .event-actions { display: flex; gap: 8px; flex-shrink: 0; align-self: center; }
+    .btn-edit { background: none; border: 1px solid rgba(245,184,0,0.35); color: #F5B800; padding: 8px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; min-height: 44px; }
+    .btn-delete { background: none; border: 1px solid rgba(255,80,80,0.25); color: rgba(255,100,100,0.7); padding: 8px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; min-height: 44px; }
+    .badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.1em; text-transform: uppercase; margin-left: 6px; vertical-align: middle; }
+    .badge-live { background: rgba(80,200,80,0.12); color: #6fde6f; border: 1px solid rgba(80,200,80,0.25); }
+    .badge-draft { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); }
+
+    /* ── MODAL ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.82); display: none; align-items: flex-start; justify-content: center; z-index: 100; padding: 0; overflow-y: auto; }
+    @media(min-width:600px) { .modal-overlay { align-items: center; padding: 20px; } }
+    .modal { background: #161616; border: 1px solid rgba(245,184,0,0.25); width: 100%; min-height: 100vh; padding: 28px 20px 40px; }
+    @media(min-width:600px) { .modal { border-radius: 16px; max-width: 520px; min-height: unset; } }
+    .modal-title { font-family: Impact,'Arial Black',sans-serif; font-size: 22px; color: #F5B800; letter-spacing: 2px; margin-bottom: 24px; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.4); margin-bottom: 7px; }
+    .form-input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(245,184,0,0.25); border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 16px; font-family: Arial; }
+    .form-input:focus { outline: none; border-color: #F5B800; }
+    textarea.form-input { min-height: 90px; resize: vertical; }
+    .upload-area { border: 2px dashed rgba(245,184,0,0.25); border-radius: 8px; padding: 22px; text-align: center; color: rgba(255,255,255,0.3); font-size: 14px; cursor: pointer; }
+    .upload-area:active { border-color: rgba(245,184,0,0.6); }
+    .img-preview { width: 100%; border-radius: 8px; margin-top: 10px; object-fit: cover; max-height: 200px; display: none; }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; }
+    .toggle-wrap { position: relative; width: 46px; height: 26px; cursor: pointer; }
+    .toggle-wrap input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track { position: absolute; inset: 0; background: rgba(255,255,255,0.1); border-radius: 13px; border: 1px solid rgba(245,184,0,0.2); transition: background 0.2s; }
+    .toggle-wrap input:checked + .toggle-track { background: #F5B800; }
+    .toggle-knob { position: absolute; width: 20px; height: 20px; background: #fff; border-radius: 50%; top: 2px; left: 2px; transition: left 0.2s; pointer-events: none; }
+    .toggle-wrap input:checked ~ .toggle-knob { left: 22px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
+    .btn-save { flex: 1; background: #F5B800; color: #111; border: none; padding: 14px; border-radius: 8px; font-weight: 700; font-size: 16px; cursor: pointer; min-height: 52px; }
+    .btn-cancel { background: none; border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.4); padding: 14px 20px; border-radius: 8px; font-size: 15px; cursor: pointer; min-height: 52px; }
+
+    /* ── SPINNER ── */
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(17,17,17,0.3); border-top-color: #111; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── EMPTY STATE ── */
+    .empty { color: rgba(255,255,255,0.25); text-align: center; padding: 32px 20px; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">PAPI <span>Admin</span></div>
+  <button class="btn-logout" onclick="logout()">Esci</button>
+</div>
+
+<div class="main">
+
+  <!-- ANALYTICS -->
+  <div class="section-label">Statistiche Visite</div>
+
+  <div class="tabs" id="period-tabs">
+    <button class="tab active" onclick="switchPeriod('today', this)">Oggi</button>
+    <button class="tab" onclick="switchPeriod('week', this)">Settimana</button>
+    <button class="tab" onclick="switchPeriod('month', this)">Mese</button>
+    <button class="tab" onclick="switchPeriod('all', this)">Sempre</button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Visite</div>
+      <div class="stat-value" id="stat-total">—</div>
+      <div class="stat-sub" id="stat-period-label">oggi</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Pagine Viste</div>
+      <div class="stat-value" id="stat-pages">—</div>
+      <div class="stat-sub">pagine distinte</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Sessioni</div>
+      <div class="stat-value" id="stat-sessions">—</div>
+      <div class="stat-sub">sessioni uniche</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Top Pagina</div>
+      <div class="stat-value" id="stat-top" style="font-size:22px;">—</div>
+      <div class="stat-sub">più visitata</div>
+    </div>
+  </div>
+
+  <div class="breakdown">
+    <div class="section-label" style="margin-bottom:16px;">Pagine più visitate</div>
+    <div id="page-breakdown"><div class="empty">Caricamento...</div></div>
+  </div>
+
+  <hr>
+
+  <!-- EVENTS -->
+  <div class="events-header">
+    <div class="section-label" style="margin-bottom:0;">Gestione Eventi</div>
+    <button class="btn-add" onclick="openNew()">+ Nuovo Evento</button>
+  </div>
+
+  <div id="events-list"><div class="empty">Caricamento...</div></div>
+
+</div>
+
+<!-- EVENT EDITOR MODAL -->
+<div class="modal-overlay" id="event-modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">NUOVO EVENTO</div>
+
+    <div class="form-group">
+      <label class="form-label">Nome Evento *</label>
+      <input class="form-input" id="ev-title" type="text" placeholder="es. PAPI NIGHT ESTATE">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Data e Ora</label>
+      <input class="form-input" id="ev-date" type="datetime-local">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Descrizione</label>
+      <textarea class="form-input" id="ev-desc" placeholder="Descrivi l'evento..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Foto Evento</label>
+      <input type="hidden" id="ev-img-url">
+      <div class="upload-area" onclick="document.getElementById('ev-img-file').click()">
+        <div style="font-size:28px;margin-bottom:6px;">📸</div>
+        <div>Tocca per caricare dal telefono</div>
+        <div style="font-size:11px;margin-top:4px;color:rgba(255,255,255,0.2);">JPG, PNG, WebP · max 5MB</div>
+      </div>
+      <input type="file" id="ev-img-file" accept="image/*" style="display:none" onchange="uploadImage(this)">
+      <img id="img-preview" class="img-preview" alt="preview">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Link Biglietti</label>
+      <input class="form-input" id="ev-ticket" type="url" placeholder="https://www.liveticket.it/...">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Visibilità</label>
+      <div class="toggle-row">
+        <span style="font-size:14px;color:rgba(255,255,255,0.55);">Pubblica sul sito</span>
+        <label class="toggle-wrap">
+          <input type="checkbox" id="ev-published">
+          <div class="toggle-track"></div>
+          <div class="toggle-knob"></div>
+        </label>
+      </div>
+    </div>
+
+    <div id="modal-err" style="color:#ff6b6b;font-size:13px;margin-bottom:8px;display:none;"></div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Annulla</button>
+      <button class="btn-save" id="btn-save" onclick="saveEvent()">💾 Salva</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var editingId = null;
+var currentPeriod = 'today';
+
+/* ── AUTH CHECK ── */
+async function init() {
+  var { data: { session } } = await client.auth.getSession();
+  if (!session) { window.location.href = 'index.html'; return; }
+  await Promise.all([loadAnalytics('today'), loadEvents()]);
+}
+
+async function logout() {
+  await client.auth.signOut();
+  window.location.href = 'index.html';
+}
+
+/* ── ANALYTICS ── */
+function getFromDate(period) {
+  var now = new Date();
+  if (period === 'today') {
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+  }
+  if (period === 'week') return new Date(now - 7 * 86400000).toISOString();
+  if (period === 'month') return new Date(now - 30 * 86400000).toISOString();
+  return null;
+}
+
+var PERIOD_LABELS = { today: 'oggi', week: 'ultimi 7 giorni', month: 'ultimi 30 giorni', all: 'da sempre' };
+
+async function loadAnalytics(period) {
+  currentPeriod = period;
+  var fromDate = getFromDate(period);
+  var query = client.from('analytics').select('page, session_id, visited_at');
+  if (fromDate) query = query.gte('visited_at', fromDate);
+  var { data, error } = await query;
+  if (error) { console.error(error); return; }
+  renderAnalytics(data || [], period);
+}
+
+function renderAnalytics(rows, period) {
+  document.getElementById('stat-total').textContent = rows.length;
+  document.getElementById('stat-period-label').textContent = PERIOD_LABELS[period];
+
+  var pages = {};
+  var sessions = new Set();
+  rows.forEach(function(r) {
+    pages[r.page] = (pages[r.page] || 0) + 1;
+    sessions.add(r.session_id);
+  });
+
+  var pageNames = Object.keys(pages);
+  document.getElementById('stat-pages').textContent = pageNames.length;
+  document.getElementById('stat-sessions').textContent = sessions.size;
+
+  var sorted = Object.entries(pages).sort(function(a, b) { return b[1] - a[1]; });
+  document.getElementById('stat-top').textContent = sorted[0] ? sorted[0][0] : '—';
+
+  var max = sorted[0] ? sorted[0][1] : 1;
+  var html = sorted.length ? sorted.map(function(p) {
+    var pct = Math.round(p[1] / max * 100);
+    return '<div class="page-row">' +
+      '<div class="page-name">' + p[0] + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
+      '<div class="page-count">' + p[1] + '</div>' +
+    '</div>';
+  }).join('') : '<div class="empty">Nessuna visita nel periodo selezionato.</div>';
+
+  document.getElementById('page-breakdown').innerHTML = html;
+}
+
+function switchPeriod(period, btn) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+  loadAnalytics(period);
+}
+
+/* ── EVENTS ── */
+async function loadEvents() {
+  var { data, error } = await client.from('events').select('*').order('event_date', { ascending: true });
+  if (error) { console.error(error); return; }
+  renderEvents(data || []);
+}
+
+function fmtDate(dt) {
+  if (!dt) return '—';
+  return new Date(dt).toLocaleString('it-IT', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+
+function renderEvents(events) {
+  if (!events.length) {
+    document.getElementById('events-list').innerHTML = '<div class="empty">Nessun evento. Creane uno con il pulsante qui sopra.</div>';
+    return;
+  }
+  var html = events.map(function(ev) {
+    var thumb = ev.image_url
+      ? '<img src="' + ev.image_url + '" class="event-thumb" style="font-size:0;">'
+      : '<div class="event-thumb">📅</div>';
+    var badge = ev.is_published
+      ? '<span class="badge badge-live">Live</span>'
+      : '<span class="badge badge-draft">Bozza</span>';
+    return '<div class="event-card">' +
+      thumb +
+      '<div class="event-info">' +
+        '<div class="event-title">' + escHtml(ev.title) + badge + '</div>' +
+        '<div class="event-meta">' + fmtDate(ev.event_date) + '</div>' +
+        '<div class="event-desc">' + escHtml(ev.description || '') + '</div>' +
+      '</div>' +
+      '<div class="event-actions">' +
+        '<button class="btn-edit" onclick=\'openEdit("' + ev.id + '")\'>✏️</button>' +
+        '<button class="btn-delete" onclick=\'deleteEvent("' + ev.id + '")\'>🗑</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  document.getElementById('events-list').innerHTML = html;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── EVENT EDITOR ── */
+function openNew() {
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'NUOVO EVENTO';
+  document.getElementById('ev-title').value = '';
+  document.getElementById('ev-date').value = '';
+  document.getElementById('ev-desc').value = '';
+  document.getElementById('ev-ticket').value = '';
+  document.getElementById('ev-published').checked = false;
+  document.getElementById('ev-img-url').value = '';
+  document.getElementById('img-preview').style.display = 'none';
+  document.getElementById('modal-err').style.display = 'none';
+  document.getElementById('event-modal').style.display = 'flex';
+  document.getElementById('ev-title').focus();
+}
+
+function openEdit(id) {
+  client.from('events').select('*').eq('id', id).single().then(function(res) {
+    if (res.error) { alert('Errore caricamento evento.'); return; }
+    var ev = res.data;
+    editingId = id;
+    document.getElementById('modal-title').textContent = 'MODIFICA EVENTO';
+    document.getElementById('ev-title').value = ev.title || '';
+    document.getElementById('ev-date').value = ev.event_date ? ev.event_date.slice(0, 16) : '';
+    document.getElementById('ev-desc').value = ev.description || '';
+    document.getElementById('ev-ticket').value = ev.ticket_url || '';
+    document.getElementById('ev-published').checked = !!ev.is_published;
+    document.getElementById('ev-img-url').value = ev.image_url || '';
+    document.getElementById('modal-err').style.display = 'none';
+    var preview = document.getElementById('img-preview');
+    if (ev.image_url) { preview.src = ev.image_url; preview.style.display = 'block'; }
+    else { preview.style.display = 'none'; }
+    document.getElementById('event-modal').style.display = 'flex';
+  });
+}
+
+function closeModal() {
+  document.getElementById('event-modal').style.display = 'none';
+  editingId = null;
+}
+
+async function saveEvent() {
+  var title = document.getElementById('ev-title').value.trim();
+  if (!title) {
+    var err = document.getElementById('modal-err');
+    err.textContent = 'Il nome dell\'evento è obbligatorio.';
+    err.style.display = 'block';
+    return;
+  }
+  document.getElementById('modal-err').style.display = 'none';
+
+  var data = {
+    title: title,
+    description: document.getElementById('ev-desc').value.trim() || null,
+    event_date: document.getElementById('ev-date').value || null,
+    ticket_url: document.getElementById('ev-ticket').value.trim() || null,
+    is_published: document.getElementById('ev-published').checked,
+    image_url: document.getElementById('ev-img-url').value || null
+  };
+
+  var btn = document.getElementById('btn-save');
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+
+  var res = editingId
+    ? await client.from('events').update(data).eq('id', editingId)
+    : await client.from('events').insert(data);
+
+  btn.innerHTML = '💾 Salva';
+  btn.disabled = false;
+
+  if (res.error) {
+    var err = document.getElementById('modal-err');
+    err.textContent = 'Errore: ' + res.error.message;
+    err.style.display = 'block';
+    return;
+  }
+  closeModal();
+  await loadEvents();
+}
+
+async function deleteEvent(id) {
+  if (!confirm('Eliminare questo evento? L\'azione non può essere annullata.')) return;
+  var { error } = await client.from('events').delete().eq('id', id);
+  if (error) { alert('Errore eliminazione: ' + error.message); return; }
+  await loadEvents();
+}
+
+/* ── IMAGE UPLOAD ── */
+async function uploadImage(input) {
+  var file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { alert('Immagine troppo grande. Massimo 5MB.'); return; }
+
+  var btn = document.getElementById('btn-save');
+  btn.innerHTML = '📸 Caricamento...';
+  btn.disabled = true;
+
+  var ext = file.name.split('.').pop().toLowerCase();
+  var path = 'event-' + Date.now() + '.' + ext;
+  var { error: upErr } = await client.storage.from('event-images').upload(path, file, { cacheControl: '3600', upsert: false });
+
+  btn.innerHTML = '💾 Salva';
+  btn.disabled = false;
+
+  if (upErr) { alert('Errore upload immagine: ' + upErr.message); return; }
+  var { data: urlData } = client.storage.from('event-images').getPublicUrl(path);
+  document.getElementById('ev-img-url').value = urlData.publicUrl;
+  var preview = document.getElementById('img-preview');
+  preview.src = urlData.publicUrl;
+  preview.style.display = 'block';
+}
+
+/* ── CLOSE MODAL ON OVERLAY CLICK ── */
+document.getElementById('event-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+init();
+</script>
+</body>
+</html>

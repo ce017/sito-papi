@@ -603,8 +603,8 @@ nav:not(.papi-island) .papi-nav-logo {
     var inner = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:32px;max-width:1200px;margin:30px auto 0;width:100%;">';
     PARTNERS.forEach(function(p){
       var img = '<img src="'+p.src+'" alt="'+p.name+'" style="width:100%;height:180px;object-fit:contain;display:block;opacity:0.9;transition:opacity 0.25s,transform 0.25s;" ' +
-        'onmouseenter="this.style.opacity='1';this.style.transform='scale(1.05)'" ' +
-        'onmouseleave="this.style.opacity='0.9';this.style.transform=''">';
+        'onmouseenter="this.style.opacity=\'1\';this.style.transform=\'scale(1.05)\'" ' +
+        'onmouseleave="this.style.opacity=\'0.9\';this.style.transform=\'\'">';
       inner += p.url
         ? '<a href="'+p.url+'" target="_blank" rel="noopener" style="text-decoration:none;display:block;padding:10px;height:200px;box-sizing:border-box;">'+img+'</a>'
         : '<div style="display:block;padding:10px;height:200px;box-sizing:border-box;">'+img+'</div>';
@@ -1341,22 +1341,6 @@ document.addEventListener('keydown', function(e) {
     /* ── Generic English → Italian fragments ── */
     replaceInNodes('Beach Club', 'Beach Club');  // keep as-is
     replaceInNodes('Open every day of the week', 'Aperto ogni weekend');
-
-    /* ── Partners / sponsors section ── */
-    var sp = document.querySelector('[data-framer-name="Sponsors"]');
-    if (sp && !sp.dataset.papiPartners) {
-      sp.dataset.papiPartners = '1';
-      /* Inject our own placeholder content */
-      var wrap = document.getElementById('papi-partners-wrap');
-      if (!wrap) {
-        wrap = document.createElement('div');
-        wrap.id = 'papi-partners-wrap';
-        wrap.style.cssText = 'padding:16px 0 24px;text-align:center;color:rgba(255,255,255,0.35);font-size:13px;font-family:Arial,sans-serif;';
-        wrap.textContent = 'I nostri partner — in arrivo';
-        var container = sp.querySelector('[data-framer-name="Container"]') || sp;
-        container.appendChild(wrap);
-      }
-    }
 
     /* ── Login: remove "Luca" placeholder ── */
     var loginInput = document.getElementById('papi-login-user');

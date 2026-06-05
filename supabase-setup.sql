@@ -48,7 +48,13 @@ create table if not exists public.events (
 
 alter table public.events enable row level security;
 
-drop policy if exists "anon_select_events" on public.events;
+-- Drop any existing policies on events (handles whatever names Supabase/Framer created)
+drop policy if exists "anon_select_events"            on public.events;
+drop policy if exists "auth_all_events"               on public.events;
+drop policy if exists "Public read published events"  on public.events;
+drop policy if exists "Allow public read"             on public.events;
+drop policy if exists "Enable read access for all"    on public.events;
+
 create policy "anon_select_events"
   on public.events
   for select

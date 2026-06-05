@@ -634,6 +634,63 @@ nav:not(.papi-island) .papi-nav-logo {
   max-width: 110px !important;
   display: block !important;
 }
+
+/* Mobile custom nav -- replaces Framer phone nav */
+#papi-mob-nav  { display: none; }
+#papi-mob-menu { display: none; }
+
+@media (max-width: 809px) {
+  nav[data-framer-name="Phone Close Home"] { display: none !important; }
+
+  #papi-mob-nav {
+    display: flex;
+    position: fixed;
+    top: 0; left: 0; right: 0; z-index: 9999;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    background: rgba(10,10,10,0.82);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+    box-sizing: border-box;
+  }
+  #papi-mob-nav .pm-logo { display: flex; align-items: center; text-decoration: none; }
+  #papi-mob-nav .pm-logo img { height: 32px; width: auto; display: block; }
+
+  #papi-mob-nav .pm-burger {
+    background: none; border: none; cursor: pointer;
+    display: flex; flex-direction: column; justify-content: space-between;
+    width: 28px; height: 20px; padding: 0;
+  }
+  #papi-mob-nav .pm-burger span {
+    display: block; height: 2px; width: 100%;
+    background: #f5b800; border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  #papi-mob-nav .pm-burger.is-open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+  #papi-mob-nav .pm-burger.is-open span:nth-child(2) { opacity: 0; }
+  #papi-mob-nav .pm-burger.is-open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+  #papi-mob-menu {
+    position: fixed;
+    top: 54px; left: 0; right: 0; z-index: 9998;
+    background: rgba(10,10,10,0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+    padding: 8px 0;
+  }
+  #papi-mob-menu.is-open { display: block !important; }
+  #papi-mob-menu a {
+    display: block; padding: 15px 24px;
+    color: #fff; text-decoration: none;
+    font-size: 15px; letter-spacing: 0.05em; text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  #papi-mob-menu a:last-child { border-bottom: none; }
+  #papi-mob-menu a:active { color: #f5b800; background: rgba(245,184,0,0.08); }
+}
 </style>
 <script id="papi-partners-late-inject">
 /* Sostituisce il contenuto della sezione Framer "Sponsors" con la griglia partner. */
@@ -1431,39 +1488,63 @@ document.addEventListener('keydown', function(e) {
 
 <script id="papi-island-nav-js">
 (function(){
-  var THRESHOLD = 80;
   var LOGO_SRC = 'papi-logo.svg';
+
+  /* ---- Custom mobile nav ---- */
+  function buildMobileNav() {
+    if (document.getElementById('papi-mob-nav')) return;
+    var bar = document.createElement('div');
+    bar.id = 'papi-mob-nav';
+    bar.innerHTML =
+      '<a href="index.html" class="pm-logo">' +
+        '<img src="' + LOGO_SRC + '" alt="Papi on the Beach">' +
+      '</a>' +
+      '<button class="pm-burger" id="pm-burger" aria-label="Menu">' +
+        '<span></span><span></span><span></span>' +
+      '</button>';
+    var menu = document.createElement('div');
+    menu.id = 'papi-mob-menu';
+    menu.innerHTML =
+      '<a href="index.html">Home</a>' +
+      '<a href="events.html">Events</a>' +
+      '<a href="restaurant.html">Restaurant</a>' +
+      '<a href="venue.html">Venue</a>' +
+      '<a href="contact.html">Contatti</a>';
+    document.body.insertBefore(bar, document.body.firstChild);
+    document.body.insertBefore(menu, document.body.children[1]);
+    var btn = document.getElementById('pm-burger');
+    btn.addEventListener('click', function() {
+      this.classList.toggle('is-open');
+      document.getElementById('papi-mob-menu').classList.toggle('is-open');
+    });
+    var links = menu.querySelectorAll('a');
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', function() {
+        btn.classList.remove('is-open');
+        document.getElementById('papi-mob-menu').classList.remove('is-open');
+      });
+    }
+  }
+
+  /* ---- Desktop island nav ---- */
+  var THRESHOLD = 80;
   var nav = null;
   var burgerEl = null;
   var ticking = false;
 
   function injectLogoAndBurger() {
     if (!nav) return;
-    if (nav.querySelector('.papi-nav-logo') || nav.querySelector('.papi-mobile-logo')) return;
-
-    if (nav.dataset.framerName === 'Phone Close Home') {
-      var logoSlot = nav.querySelector('[data-framer-name="Logo"]');
-      if (logoSlot) {
-        var mobileLogoLink = document.createElement('a');
-        mobileLogoLink.href = 'index.html';
-        mobileLogoLink.className = 'papi-mobile-logo';
-        mobileLogoLink.innerHTML = '<img src="' + LOGO_SRC + '" alt="Papi on the Beach">';
-        logoSlot.appendChild(mobileLogoLink);
-      }
-      return;
-    }
-
+    if (nav.querySelector('.papi-nav-logo')) return;
     var logoLink = document.createElement('a');
     logoLink.href = 'index.html';
     logoLink.className = 'papi-nav-logo';
     logoLink.innerHTML = '<img src="' + LOGO_SRC + '" alt="Papi on the Beach">';
     nav.insertBefore(logoLink, nav.firstChild);
-
     var burger = document.createElement('button');
     burger.className = 'papi-nav-burger';
     burger.setAttribute('aria-label', 'Menu');
     burger.innerHTML = '<span></span><span></span><span></span>';
-    burger.addEventListener('click', function(e){
+    burger.addEventListener('click', function(e) {
       e.preventDefault(); e.stopPropagation();
       nav.classList.toggle('is-expanded');
       burger.classList.toggle('is-open');
@@ -1472,18 +1553,19 @@ document.addEventListener('keydown', function(e) {
     burgerEl = burger;
   }
 
-  function findNav() {
-    var phoneClose = document.querySelector('[data-framer-name="Phone Close Home"]');
-    if (phoneClose && phoneClose.offsetWidth > 0) {
-      nav = phoneClose;
-      return true;
+  function findDesktopNav() {
+    var candidates = [
+      document.querySelector('[data-framer-name="Desktop Home"]'),
+      document.querySelector('[data-framer-name="Desktop"]'),
+      document.querySelector('[data-framer-name="Tablet"]')
+    ];
+    for (var i = 0; i < candidates.length; i++) {
+      if (candidates[i] && candidates[i].offsetWidth > 0) {
+        nav = candidates[i];
+        return true;
+      }
     }
-    nav = document.querySelector('[data-framer-name="Desktop Home"]')
-       || document.querySelector('[data-framer-name="Desktop"]')
-       || document.querySelector('[data-framer-name="Tablet"]')
-       || document.querySelector('[data-framer-name="Phone"]')
-       || document.querySelector('nav.framer-iyTFJ');
-    return !!nav;
+    return false;
   }
 
   function update() {
@@ -1499,9 +1581,10 @@ document.addEventListener('keydown', function(e) {
   }
 
   function init() {
+    buildMobileNav();
     var tries = 0;
     function attempt() {
-      if (findNav()) {
+      if (findDesktopNav()) {
         injectLogoAndBurger();
         window.addEventListener('scroll', function() {
           if (!ticking) { requestAnimationFrame(update); ticking = true; }
@@ -1515,7 +1598,7 @@ document.addEventListener('keydown', function(e) {
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function(){ setTimeout(init, 100); });
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 100); });
   } else {
     setTimeout(init, 100);
   }

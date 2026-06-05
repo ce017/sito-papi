@@ -295,6 +295,12 @@ nav p, nav span, header nav p, nav label { color: #ffffff !important; }
 [style*="color: rgb(17, 17, 20)"] { color: #ffffff !important; }
 [style*="color: rgb(0, 0, 0)"] { color: #ffffff !important; }
 [style*="color:rgb(17,17,20)"] { color: #ffffff !important; }
+
+/* Unused Framer sections -- removed from render tree immediately */
+#weekly-agenda,
+[data-framer-name="Weekly Agenda"] { display: none !important; }
+#aboutku { display: none !important; }
+#eventselection { display: none !important; }
 </style>
 
   <!-- Supabase SDK + Papi config -->
@@ -924,64 +930,7 @@ nav:not(.papi-island) .papi-nav-logo {
   });
 })();
 </script>
-<style id="papi-animation">
-/* ── NAV LOGO ─────────────────────────────────────── */
-
-/* Papi: dramatic background */
-body {
-  background: #0a0a0a !important;
-  background-image:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(245,184,0,0.18) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(245,184,0,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 30% at 10% 100%, rgba(245,184,0,0.06) 0%, transparent 50%) !important;
-}
-html { background:#0a0a0a !important; }
-.papi-nav-logo { position:absolute!important; left:24px!important; top:50%!important; transform:translateY(-50%)!important; height:36px!important; width:auto!important; max-width:150px!important; object-fit:contain!important; z-index:100!important; }
-nav.framer-iyTFJ { position: relative !important; }
-figure[data-framer-name="Logo Papi"] { transform:scale(1)!important; max-height:220px!important; }
-figure[data-framer-name="Logo Papi"] img { object-fit:contain!important; max-height:200px!important; }
-header[data-framer-name="Hero"] { min-height:100vh!important; position:relative!important; }
-[data-framer-name="Text"] p, [data-framer-name="Text"] div p { color:#ffffff!important; }
-.framer-7sznpq p { color:#ffffff!important; }
-section { background:#0a0a0a!important; }
-#main { background:#0a0a0a!important; }
-
-
-/* Papi: top gold accent stripe */
-body::before { content:''; display:block; height:3px; background:linear-gradient(90deg,transparent 0%,#F5B800 30%,#F5B800 70%,transparent 100%); position:fixed; top:0; left:0; right:0; z-index:9999; }
-/* Fix dark text tokens to be white/gold */
-:root { --token-12cbfa94-9c5f-41d3-a67b-614d50367bfe: #ffffff; }
-[style*="--framer-text-color:var(--extracted-r6o4lv"] { --framer-text-color:#ffffff!important; }
-/* Nav background - semi-transparent dark */
-nav.framer-iyTFJ, header.framer-iyTFJ { background:rgba(17,17,17,0.92)!important; backdrop-filter:blur(12px)!important; -webkit-backdrop-filter:blur(12px)!important; }
-/* Weekly agenda section - make it look different */
-section[id="weekly-agenda"] { background:#0a0a0a!important; }
-/* Event cards: ensure dark bg */
-.framer-nsa0em { background:#111!important; }
-/* Fix any white backgrounds in content sections */
-section { background:#111111!important; }
-div[style*="background-color:rgb(255, 255, 255)"] { background-color:#111111!important; }
-div[style*="background-color:white"] { background-color:#111111!important; }
-
-.papi-nav-logo {
-  position: absolute; left: 24px; top: 50%; transform: translateY(-50%);
-  height: 44px; z-index: 100; display: block;
-}
-
-/* ── FIX NAV SLIDE-IN (was translateY(-40px)) ─────── */
-nav[style*="translateY(-40px)"] { transform: translateY(0) !important; }
-nav[style*="translateY(-100"]    { transform: translateY(0) !important; }
-
-/* ── HERO PARTICLE CANVAS ─────────────────────────── */
-#papi-particles {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  pointer-events: none; z-index: 0;
-}
-
-/* ── GOLD DIMMED TEXT FIX ─────────────────────────── */
-[style*="rgba(38, 38, 38, 0.8)"]  { --framer-text-color: #F5B800 !important; color: #F5B800 !important; }
-[style*="rgba(38,38,38,0.8)"]     { --framer-text-color: #F5B800 !important; color: #F5B800 !important; }
-</style>
+<style id="papi-animation"></style>
 
 <canvas id="papi-particles"></canvas>
 <script id="papi-particles-js">

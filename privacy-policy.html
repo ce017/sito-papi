@@ -1079,7 +1079,6 @@ nav[style*="translateY(-100"]    { transform: translateY(0) !important; }
     c.from('analytics').insert({ page: page, session_id: sid, visited_at: new Date().toISOString() })
       .then(function(r) {
         if (r.error) console.warn('[papi-analytics] insert error:', r.error);
-        else console.log('[papi-analytics] tracked:', page);
       });
   } catch(e) { console.warn("[papi-analytics] exception:", e); }
 })();

@@ -216,7 +216,7 @@ html, body { background-color:#111111!important; }
 div[class*="framer-"] { --framer-page-background:#111111; }
 :root {
   --token-a1a0c7e5-1e4d-414c-8dba-5e69e14eca12: #111111;
-  --token-c465f8c5-7fa9-436d-b203-2cb129c31fb1: #1a1a1a;
+  --token-c465f8c5-7fa9-436d-b203-2cb129c31fb1: rgba(255,255,255,0.78);
   --token-dc631f8a-4140-47df-884a-ed562fa8ef1a: #F5B800;
   --token-a888adc2-3d05-4d6f-88b7-8dab97418795: #F5B800;
   --token-f1c81b52-2a59-4da2-a47f-3f4bfb2f2b58: #8B6900;
@@ -683,29 +683,38 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
   ];
 
   var CSS =
-    '#papi-events-section{background:#0a0a0a;padding:110px 40px 80px;width:100%;box-sizing:border-box;}' +
-    '@media(max-width:640px){#papi-events-section{padding:80px 20px 56px;}}' +
-    '.pe-hd{max-width:1100px;margin:0 auto 48px;}' +
-    '.pe-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:16px;}' +
-    '.pe-eyebrow-bar{display:block;width:28px;height:1px;background:#F5B800;}' +
-    '.pe-eyebrow-lbl{font:700 11px/1 Arial,sans-serif;color:rgba(255,255,255,.5);letter-spacing:.14em;text-transform:uppercase;}' +
-    '.pe-h1{font:800 clamp(36px,6vw,72px)/1 Arial,Helvetica,sans-serif;color:#fff;margin:0 0 10px;letter-spacing:-.02em;}' +
-    '.pe-sub{font:14px/1.5 Arial,sans-serif;color:rgba(255,255,255,.38);margin:0;}' +
-    '#papi-events-grid{display:grid;gap:20px;max-width:1100px;margin:0 auto;}' +
-    '@media(max-width:768px){#papi-events-grid{grid-template-columns:1fr !important;}}' +
-    '.pe-card{background:#111;border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;}' +
+    /* section */
+    '#papi-events-section{background:#0a0a0a;padding:100px 32px 60px;width:100%;box-sizing:border-box;}' +
+    '@media(max-width:640px){#papi-events-section{padding:72px 16px 40px;}}' +
+    /* header */
+    '.pe-hd{max-width:1100px;margin:0 auto 32px;}' +
+    '@media(max-width:640px){.pe-hd{margin-bottom:20px;}}' +
+    '.pe-label{font:600 10px/1 "Inter",Arial,sans-serif;color:rgba(255,255,255,.35);letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px;display:block;}' +
+    '.pe-h1{font:700 clamp(24px,4vw,42px)/1.1 "Inter Display","Inter",Arial,sans-serif;color:#fff;margin:0 0 6px;letter-spacing:-.02em;}' +
+    '@media(max-width:640px){.pe-h1{font-size:28px;}}' +
+    /* grid */
+    '#papi-events-grid{display:grid;gap:16px;max-width:1100px;margin:0 auto;}' +
+    '@media(max-width:640px){#papi-events-grid{grid-template-columns:1fr !important;gap:12px;}}' +
+    /* card */
+    '.pe-card{background:#111;border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .25s;}' +
+    '.pe-card:hover{border-color:rgba(245,184,0,.3);}' +
     '.pe-card-img{aspect-ratio:16/9;overflow:hidden;background:#1a1a1a;flex-shrink:0;}' +
+    '@media(max-width:640px){.pe-card-img{aspect-ratio:2/1;}}' +
     '.pe-card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease;}' +
-    '.pe-card:hover .pe-card-img img{transform:scale(1.04);}' +
-    '.pe-card-body{padding:22px 24px 24px;display:flex;flex-direction:column;flex:1;}' +
-    '.pe-date{font:700 11px/1 Arial,sans-serif;color:#F5B800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;}' +
-    '.pe-name{font:800 clamp(18px,2.2vw,24px)/1.15 Arial,Helvetica,sans-serif;color:#fff;text-transform:uppercase;letter-spacing:.01em;margin-bottom:8px;}' +
-    '.pe-loc{font:12px/1.4 Arial,sans-serif;color:rgba(255,255,255,.32);margin-bottom:20px;flex:1;}' +
-    '.pe-btns{display:flex;gap:10px;flex-wrap:wrap;}' +
-    '.pe-btn{display:inline-flex;align-items:center;padding:10px 22px;border-radius:7px;font:700 11px/1 Arial,sans-serif;text-decoration:none;letter-spacing:.08em;text-transform:uppercase;transition:opacity .2s;white-space:nowrap;}' +
+    '.pe-card:hover .pe-card-img img{transform:scale(1.03);}' +
+    '.pe-card-body{padding:18px 20px 20px;display:flex;flex-direction:column;flex:1;}' +
+    '@media(max-width:640px){.pe-card-body{padding:12px 14px 16px;}}' +
+    '.pe-date{font:600 10px/1 "Inter",Arial,sans-serif;color:#F5B800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px;}' +
+    '.pe-name{font:700 clamp(15px,1.8vw,20px)/1.2 "Inter Display","Inter",Arial,sans-serif;color:#fff;text-transform:uppercase;letter-spacing:.01em;margin-bottom:6px;}' +
+    '@media(max-width:640px){.pe-name{font-size:15px;}}' +
+    '.pe-loc{font:13px/1.4 "Inter",Arial,sans-serif;color:rgba(255,255,255,.3);margin-bottom:14px;flex:1;}' +
+    '@media(max-width:640px){.pe-loc{font-size:12px;margin-bottom:10px;}}' +
+    '.pe-btns{display:flex;gap:8px;flex-wrap:wrap;}' +
+    '.pe-btn{display:inline-flex;align-items:center;padding:9px 18px;border-radius:6px;font:600 11px/1 "Inter",Arial,sans-serif;text-decoration:none;letter-spacing:.07em;text-transform:uppercase;transition:opacity .2s;white-space:nowrap;}' +
+    '@media(max-width:640px){.pe-btn{padding:8px 14px;font-size:10px;}}' +
     '.pe-btn:hover{opacity:.8;}' +
     '.pe-btn-gold{background:#F5B800;color:#111;}' +
-    '.pe-btn-out{border:1px solid rgba(245,184,0,.45);color:#F5B800;}';
+    '.pe-btn-out{border:1px solid rgba(245,184,0,.4);color:#F5B800;}';
 
   function card(ev) {
     return '<div class="pe-card">' +
@@ -738,9 +747,8 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
     sec.id = 'papi-events-section';
     sec.innerHTML =
       '<div class="pe-hd">' +
-        '<div class="pe-eyebrow"><span class="pe-eyebrow-bar"></span><span class="pe-eyebrow-lbl">In programma</span></div>' +
-        '<h1 class="pe-h1">I prossimi<br>eventi</h1>' +
-        '<p class="pe-sub">Acquista i biglietti o prenota un tavolo</p>' +
+        '<span class="pe-label">In programma</span>' +
+        '<h1 class="pe-h1">I prossimi eventi</h1>' +
       '</div>' +
       '<div id="papi-events-grid" style="grid-template-columns:' + cols + '">' +
         EVENTS.map(card).join('') +

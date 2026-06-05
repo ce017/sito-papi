@@ -38,6 +38,7 @@
     .stat-card { background: #161616; border: 1px solid rgba(245,184,0,0.15); border-radius: 12px; padding: 16px 18px; }
     .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 8px; font-family: monospace; }
     .stat-value { font-family: Impact,'Arial Black',sans-serif; font-size: 34px; color: #F5B800; line-height: 1; }
+    @media(max-width:480px) { .stat-card { padding: 12px 14px; } .stat-value { font-size: 26px; } .stat-label { font-size: 9px; } .main { padding: 14px; } }
     .stat-sub { font-size: 11px; color: rgba(255,255,255,0.25); margin-top: 4px; }
 
     /* ── PAGE BREAKDOWN ── */
@@ -106,7 +107,7 @@
 <body>
 
 <div class="topbar">
-  <div class="topbar-logo">PAPI <span>Admin</span></div>
+  <div class="topbar-logo"><img src="papi-logo.svg" alt="Papi" style="height:26px;width:auto;vertical-align:middle;display:inline-block;margin-right:6px;"> <span>Admin</span></div>
   <button class="btn-logout" onclick="logout()">Esci</button>
 </div>
 
@@ -256,7 +257,18 @@ async function loadAnalytics(period) {
   var query = client.from('analytics').select('page, session_id, visited_at');
   if (fromDate) query = query.gte('visited_at', fromDate);
   var { data, error } = await query;
-  if (error) { console.error(error); return; }
+  if (error) {
+    console.error(error);
+    var msg = error.code === '42P01'
+      ? 'Tabella analytics non trovata.'
+      : 'Errore: ' + error.message;
+    document.getElementById('stat-total').textContent = '-';
+    document.getElementById('stat-pages').textContent = '-';
+    document.getElementById('stat-sessions').textContent = '-';
+    document.getElementById('stat-top').textContent = '-';
+    document.getElementById('page-breakdown').innerHTML = '<div class="empty" style="color:#ff8080;font-size:12px;">'+msg+'</div>';
+    return;
+  }
   renderAnalytics(data || [], period);
 }
 
@@ -300,7 +312,18 @@ function switchPeriod(period, btn) {
 /* ── EVENTS ── */
 async function loadEvents() {
   var { data, error } = await client.from('events').select('*').order('event_date', { ascending: true });
-  if (error) { console.error(error); return; }
+  if (error) {
+    console.error(error);
+    var msg = error.code === '42P01'
+      ? 'Tabella analytics non trovata.'
+      : 'Errore: ' + error.message;
+    document.getElementById('stat-total').textContent = '-';
+    document.getElementById('stat-pages').textContent = '-';
+    document.getElementById('stat-sessions').textContent = '-';
+    document.getElementById('stat-top').textContent = '-';
+    document.getElementById('page-breakdown').innerHTML = '<div class="empty" style="color:#ff8080;font-size:12px;">'+msg+'</div>';
+    return;
+  }
   renderEvents(data || []);
 }
 

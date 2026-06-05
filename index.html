@@ -321,6 +321,35 @@ figure.framer-f0om72 img {
 figure.framer-f0om72 {
   transform: translateX(-120px) !important;
 }
+
+/* Mobile fixes */
+@media (max-width: 768px) {
+  /* Hero logo: image renders at 1575px on mobile -- cap it */
+  figure.framer-f0om72 {
+    transform: none !important;
+    overflow: hidden !important;
+  }
+  figure.framer-f0om72 img {
+    max-width: 200px !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: 140px !important;
+    object-position: center !important;
+  }
+  /* Restaurant gallery: 3-column to 2-column */
+  #papi-restaurant-gallery div[style*="grid-template-columns"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-auto-rows: 180px !important;
+    gap: 10px !important;
+  }
+  #papi-restaurant-gallery .papi-gallery-item {
+    grid-row: span 1 !important;
+  }
+  /* Event card images: reduce height */
+  img[src*="event-"][style*="height:200px"] {
+    height: 150px !important;
+  }
+}
 </style>
 <style id="papi-token-fix">
 /* The site's primary text token resolves to #111114 (near-black).
@@ -605,6 +634,21 @@ nav.papi-island.is-expanded .framer-fzdypl [data-framer-name="Content"] > a:last
 /* ── TOP (non scrolled) ──────────────────────────────────── */
 nav:not(.papi-island) .papi-nav-logo {
   margin-right: 24px;
+}
+
+/* Mobile nav logo */
+.papi-mobile-logo {
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  text-decoration: none !important;
+  padding: 0 4px !important;
+}
+.papi-mobile-logo img {
+  height: 28px !important;
+  width: auto !important;
+  max-width: 110px !important;
+  display: block !important;
 }
 </style>
 <script id="papi-partners-late-inject">
@@ -1611,7 +1655,19 @@ document.addEventListener('keydown', function(e) {
 
   function injectLogoAndBurger() {
     if (!nav) return;
-    if (nav.querySelector('.papi-nav-logo')) return;
+    if (nav.querySelector('.papi-nav-logo') || nav.querySelector('.papi-mobile-logo')) return;
+
+    if (nav.dataset.framerName === 'Phone Close Home') {
+      var logoSlot = nav.querySelector('[data-framer-name="Logo"]');
+      if (logoSlot) {
+        var mobileLogoLink = document.createElement('a');
+        mobileLogoLink.href = 'index.html';
+        mobileLogoLink.className = 'papi-mobile-logo';
+        mobileLogoLink.innerHTML = '<img src="' + LOGO_SRC + '" alt="Papi on the Beach">';
+        logoSlot.appendChild(mobileLogoLink);
+      }
+      return;
+    }
 
     var logoLink = document.createElement('a');
     logoLink.href = 'index.html';
@@ -1633,6 +1689,11 @@ document.addEventListener('keydown', function(e) {
   }
 
   function findNav() {
+    var phoneClose = document.querySelector('[data-framer-name="Phone Close Home"]');
+    if (phoneClose && phoneClose.offsetWidth > 0) {
+      nav = phoneClose;
+      return true;
+    }
     nav = document.querySelector('[data-framer-name="Desktop Home"]')
        || document.querySelector('[data-framer-name="Desktop"]')
        || document.querySelector('[data-framer-name="Tablet"]')

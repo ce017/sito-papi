@@ -734,80 +734,105 @@ nav:not(.papi-island) .papi-nav-logo {
     <!-- End of bodyEnd -->
 <script id="papi-events-inject">
 (function() {
-  var IMG = 'https://www.liveticket.it/dati_flexa/Image/Img_eventi_2026/end_of_school_party_papi_on_320.jpg';
-  var TICKET = 'https://www.liveticket.it/evento.aspx?Id=673818&InstantBuy=1';
-  var CARD =
-    '<div style="border-radius:24px;overflow:hidden;background:#111;border:1.5px solid #F5B800;position:relative;">' +
-      '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#F5B800,transparent);z-index:2;"></div>' +
-      '<div style="display:flex;flex-wrap:wrap;min-height:280px;">' +
-        '<div style="flex:0 0 auto;width:min(100%,300px);position:relative;overflow:hidden;">' +
-          '<img src="' + IMG + '" alt="END OF SCHOOL PARTY" ' +
-               'style="width:100%;height:100%;min-height:260px;object-fit:cover;display:block;" ' +
-               'onerror="this.style.background='linear-gradient(135deg,#1a1400,#111)';this.style.minHeight='260px'">' +
-          '<div style="position:absolute;inset:0;background:linear-gradient(to right,transparent 60%,#111 100%);"></div>' +
-        '</div>' +
-        '<div style="flex:1 1 260px;padding:36px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;">' +
-          '<div style="font-family:monospace;font-size:11px;color:#F5B800;letter-spacing:0.15em;text-transform:uppercase;">Prossimo Evento</div>' +
-          '<div style="font-family:Impact,Arial Black,sans-serif;font-size:clamp(28px,4vw,50px);color:#F5B800;letter-spacing:2px;text-transform:uppercase;line-height:1.05;">END OF SCHOOL<br>PARTY</div>' +
-          '<div style="font-family:monospace;font-size:13px;color:rgba(255,255,255,0.55);letter-spacing:0.06em;">Sab 6 &ndash; Dom 7 Giugno 2026 &nbsp;&middot;&nbsp; Ore 22:00</div>' +
-          '<div style="font-family:Arial,sans-serif;font-size:13px;color:rgba(255,255,255,0.4);">&#128205; Via XX Settembre 289, Roveredo in Piano (PN)</div>' +
-          '<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:6px;">' +
-            '<a href="' + TICKET + '" target="_blank" rel="noopener" ' +
-               'style="display:inline-flex;align-items:center;background:linear-gradient(135deg,#F5B800,#ffe066 40%,#b8860b);color:#111;font-family:Arial,sans-serif;font-size:13px;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;text-transform:uppercase;letter-spacing:0.08em;">ACQUISTA BIGLIETTI &#8594;</a>' +
-            '<a href="contact.html" ' +
-               'style="display:inline-flex;align-items:center;border:1.5px solid rgba(245,184,0,0.6);color:#F5B800;font-family:Arial,sans-serif;font-size:13px;font-weight:500;padding:11px 24px;border-radius:8px;text-decoration:none;text-transform:uppercase;letter-spacing:0.06em;">Tavolo</a>' +
-          '</div>' +
+  /* Edit this array to add / remove events */
+  var EVENTS = [
+    {
+      img: 'https://www.liveticket.it/dati_flexa/Image/Img_eventi_2026/end_of_school_party_papi_on_320.jpg',
+      title: 'End of School Party',
+      date: 'Sab 6 \u2013 Dom 7 Giugno 2026  \u00b7  ore 22:00',
+      location: 'Via XX Settembre 289, Roveredo in Piano (PN)',
+      ticket: 'https://www.liveticket.it/evento.aspx?Id=673818&InstantBuy=1'
+    }
+    /* To add another event, paste a comma then a new block like the one above.
+    ,{
+      img: '',
+      title: '',
+      date: '',
+      location: '',
+      ticket: ''
+    } */
+  ];
+
+  var CSS =
+    '#papi-events-section{background:#0a0a0a;padding:110px 40px 80px;width:100%;box-sizing:border-box;}' +
+    '@media(max-width:640px){#papi-events-section{padding:80px 20px 56px;}}' +
+    '.pe-hd{max-width:1100px;margin:0 auto 48px;}' +
+    '.pe-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:16px;}' +
+    '.pe-eyebrow-bar{display:block;width:28px;height:1px;background:#F5B800;}' +
+    '.pe-eyebrow-lbl{font:700 11px/1 Arial,sans-serif;color:rgba(255,255,255,.5);letter-spacing:.14em;text-transform:uppercase;}' +
+    '.pe-h1{font:800 clamp(36px,6vw,72px)/1 Arial,Helvetica,sans-serif;color:#fff;margin:0 0 10px;letter-spacing:-.02em;}' +
+    '.pe-sub{font:14px/1.5 Arial,sans-serif;color:rgba(255,255,255,.38);margin:0;}' +
+    '#papi-events-grid{display:grid;gap:20px;max-width:1100px;margin:0 auto;}' +
+    '@media(max-width:768px){#papi-events-grid{grid-template-columns:1fr !important;}}' +
+    '.pe-card{background:#111;border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;}' +
+    '.pe-card-img{aspect-ratio:16/9;overflow:hidden;background:#1a1a1a;flex-shrink:0;}' +
+    '.pe-card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease;}' +
+    '.pe-card:hover .pe-card-img img{transform:scale(1.04);}' +
+    '.pe-card-body{padding:22px 24px 24px;display:flex;flex-direction:column;flex:1;}' +
+    '.pe-date{font:700 11px/1 Arial,sans-serif;color:#F5B800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;}' +
+    '.pe-name{font:800 clamp(18px,2.2vw,24px)/1.15 Arial,Helvetica,sans-serif;color:#fff;text-transform:uppercase;letter-spacing:.01em;margin-bottom:8px;}' +
+    '.pe-loc{font:12px/1.4 Arial,sans-serif;color:rgba(255,255,255,.32);margin-bottom:20px;flex:1;}' +
+    '.pe-btns{display:flex;gap:10px;flex-wrap:wrap;}' +
+    '.pe-btn{display:inline-flex;align-items:center;padding:10px 22px;border-radius:7px;font:700 11px/1 Arial,sans-serif;text-decoration:none;letter-spacing:.08em;text-transform:uppercase;transition:opacity .2s;white-space:nowrap;}' +
+    '.pe-btn:hover{opacity:.8;}' +
+    '.pe-btn-gold{background:#F5B800;color:#111;}' +
+    '.pe-btn-out{border:1px solid rgba(245,184,0,.45);color:#F5B800;}';
+
+  function card(ev) {
+    return '<div class="pe-card">' +
+      '<div class="pe-card-img"><img src="' + ev.img + '" alt="' + ev.title + '" loading="lazy"></div>' +
+      '<div class="pe-card-body">' +
+        '<div class="pe-date">' + ev.date + '</div>' +
+        '<div class="pe-name">' + ev.title + '</div>' +
+        '<div class="pe-loc">' + ev.location + '</div>' +
+        '<div class="pe-btns">' +
+          (ev.ticket ? '<a href="' + ev.ticket + '" target="_blank" rel="noopener" class="pe-btn pe-btn-gold">Biglietti &rarr;</a>' : '') +
+          '<a href="contact.html" class="pe-btn pe-btn-out">Tavolo</a>' +
         '</div>' +
       '</div>' +
     '</div>';
-
-  var EVENT_HTML =
-    '<div style="max-width:960px;margin:0 auto;padding:20px 0;">' +
-    CARD +
-    '<div style="text-align:center;margin-top:28px;">' +
-      '<a href="events.html" style="color:#F5B800;font-family:Arial,sans-serif;font-size:13px;font-weight:500;letter-spacing:0.12em;text-decoration:none;text-transform:uppercase;border-bottom:1px solid rgba(245,184,0,0.5);padding-bottom:3px;">TUTTI GLI EVENTI &#8594;</a>' +
-    '</div></div>';
-
-  var HEADER_HTML =
-    '<div style="max-width:1100px;margin:0 auto 56px;padding:0 20px;">' +
-      '<div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">' +
-        '<span style="display:inline-block;width:36px;height:2px;background:#F5B800;"></span>' +
-        '<span style="font-family:Arial,sans-serif;font-size:13px;color:rgba(255,255,255,0.65);letter-spacing:0.08em;">Eventi</span>' +
-      '</div>' +
-      '<h1 style="font-family:Arial,Helvetica,sans-serif;font-size:clamp(40px,7vw,84px);font-weight:800;color:#fff;letter-spacing:-0.01em;line-height:1;margin:0 0 16px;">I prossimi eventi</h1>' +
-      '<p style="font-family:Arial,sans-serif;font-size:15px;color:rgba(255,255,255,0.45);margin:0;max-width:600px;">Acquista i biglietti o leggi informazioni sugli eventi</p>' +
-    '</div>';
-
-  function injectEvents() {
-    /* 1. Inserisci una sezione TITOLO completamente separata, prima di #eventselection */
-    var sel = document.querySelector('#eventselection');
-    if (sel && !document.getElementById('papi-events-title')) {
-      var titleSec = document.createElement('section');
-      titleSec.id = 'papi-events-title';
-      titleSec.style.cssText = 'background:#0a0a0a;padding:140px 40px 40px;width:100%;box-sizing:border-box;display:block;position:relative;z-index:1;';
-      titleSec.innerHTML = HEADER_HTML;
-      sel.parentNode.insertBefore(titleSec, sel);
-    }
-    /* 2. Inietta la card dentro #eventselection (lasciando intatto l'header sopra) */
-    if (sel && !sel.dataset.papiDone) {
-      sel.dataset.papiDone = '1';
-      var inner = sel.querySelector('[data-framer-name="Container"]') || sel;
-      inner.innerHTML = EVENT_HTML;
-      inner.style.cssText = 'padding:20px 40px 80px;max-width:none;width:100%;box-sizing:border-box;';
-      sel.style.cssText = 'background:#0a0a0a;width:100%;';
-    }
-    /* 3. Nascondi l'hero/about originale Framer */
-    var about = document.querySelector('#about');
-    if (about) about.style.display = 'none';
-    var hero = document.querySelector('[data-framer-name="Hero"], #hero');
-    if (hero) hero.style.display = 'none';
   }
 
-  /* Render IMMEDIATO — niente delay per evitare il "flash" della pagina vuota */
+  function inject() {
+    if (document.getElementById('papi-events-section')) return;
+    var sel = document.querySelector('#eventselection');
+    if (!sel) return;
+
+    var st = document.createElement('style');
+    st.id = 'papi-events-css';
+    st.textContent = CSS;
+    document.head.appendChild(st);
+
+    var cols = EVENTS.length === 1 ? 'minmax(300px,600px)' : 'repeat(2,1fr)';
+
+    var sec = document.createElement('section');
+    sec.id = 'papi-events-section';
+    sec.innerHTML =
+      '<div class="pe-hd">' +
+        '<div class="pe-eyebrow"><span class="pe-eyebrow-bar"></span><span class="pe-eyebrow-lbl">In programma</span></div>' +
+        '<h1 class="pe-h1">I prossimi<br>eventi</h1>' +
+        '<p class="pe-sub">Acquista i biglietti o prenota un tavolo</p>' +
+      '</div>' +
+      '<div id="papi-events-grid" style="grid-template-columns:' + cols + '">' +
+        EVENTS.map(card).join('') +
+      '</div>';
+
+    sel.parentNode.insertBefore(sec, sel);
+    sel.style.display = 'none';
+
+    var oldTitle = document.getElementById('papi-events-title');
+    if (oldTitle) oldTitle.remove();
+
+    var ab = document.querySelector('#about');
+    if (ab) ab.style.display = 'none';
+    var he = document.querySelector('[data-framer-name="Hero"], #hero');
+    if (he) he.style.display = 'none';
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', injectEvents);
+    document.addEventListener('DOMContentLoaded', inject);
   } else {
-    injectEvents();
+    inject();
   }
 })();
 </script>

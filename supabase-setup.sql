@@ -1,8 +1,9 @@
 -- Papi on the Beach — Supabase setup
--- Run this once in the Supabase SQL Editor (dashboard.supabase.com)
+-- Run this in the Supabase SQL Editor (dashboard.supabase.com)
+-- Safe to run multiple times.
 
 -- ============================================================
--- 1. Analytics table
+-- Analytics table + RLS  (this is the important part)
 -- ============================================================
 create table if not exists public.analytics (
   id          bigserial        primary key,
@@ -11,12 +12,9 @@ create table if not exists public.analytics (
   visited_at  timestamptz      not null default now()
 );
 
--- ============================================================
--- 2. Row-Level Security
--- ============================================================
 alter table public.analytics enable row level security;
 
--- Anyone (anonymous visitors) can INSERT
+-- Anonymous visitors can INSERT (tracking)
 drop policy if exists "anon_insert" on public.analytics;
 create policy "anon_insert"
   on public.analytics
@@ -24,7 +22,7 @@ create policy "anon_insert"
   to anon
   with check (true);
 
--- Only logged-in admin can SELECT (admin panel)
+-- Logged-in admin can SELECT (admin panel stats)
 drop policy if exists "auth_select" on public.analytics;
 create policy "auth_select"
   on public.analytics
@@ -33,38 +31,5 @@ create policy "auth_select"
   using (true);
 
 -- ============================================================
--- 3. Events table (if not already created)
+-- Events table policies are already set up — nothing to do.
 -- ============================================================
-create table if not exists public.events (
-  id          bigserial        primary key,
-  name        text             not null,
-  date        text,
-  location    text,
-  image_url   text,
-  ticket_url  text,
-  table_url   text,
-  created_at  timestamptz      not null default now()
-);
-
-alter table public.events enable row level security;
-
--- Drop any existing policies on events (handles whatever names Supabase/Framer created)
-drop policy if exists "anon_select_events"            on public.events;
-drop policy if exists "auth_all_events"               on public.events;
-drop policy if exists "Public read published events"  on public.events;
-drop policy if exists "Allow public read"             on public.events;
-drop policy if exists "Enable read access for all"    on public.events;
-
-create policy "anon_select_events"
-  on public.events
-  for select
-  to anon
-  using (true);
-
-drop policy if exists "auth_all_events" on public.events;
-create policy "auth_all_events"
-  on public.events
-  for all
-  to authenticated
-  using (true)
-  with check (true);

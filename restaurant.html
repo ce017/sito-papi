@@ -1186,7 +1186,7 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
       sessionStorage.setItem('papi_sid', sid);
     }
     var c = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    c.from('analytics').insert({ page: page, session_id: sid });
+    c.from('analytics').insert({ page: page, session_id: sid, visited_at: new Date().toISOString() });
   } catch(e) {}
 })();
 </script>

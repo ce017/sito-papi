@@ -456,222 +456,89 @@ textarea::placeholder {
 
 
 <style id="papi-island-nav">
-/* ── Papi Island Nav v9 — movement compose animation ───────────── */
 
-:root {
-  --papi-ease: cubic-bezier(0.32, 0.72, 0, 1);
-  --papi-dur: 1s;
-}
+/* Papi Island Nav v10 - Apple-style mobile overlay */
+:root { --papi-ease: cubic-bezier(0.32,0.72,0,1); --papi-dur: 1s; }
 
-/* Logo iniettato */
 .papi-nav-logo {
-  display: inline-flex !important;
-  align-items: center !important;
-  text-decoration: none !important;
-  height: 40px !important;
-  flex: 0 0 auto !important;
-  z-index: 2 !important;
-  transition: height var(--papi-dur) var(--papi-ease),
-              margin var(--papi-dur) var(--papi-ease),
-              transform var(--papi-dur) var(--papi-ease);
+  display: inline-flex !important; align-items: center !important;
+  text-decoration: none !important; height: 40px !important;
+  flex: 0 0 auto !important; z-index: 2 !important;
+  transition: height var(--papi-dur) var(--papi-ease), margin var(--papi-dur) var(--papi-ease), transform var(--papi-dur) var(--papi-ease);
 }
 .papi-nav-logo img {
-  height: 100% !important;
-  width: auto !important;
-  display: block !important;
-  max-width: 130px !important;
-  transition: max-width var(--papi-dur) var(--papi-ease);
+  height: 100% !important; width: auto !important; display: block !important;
+  max-width: 130px !important; transition: max-width var(--papi-dur) var(--papi-ease);
 }
-
-/* Burger iniettato */
 .papi-nav-burger {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: rgba(245,184,0,0.95);
-  border: none;
-  cursor: pointer;
-  flex: 0 0 38px;
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-  z-index: 2;
-  opacity: 0;
-  max-width: 0;
-  pointer-events: none;
-  margin-left: 0;
-  overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  gap: 5px; width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(245,184,0,0.95); border: none; cursor: pointer;
+  flex: 0 0 38px; box-sizing: border-box; padding: 0; margin: 0; z-index: 2;
+  opacity: 0; max-width: 0; pointer-events: none; margin-left: 0; overflow: hidden;
   transform: scale(0.4);
-  transition: opacity var(--papi-dur) var(--papi-ease),
-              max-width var(--papi-dur) var(--papi-ease),
-              margin-left var(--papi-dur) var(--papi-ease),
-              transform var(--papi-dur) var(--papi-ease),
-              background 0.2s ease;
+  transition: opacity var(--papi-dur) var(--papi-ease), max-width var(--papi-dur) var(--papi-ease),
+    margin-left var(--papi-dur) var(--papi-ease), transform var(--papi-dur) var(--papi-ease), background 0.2s ease;
 }
 .papi-nav-burger:hover { background: rgb(245,184,0); transform: scale(1.08) !important; }
 .papi-nav-burger span {
-  display: block; width: 18px; height: 2px;
-  background: #111; border-radius: 2px;
+  display: block; width: 18px; height: 2px; background: #111; border-radius: 2px;
   transition: transform 0.4s var(--papi-ease), opacity 0.3s ease;
 }
-.papi-nav-burger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.papi-nav-burger.is-open span:nth-child(2) { opacity: 0; }
-.papi-nav-burger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* ── NAV transitions ──────────────────────────────────────────── */
-nav[data-framer-name="Desktop Home"],
-nav[data-framer-name="Desktop"],
-nav[data-framer-name="Tablet"],
-nav[data-framer-name="Phone"] {
-  transition: width var(--papi-dur) var(--papi-ease),
-              max-width var(--papi-dur) var(--papi-ease),
-              padding var(--papi-dur) var(--papi-ease),
-              background var(--papi-dur) ease,
-              backdrop-filter var(--papi-dur) ease,
-              -webkit-backdrop-filter var(--papi-dur) ease,
-              border-radius var(--papi-dur) var(--papi-ease),
-              border-color var(--papi-dur) ease,
-              box-shadow var(--papi-dur) ease,
-              margin var(--papi-dur) var(--papi-ease),
-              gap var(--papi-dur) var(--papi-ease) !important;
+nav[data-framer-name="Desktop Home"], nav[data-framer-name="Desktop"],
+nav[data-framer-name="Tablet"], nav[data-framer-name="Phone"] {
+  transition: width var(--papi-dur) var(--papi-ease), max-width var(--papi-dur) var(--papi-ease),
+    padding var(--papi-dur) var(--papi-ease), background var(--papi-dur) ease,
+    backdrop-filter var(--papi-dur) ease, -webkit-backdrop-filter var(--papi-dur) ease,
+    border-radius var(--papi-dur) var(--papi-ease), border-color var(--papi-dur) ease,
+    box-shadow var(--papi-dur) ease, margin var(--papi-dur) var(--papi-ease),
+    gap var(--papi-dur) var(--papi-ease) !important;
 }
-
-/* Container Framer interno animato */
 nav .framer-fzdypl {
   transition: max-width var(--papi-dur) var(--papi-ease),
-              opacity calc(var(--papi-dur) * 0.7) var(--papi-ease),
-              padding var(--papi-dur) var(--papi-ease),
-              margin var(--papi-dur) var(--papi-ease) !important;
+    opacity calc(var(--papi-dur)*0.7) var(--papi-ease),
+    padding var(--papi-dur) var(--papi-ease), margin var(--papi-dur) var(--papi-ease) !important;
 }
-
-/* Figli interni del Framer Container — animati con translateX */
 nav .framer-fzdypl > [data-framer-name="Logo"],
 nav .framer-fzdypl [data-framer-name="Content"],
 nav .framer-fzdypl nav[data-framer-name="Links"],
 nav .framer-fzdypl [data-framer-name="Content"] > * {
-  transition: transform var(--papi-dur) var(--papi-ease),
-              opacity calc(var(--papi-dur) * 0.7) ease !important;
+  transition: transform var(--papi-dur) var(--papi-ease), opacity calc(var(--papi-dur)*0.7) ease !important;
 }
 
-/* ── ISLAND COLLASSATO ─────────────────────────────────────── */
 nav.papi-island {
-  background:
-    linear-gradient(135deg,
-      rgba(255,255,255,0.10) 0%,
-      rgba(255,255,255,0.04) 50%,
-      rgba(255,255,255,0.08) 100%) !important;
-  backdrop-filter: blur(28px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
-  border: 1px solid rgba(255,255,255,0.18) !important;
-  border-radius: 999px !important;
-  box-shadow:
-    0 8px 32px rgba(0,0,0,0.45),
-    inset 0 1px 0 rgba(255,255,255,0.18) !important;
-
-  width: auto !important;
-  max-width: 180px !important;
-  padding: 8px 10px 8px 16px !important;
-  margin: 10px auto 0 !important;
-  gap: 8px !important;
-  overflow: visible !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  flex-direction: row !important;
+  background: linear-gradient(135deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0.04) 50%,rgba(255,255,255,0.08) 100%) !important;
+  backdrop-filter: blur(28px) saturate(180%) !important; -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+  border: 1px solid rgba(255,255,255,0.18) !important; border-radius: 999px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.18) !important;
+  width: auto !important; max-width: 180px !important; padding: 8px 10px 8px 16px !important;
+  margin: 10px auto 0 !important; gap: 8px !important; overflow: visible !important;
+  display: flex !important; align-items: center !important; justify-content: flex-start !important; flex-direction: row !important;
 }
-
-/* Framer Container collassa con la larghezza */
 nav.papi-island > .framer-fzdypl {
-  max-width: 0 !important;
-  opacity: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  pointer-events: none !important;
-  flex: 0 0 0 !important;
-  overflow: hidden !important;
+  max-width: 0 !important; opacity: 0 !important; padding: 0 !important; margin: 0 !important;
+  pointer-events: none !important; flex: 0 0 0 !important; overflow: hidden !important;
 }
-
-/* Figli interni MUOVONO verso il centro mentre svaniscono */
-nav.papi-island .framer-fzdypl > [data-framer-name="Logo"] {
-  transform: translateX(80px) scale(0.4) !important;
-  opacity: 0 !important;
-}
-nav.papi-island .framer-fzdypl nav[data-framer-name="Links"] {
-  transform: scale(0.5) !important;
-  opacity: 0 !important;
-}
+nav.papi-island .framer-fzdypl > [data-framer-name="Logo"] { transform: translateX(80px) scale(0.4) !important; opacity: 0 !important; }
+nav.papi-island .framer-fzdypl nav[data-framer-name="Links"] { transform: scale(0.5) !important; opacity: 0 !important; }
 nav.papi-island .framer-fzdypl [data-framer-name="Content"] > div:last-child,
-nav.papi-island .framer-fzdypl [data-framer-name="Content"] > a:last-child {
-  transform: translateX(-80px) scale(0.4) !important;
-  opacity: 0 !important;
-}
-
-/* Logo iniettato si rimpicciolisce */
-nav.papi-island .papi-nav-logo {
-  margin: 0 !important;
-}
-
-/* Burger appare */
+nav.papi-island .framer-fzdypl [data-framer-name="Content"] > a:last-child { transform: translateX(-80px) scale(0.4) !important; opacity: 0 !important; }
+nav.papi-island .papi-nav-logo { margin: 0 !important; }
 nav.papi-island .papi-nav-burger {
-  opacity: 1 !important;
-  max-width: 38px !important;
-  pointer-events: auto !important;
-  margin-left: auto !important;
-  transform: scale(1) !important;
+  opacity: 1 !important; max-width: 38px !important; pointer-events: auto !important;
+  margin-left: auto !important; transform: scale(1) !important;
 }
-
-/* ── ISLAND ESPANSO (click burger) ────────────────────────── */
-nav.papi-island.is-expanded {
-  max-width: 980px !important;
-  padding: 8px 12px 8px 20px !important;
-  gap: 16px !important;
-}
-nav.papi-island.is-expanded > .framer-fzdypl {
-  max-width: 100% !important;
-  opacity: 1 !important;
-  flex: 1 1 auto !important;
-  pointer-events: auto !important;
-}
-nav.papi-island.is-expanded .framer-fzdypl > [data-framer-name="Logo"] {
-  transform: translateX(0) scale(1) !important;
-  opacity: 1 !important;
-}
-nav.papi-island.is-expanded .framer-fzdypl nav[data-framer-name="Links"] {
-  transform: scale(1) !important;
-  opacity: 1 !important;
-}
+nav.papi-island.is-expanded { max-width: 980px !important; padding: 8px 12px 8px 20px !important; gap: 16px !important; }
+nav.papi-island.is-expanded > .framer-fzdypl { max-width: 100% !important; opacity: 1 !important; flex: 1 1 auto !important; pointer-events: auto !important; }
+nav.papi-island.is-expanded .framer-fzdypl > [data-framer-name="Logo"] { transform: translateX(0) scale(1) !important; opacity: 1 !important; }
+nav.papi-island.is-expanded .framer-fzdypl nav[data-framer-name="Links"] { transform: scale(1) !important; opacity: 1 !important; }
 nav.papi-island.is-expanded .framer-fzdypl [data-framer-name="Content"] > div:last-child,
-nav.papi-island.is-expanded .framer-fzdypl [data-framer-name="Content"] > a:last-child {
-  transform: translateX(0) scale(1) !important;
-  opacity: 1 !important;
-}
+nav.papi-island.is-expanded .framer-fzdypl [data-framer-name="Content"] > a:last-child { transform: translateX(0) scale(1) !important; opacity: 1 !important; }
 
-/* ── TOP (non scrolled) ──────────────────────────────────── */
-nav:not(.papi-island) .papi-nav-logo {
-  margin-right: 24px;
-}
+nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
 
-/* Mobile nav logo */
-.papi-mobile-logo {
-  display: flex !important;
-  align-items: center !important;
-  height: 100% !important;
-  text-decoration: none !important;
-  padding: 0 4px !important;
-}
-.papi-mobile-logo img {
-  height: 28px !important;
-  width: auto !important;
-  max-width: 110px !important;
-  display: block !important;
-}
-
-/* Mobile custom nav -- replaces Framer phone nav */
+/* ======== MOBILE NAV ======== */
 #papi-mob-nav  { display: none; }
 #papi-mob-menu { display: none; }
 
@@ -679,54 +546,76 @@ nav:not(.papi-island) .papi-nav-logo {
   nav[data-framer-name="Phone Close Home"] { display: none !important; }
 
   #papi-mob-nav {
-    display: flex;
-    position: fixed;
-    top: 0; left: 0; right: 0; z-index: 9999;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 18px;
-    background: rgba(10,10,10,0.82);
-    backdrop-filter: blur(16px) saturate(160%);
-    -webkit-backdrop-filter: blur(16px) saturate(160%);
-    border-bottom: 1px solid rgba(255,255,255,0.10);
-    box-sizing: border-box;
+    display: flex; position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+    align-items: center; justify-content: space-between;
+    padding: 0 20px; height: 54px;
+    background: rgba(8,8,8,0.90);
+    backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border-bottom: 1px solid rgba(255,255,255,0.08); box-sizing: border-box;
   }
   #papi-mob-nav .pm-logo { display: flex; align-items: center; text-decoration: none; }
-  #papi-mob-nav .pm-logo img { height: 32px; width: auto; display: block; }
+  #papi-mob-nav .pm-logo img { height: 30px; width: auto; display: block; }
 
   #papi-mob-nav .pm-burger {
-    background: none; border: none; cursor: pointer;
+    background: none; border: none; cursor: pointer; padding: 0;
     display: flex; flex-direction: column; justify-content: space-between;
-    width: 28px; height: 20px; padding: 0;
+    width: 22px; height: 16px;
   }
   #papi-mob-nav .pm-burger span {
     display: block; height: 2px; width: 100%;
-    background: #f5b800; border-radius: 2px;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    background: #fff; border-radius: 2px;
   }
-  #papi-mob-nav .pm-burger.is-open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
-  #papi-mob-nav .pm-burger.is-open span:nth-child(2) { opacity: 0; }
-  #papi-mob-nav .pm-burger.is-open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
+  /* Full-screen overlay */
   #papi-mob-menu {
-    position: fixed;
-    top: 54px; left: 0; right: 0; z-index: 9998;
-    background: rgba(10,10,10,0.96);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255,255,255,0.10);
-    padding: 8px 0;
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99999;
+    background: rgba(0,0,0,0.97);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    flex-direction: column;
   }
-  #papi-mob-menu.is-open { display: block !important; }
-  #papi-mob-menu a {
-    display: block; padding: 15px 24px;
-    color: #fff; text-decoration: none;
-    font-size: 15px; letter-spacing: 0.05em; text-transform: uppercase;
+  #papi-mob-menu.is-open {
+    display: flex !important;
+    animation: pmFadeIn 0.22s ease forwards;
+  }
+  @keyframes pmFadeIn { from { opacity:0; } to { opacity:1; } }
+
+  #papi-mob-menu .pm-close {
+    position: absolute; top: 14px; right: 18px;
+    background: none; border: none; cursor: pointer;
+    color: rgba(255,255,255,0.85); font-size: 30px; line-height: 1;
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+    padding: 0; z-index: 1;
+  }
+  #papi-mob-menu .pm-close:hover { color: #f5b800; }
+
+  #papi-mob-menu .pm-links {
+    display: flex; flex-direction: column; justify-content: center;
+    flex: 1; padding: 70px 36px 50px; gap: 2px;
+  }
+  #papi-mob-menu .pm-links a {
+    display: block; color: #fff; text-decoration: none;
+    font-size: 36px; font-weight: 600; letter-spacing: -0.5px;
+    padding: 12px 0; opacity: 0; transform: translateY(10px);
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
-  #papi-mob-menu a:last-child { border-bottom: none; }
-  #papi-mob-menu a:active { color: #f5b800; background: rgba(245,184,0,0.08); }
+  #papi-mob-menu .pm-links a:last-child { border-bottom: none; }
+  #papi-mob-menu .pm-links a:active { color: #f5b800; }
+
+  /* Stagger drop-in */
+  #papi-mob-menu.is-open .pm-links a {
+    animation: pmItemIn 0.38s cubic-bezier(0.25,0.46,0.45,0.94) both;
+  }
+  #papi-mob-menu.is-open .pm-links a:nth-child(1) { animation-delay: 0.06s; }
+  #papi-mob-menu.is-open .pm-links a:nth-child(2) { animation-delay: 0.12s; }
+  #papi-mob-menu.is-open .pm-links a:nth-child(3) { animation-delay: 0.18s; }
+  #papi-mob-menu.is-open .pm-links a:nth-child(4) { animation-delay: 0.24s; }
+  #papi-mob-menu.is-open .pm-links a:nth-child(5) { animation-delay: 0.30s; }
+  @keyframes pmItemIn {
+    from { opacity:0; transform:translateY(10px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
 }
+
 </style>
 <script id="papi-partners-late-inject">
 /* Sostituisce il contenuto della sezione Framer "Sponsors" con la griglia partner. */
@@ -1466,46 +1355,38 @@ document.addEventListener('keydown', function(e) {
 
 
 <script id="papi-island-nav-js">
+
 (function(){
   var LOGO_SRC = 'papi-logo.svg';
 
-  /* ---- Custom mobile nav ---- */
   function buildMobileNav() {
     if (document.getElementById('papi-mob-nav')) return;
     var bar = document.createElement('div');
     bar.id = 'papi-mob-nav';
     bar.innerHTML =
-      '<a href="index.html" class="pm-logo">' +
-        '<img src="' + LOGO_SRC + '" alt="Papi on the Beach">' +
-      '</a>' +
-      '<button class="pm-burger" id="pm-burger" aria-label="Menu">' +
-        '<span></span><span></span><span></span>' +
-      '</button>';
+      '<a href="index.html" class="pm-logo"><img src="' + LOGO_SRC + '" alt="Papi on the Beach"></a>' +
+      '<button class="pm-burger" id="pm-burger" aria-label="Menu"><span></span><span></span><span></span></button>';
     var menu = document.createElement('div');
     menu.id = 'papi-mob-menu';
     menu.innerHTML =
-      '<a href="index.html">Home</a>' +
-      '<a href="events.html">Events</a>' +
-      '<a href="restaurant.html">Restaurant</a>' +
-      '<a href="venue.html">Venue</a>' +
-      '<a href="contact.html">Contatti</a>';
+      '<button class="pm-close" id="pm-close" aria-label="Chiudi">&#x2715;</button>' +
+      '<nav class="pm-links">' +
+        '<a href="index.html">Home</a>' +
+        '<a href="events.html">Events</a>' +
+        '<a href="restaurant.html">Restaurant</a>' +
+        '<a href="venue.html">Venue</a>' +
+        '<a href="contact.html">Contatti</a>' +
+      '</nav>';
     document.body.insertBefore(bar, document.body.firstChild);
     document.body.insertBefore(menu, document.body.children[1]);
-    var btn = document.getElementById('pm-burger');
-    btn.addEventListener('click', function() {
-      this.classList.toggle('is-open');
-      document.getElementById('papi-mob-menu').classList.toggle('is-open');
-    });
-    var links = menu.querySelectorAll('a');
-    for (var i = 0; i < links.length; i++) {
-      links[i].addEventListener('click', function() {
-        btn.classList.remove('is-open');
-        document.getElementById('papi-mob-menu').classList.remove('is-open');
-      });
-    }
+    function openMenu()  { menu.classList.add('is-open');    document.body.style.overflow = 'hidden'; }
+    function closeMenu() { menu.classList.remove('is-open'); document.body.style.overflow = ''; }
+    document.getElementById('pm-burger').addEventListener('click', openMenu);
+    document.getElementById('pm-close').addEventListener('click', closeMenu);
+    var links = menu.querySelectorAll('.pm-links a');
+    for (var i = 0; i < links.length; i++) { links[i].addEventListener('click', closeMenu); }
   }
 
-  /* ---- Desktop island nav ---- */
   var THRESHOLD = 80;
   var nav = null;
   var burgerEl = null;
@@ -1539,10 +1420,7 @@ document.addEventListener('keydown', function(e) {
       document.querySelector('[data-framer-name="Tablet"]')
     ];
     for (var i = 0; i < candidates.length; i++) {
-      if (candidates[i] && candidates[i].offsetWidth > 0) {
-        nav = candidates[i];
-        return true;
-      }
+      if (candidates[i] && candidates[i].offsetWidth > 0) { nav = candidates[i]; return true; }
     }
     return false;
   }
@@ -1569,19 +1447,16 @@ document.addEventListener('keydown', function(e) {
           if (!ticking) { requestAnimationFrame(update); ticking = true; }
         }, { passive: true });
         update();
-      } else if (tries++ < 20) {
-        setTimeout(attempt, 200);
-      }
+      } else if (tries++ < 20) { setTimeout(attempt, 200); }
     }
     attempt();
   }
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 100); });
-  } else {
-    setTimeout(init, 100);
-  }
+  } else { setTimeout(init, 100); }
 })();
+
 </script>
 </body>
 

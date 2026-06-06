@@ -311,6 +311,9 @@ nav p, nav span, header nav p, nav label { color: #ffffff !important; }
 /* Cookie/anti-molestie interactive widgets */
 #undefined-zq3hri,
 [id="undefined-zq3hri"] { display: none !important; }
+
+/* Hide Sponsors / partners section on events page — Tropify lives on main page only */
+[data-framer-name="Sponsors"] { display: none !important; }
 </style>
 
   <!-- Supabase SDK + Papi config -->
@@ -731,10 +734,13 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
     '</div>';
   }
 
-  function inject() {
+  function inject(attempt) {
     if (document.getElementById('papi-events-section')) return;
-    var sel = document.querySelector('#eventselection');
-    if (!sel) return;
+    var sel = document.querySelector('#eventselection, [data-framer-name="Event Selection"], [data-framer-name="Events"]');
+    if (!sel) {
+      if ((attempt || 0) < 12) setTimeout(function(){ inject((attempt||0)+1); }, 400);
+      return;
+    }
 
     var st = document.createElement('style');
     st.id = 'papi-events-css';
@@ -767,9 +773,9 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', inject);
+    document.addEventListener('DOMContentLoaded', function(){ inject(0); });
   } else {
-    inject();
+    inject(0);
   }
 })();
 </script>

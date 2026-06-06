@@ -1393,6 +1393,8 @@ document.addEventListener('keydown', function(e) {
       for (var i = 0; i < PARA_MAP.length; i++) {
         if (t.indexOf(PARA_MAP[i].detect) >= 0) {
           el.innerHTML = PARA_MAP[i].replace;
+          el.style.setProperty('color', 'rgba(255,255,255,0.78)', 'important');
+          el.style.setProperty('--framer-text-color', 'rgba(255,255,255,0.78)', '');
           if (el.dataset) el.dataset.papiParaFixed = '1';
           break;
         }

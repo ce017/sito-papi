@@ -676,6 +676,10 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
     <!-- End of bodyEnd -->
 <script id="papi-events-inject">
 (function() {
+  /* DISABLED: superseded by #papi-events-live (Supabase-driven, below).
+     This hardcoded injection caused a duplicate "IN PROGRAMMA" events
+     section to render alongside the live one. */
+  return;
   /* Edit this array to add / remove events */
   var EVENTS = [
     {

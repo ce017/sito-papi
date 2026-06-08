@@ -326,32 +326,44 @@ nav p, nav span, header nav p, nav label { color: #ffffff !important; }
 footer [style*="rgb(13, 13, 13)"],
 footer [style*="rgb(17, 17, 20)"] { color: rgba(255,255,255,0.65) !important; }
 
-/* Hero logo Papi (index) — sposta a sinistra per allinearlo col centro pagina */
-figure.framer-f0om72 img {
-  object-position: 25% center !important;
-}
+/* Hero logo Papi (index) — clean responsive centering.
+   The Framer <img> has a duplicate style attr (its width:100% is ignored),
+   so it rendered at natural 1575px and got cropped. We bypass all of that:
+   make the figure a normal centered block and the image fully contained. */
 figure.framer-f0om72 {
-  transform: translateX(-120px) !important;
+  width: 100% !important;
+  max-width: 400px !important;
+  height: auto !important;
+  margin: 0 auto !important;
+  transform: none !important;
+  left: auto !important;
+  right: auto !important;
+  overflow: visible !important;
+  display: block !important;
+  aspect-ratio: auto !important;
+  position: relative !important;
+}
+figure.framer-f0om72 > div {
+  position: static !important;
+  inset: auto !important;
+}
+figure.framer-f0om72 img {
+  position: static !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  display: block !important;
+  margin: 0 auto !important;
+  transform: none !important;
 }
 
 /* Mobile fixes */
 @media (max-width: 768px) {
-  /* Hero logo: image renders at 1575px on mobile -- cap it */
+  /* Hero logo: smaller cap on phones (centering handled by the base rule above) */
   figure.framer-f0om72 {
-    width: 280px !important;
-    height: 75px !important;
-    transform: none !important;
-    left: auto !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    overflow: hidden !important;
-  }
-  figure.framer-f0om72 img {
-    max-width: 200px !important;
-    width: auto !important;
-    height: auto !important;
-    max-height: 140px !important;
-    object-position: center !important;
+    max-width: 280px !important;
   }
   /* Restaurant gallery: 3-column to 2-column */
   #papi-restaurant-gallery div[style*="grid-template-columns"] {

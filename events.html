@@ -1235,48 +1235,84 @@ document.addEventListener('keydown', function(e) {
   var curPage = window.location.pathname.split('/').pop().replace('.html','') || 'index';
   if (PAGES_WITH_EVENTS.indexOf(curPage) < 0) return;
 
-  function fmtDate(dt) {
-    if (!dt) return '';
-    return new Date(dt).toLocaleDateString('it-IT', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-    });
-  }
-  function fmtTime(dt) {
-    if (!dt) return '';
-    return new Date(dt).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-  }
-
   function escHtml(s) {
     return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
   function safeUrl(u) {
     return /^https?:\/\//i.test(String(u||'')) ? u : '#';
   }
-  function renderCard(ev) {
-    return '<div style="background:#161616;border:1px solid rgba(245,184,0,0.2);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform 0.2s,border-color 0.2s;" onmouseenter="this.style.transform=\'translateY(-3px)\';this.style.borderColor=\'rgba(245,184,0,0.5)\'" onmouseleave="this.style.transform=\'\';this.style.borderColor=\'rgba(245,184,0,0.2)\'">' +
-      (ev.image_url
-        ? '<div style="width:100%;aspect-ratio:1/1;overflow:hidden;background:#0a0a0a;"><img src="'+escHtml(ev.image_url)+'" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
-        : '<div style="width:100%;aspect-ratio:1/1;background:linear-gradient(135deg,#1a1400,#111);display:flex;align-items:center;justify-content:center;"><span style="font-size:36px;">🎵</span></div>') +
+  function fmtDate(dt) {
+    if (!dt) return '';
+    return new Date(dt).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  function fmtTime(dt) {
+    if (!dt) return '';
+    return new Date(dt).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  /* Days since the event's calendar day: 0 = today, 1 = yesterday (the morning after),
+     negative = future, >= 2 = fully in the past. */
+  function daysSince(dt) {
+    if (!dt) return -9999;
+    var ev = new Date(dt);
+    if (isNaN(ev.getTime())) return -9999;
+    var evDay = new Date(ev.getFullYear(), ev.getMonth(), ev.getDate());
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.round((today - evDay) / 86400000);
+  }
+  function isOggi(dt) { var d = daysSince(dt); return d === 0 || d === 1; }
+  function isPast(dt) { return daysSince(dt) >= 2; }
+
+  function renderCard(ev, opts) {
+    opts = opts || {};
+    var oggi = opts.oggi, past = opts.past;
+    var badge = oggi ? '<span class="papi-oggi-badge">OGGI!</span>' : '';
+    var imgBox = ev.image_url
+      ? '<div style="width:100%;aspect-ratio:1/1;overflow:hidden;background:#0a0a0a;position:relative;"><img src="'+escHtml(ev.image_url)+'" style="width:100%;height:100%;object-fit:cover;display:block;">'+badge+'</div>'
+      : '<div style="width:100%;aspect-ratio:1/1;background:linear-gradient(135deg,#1a1400,#111);display:flex;align-items:center;justify-content:center;position:relative;"><span style="font-size:36px;">🎵</span>'+badge+'</div>';
+    var btn = '';
+    if (past) {
+      if (ev.gallery_url) {
+        btn = '<a href="galleria.html#event-'+escHtml(String(ev.id))+'" style="display:inline-block;border:1px solid rgba(245,184,0,0.5);color:#F5B800;font-weight:700;padding:7px 14px;border-radius:6px;text-decoration:none;font-size:11px;letter-spacing:0.04em;">📸 Galleria →</a>';
+      }
+    } else if (ev.ticket_url) {
+      btn = '<a href="'+escHtml(safeUrl(ev.ticket_url))+'" target="_blank" rel="noopener" style="display:inline-block;background:#F5B800;color:#111;font-weight:700;padding:7px 14px;border-radius:6px;text-decoration:none;font-size:11px;letter-spacing:0.04em;">🎟️ Biglietti</a>';
+    }
+    var bcolor = oggi ? 'rgba(245,184,0,0.6)' : 'rgba(245,184,0,0.2)';
+    return '<div class="papi-ev-card'+(oggi?' papi-ev-oggi':'')+'" style="background:#161616;border:1px solid '+bcolor+';border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform 0.2s,border-color 0.2s;'+(past?'opacity:0.94;':'')+'" onmouseenter="this.style.transform=\'translateY(-3px)\';this.style.borderColor=\'rgba(245,184,0,0.5)\'" onmouseleave="this.style.transform=\'\';this.style.borderColor=\''+bcolor+'\'">' +
+      imgBox +
       '<div style="padding:14px;flex:1;display:flex;flex-direction:column;gap:6px;">' +
         '<div style="font-size:9px;font-family:monospace;color:#F5B800;letter-spacing:0.12em;text-transform:uppercase;">' + (fmtDate(ev.event_date) || 'Prossimo Evento') + '</div>' +
         '<h2 style="font-family:Impact,Arial Black,sans-serif;font-size:17px;color:#fff;text-transform:uppercase;letter-spacing:1px;margin:0;line-height:1.1;">' + escHtml(ev.title) + '</h2>' +
         (ev.event_date ? '<div style="color:rgba(255,255,255,0.4);font-size:11px;">' + fmtTime(ev.event_date) + '</div>' : '') +
-        '<div style="margin-top:auto;padding-top:10px;">' +
-          (ev.ticket_url ? '<a href="'+escHtml(safeUrl(ev.ticket_url))+'" target="_blank" rel="noopener" style="display:inline-block;background:#F5B800;color:#111;font-weight:700;padding:7px 14px;border-radius:6px;text-decoration:none;font-size:11px;letter-spacing:0.04em;">🎫 Biglietti</a>' : '') +
-        '</div>' +
+        (btn ? '<div style="margin-top:auto;padding-top:10px;">' + btn + '</div>' : '') +
       '</div>' +
     '</div>';
   }
 
-  /* Crea il wrapper con titolo SUBITO, prima che arrivi la risposta Supabase */
+  function injectCSS() {
+    if (document.getElementById('papi-events-live-css')) return;
+    var st = document.createElement('style');
+    st.id = 'papi-events-live-css';
+    st.textContent =
+      '.papi-oggi-badge{position:absolute;top:10px;left:10px;background:#F5B800;color:#111;' +
+      'font-family:"Inter",Arial,sans-serif;font-weight:800;font-size:12px;letter-spacing:0.06em;' +
+      'padding:5px 12px;border-radius:999px;box-shadow:0 4px 14px rgba(245,184,0,0.5);' +
+      'animation:papiOggiPulse 1.6s ease-in-out infinite;z-index:2;}' +
+      '@keyframes papiOggiPulse{0%,100%{transform:scale(1);box-shadow:0 4px 14px rgba(245,184,0,0.45);}' +
+      '50%{transform:scale(1.07);box-shadow:0 6px 22px rgba(245,184,0,0.8);}}' +
+      '.papi-ev-oggi{box-shadow:0 0 0 1px rgba(245,184,0,0.35),0 10px 34px rgba(245,184,0,0.14);}';
+    document.head.appendChild(st);
+  }
+
+  /* Create the wrapper (titles + both grids) immediately, before Supabase responds. */
   function createWrapper() {
     if (document.getElementById('papi-events-live-wrap')) return;
-    var curPage = window.location.pathname.split('/').pop().replace('.html','') || 'index';
     if (curPage !== 'events') return;
     var about = document.querySelector('#about');
     if (!about) return;
 
-    /* Nascondi la sezione Framer originale */
     about.style.display = 'none';
     var hero = document.querySelector('[data-framer-name="Hero"], #hero');
     if (hero) hero.style.display = 'none';
@@ -1295,21 +1331,50 @@ document.addEventListener('keydown', function(e) {
         '<div id="papi-events-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;min-height:120px;">' +
           '<p style="color:rgba(255,255,255,0.2);font-size:14px;">Caricamento eventi...</p>' +
         '</div>' +
+        '<div id="papi-past-section" style="display:none;margin-top:96px;">' +
+          '<div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">' +
+            '<span style="display:inline-block;width:28px;height:2px;background:#F5B800;flex-shrink:0;"></span>' +
+            '<span style="font-family:inherit;font-size:14px;font-weight:400;color:rgba(255,255,255,0.6);letter-spacing:0.04em;">Archivio</span>' +
+          '</div>' +
+          '<h2 style="font-family:inherit;font-size:clamp(34px,5vw,60px);font-weight:300;color:#fff;letter-spacing:-0.02em;line-height:1.05;margin:0 0 40px;">Eventi passati</h2>' +
+          '<div id="papi-events-past-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;"></div>' +
+        '</div>' +
       '</div>';
     about.parentNode.insertBefore(wrap, about);
   }
 
   function inject(events) {
-    /* Su index.html inietta nel container Framer esistente */
-    var c1 = document.querySelector('#eventselection [data-framer-name="Container"]');
-    if (c1) { c1.innerHTML = events.length ? events.map(renderCard).join('') : ''; return; }
+    var upcoming = [], past = [];
+    events.forEach(function(e) { (isPast(e.event_date) ? past : upcoming).push(e); });
+    /* upcoming: soonest first (query already ascending); past: most recent first */
+    past.sort(function(a, b) { return new Date(b.event_date) - new Date(a.event_date); });
 
-    /* Su events.html popola solo il box cards (titolo già c'è) */
+    /* index.html: inject upcoming into the Framer container */
+    var c1 = document.querySelector('#eventselection [data-framer-name="Container"]');
+    if (c1) {
+      c1.innerHTML = upcoming.length
+        ? upcoming.map(function(e){ return renderCard(e, { oggi: isOggi(e.event_date) }); }).join('')
+        : '';
+      return;
+    }
+
+    /* events.html: upcoming grid */
     var cards = document.getElementById('papi-events-cards');
     if (cards) {
-      cards.innerHTML = events.length
-        ? events.map(renderCard).join('')
+      cards.innerHTML = upcoming.length
+        ? upcoming.map(function(e){ return renderCard(e, { oggi: isOggi(e.event_date) }); }).join('')
         : '<p style="color:rgba(255,255,255,0.3);padding:32px 0;text-align:center;font-size:15px;">Nessun evento in programma al momento.</p>';
+    }
+    /* events.html: past grid (hidden if empty) */
+    var pastWrap = document.getElementById('papi-events-past-cards');
+    var pastSection = document.getElementById('papi-past-section');
+    if (pastWrap && pastSection) {
+      if (past.length) {
+        pastWrap.innerHTML = past.map(function(e){ return renderCard(e, { past: true }); }).join('');
+        pastSection.style.display = '';
+      } else {
+        pastSection.style.display = 'none';
+      }
     }
   }
 
@@ -1322,14 +1387,16 @@ document.addEventListener('keydown', function(e) {
       });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      createWrapper(); /* titolo subito */
-      run();           /* poi popola le card */
-    });
-  } else {
+  function start() {
+    injectCSS();
     createWrapper();
     run();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
   }
 })();
 </script>
@@ -1676,6 +1743,61 @@ document.addEventListener('keydown', function(e) {
   } else {
     observe();
   }
+})();
+</script>
+<script id="papi-galleria-nav">
+(function() {
+  /* Inject a "Galleria" link into the desktop Framer nav and the mobile menu,
+     positioned right after the Eventi/Events link. Idempotent + retried. */
+  function injectDesktop() {
+    var navs = document.querySelectorAll('nav[data-framer-name="Links"]');
+    for (var i = 0; i < navs.length; i++) {
+      var nav = navs[i];
+      if (nav.querySelector('a[href="galleria.html"]')) continue;
+      var links = nav.querySelectorAll('a');
+      if (!links.length) continue;
+      var afterEv = nav.querySelector('a[href="events.html"]') || links[links.length - 1];
+      var clone = afterEv.cloneNode(true);
+      clone.setAttribute('href', 'galleria.html');
+      clone.setAttribute('name', 'Gallery');
+      var p = clone.querySelector('.framer-text') || clone.querySelector('p, div[data-framer-name="Label"]');
+      if (p) p.textContent = 'Galleria'; else clone.textContent = 'Galleria';
+      afterEv.parentNode.insertBefore(clone, afterEv.nextSibling);
+    }
+  }
+
+  function injectMobile() {
+    var links = document.querySelector('#papi-mob-menu .pm-links');
+    if (!links) return;
+    if (links.querySelector('a[href="galleria.html"]')) return;
+    var a = document.createElement('a');
+    a.href = 'galleria.html';
+    a.textContent = 'Galleria';
+    var afterEv = links.querySelector('a[href="events.html"]');
+    if (afterEv && afterEv.nextSibling) links.insertBefore(a, afterEv.nextSibling);
+    else if (afterEv) links.appendChild(a);
+    else links.appendChild(a);
+    a.addEventListener('click', function() {
+      var m = document.getElementById('papi-mob-menu');
+      if (m) m.classList.remove('is-open');
+      document.body.style.overflow = '';
+    });
+  }
+
+  function ensureStagger() {
+    if (document.getElementById('papi-galleria-nav-css')) return;
+    var st = document.createElement('style');
+    st.id = 'papi-galleria-nav-css';
+    st.textContent = '#papi-mob-menu.is-open .pm-links a:nth-child(6){animation-delay:0.36s;}';
+    document.head.appendChild(st);
+  }
+
+  function run() { injectDesktop(); injectMobile(); ensureStagger(); }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+  var n = 0;
+  var iv = setInterval(function(){ run(); if (++n > 12) clearInterval(iv); }, 400);
 })();
 </script>
 </body>

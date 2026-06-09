@@ -33,3 +33,10 @@ create policy "auth_select"
 -- ============================================================
 -- Events table policies are already set up — nothing to do.
 -- ============================================================
+
+-- ============================================================
+-- Gallery support: add a Google Drive folder link to events.
+-- An event with a non-empty gallery_url appears on the Galleria page.
+-- Safe to run multiple times.
+-- ============================================================
+alter table public.events add column if not exists gallery_url text;

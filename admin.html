@@ -218,6 +218,16 @@
     </div>
 
     <div class="form-group">
+      <label class="form-label">Link Galleria (Google Drive)</label>
+      <input class="form-input" id="ev-gallery" type="url" placeholder="https://drive.google.com/drive/folders/...">
+      <div style="font-size:11px;margin-top:6px;color:rgba(255,255,255,0.3);line-height:1.5;">
+        Incolla il link alla cartella Drive con le foto dell'evento. La cartella dev'essere condivisa come
+        <strong style="color:rgba(255,255,255,0.5);">"Chiunque abbia il link"</strong>.
+        Comparirà nella pagina Galleria una volta passato l'evento.
+      </div>
+    </div>
+
+    <div class="form-group">
       <label class="form-label">Visibilità</label>
       <div class="toggle-row">
         <span style="font-size:14px;color:rgba(255,255,255,0.55);font-family:'Inter',Arial,sans-serif;">Pubblica sul sito</span>
@@ -513,6 +523,7 @@ function openNew() {
   document.getElementById('ev-date').value = '';
   document.getElementById('ev-desc').value = '';
   document.getElementById('ev-ticket').value = '';
+  document.getElementById('ev-gallery').value = '';
   document.getElementById('ev-published').checked = false;
   document.getElementById('ev-img-url').value = '';
   document.getElementById('img-preview').style.display = 'none';
@@ -531,6 +542,7 @@ function openEdit(id) {
     document.getElementById('ev-date').value = ev.event_date ? ev.event_date.slice(0, 16) : '';
     document.getElementById('ev-desc').value = ev.description || '';
     document.getElementById('ev-ticket').value = ev.ticket_url || '';
+    document.getElementById('ev-gallery').value = ev.gallery_url || '';
     document.getElementById('ev-published').checked = !!ev.is_published;
     document.getElementById('ev-img-url').value = ev.image_url || '';
     document.getElementById('modal-err').style.display = 'none';
@@ -561,6 +573,7 @@ async function saveEvent() {
     description: document.getElementById('ev-desc').value.trim() || null,
     event_date: document.getElementById('ev-date').value || null,
     ticket_url: document.getElementById('ev-ticket').value.trim() || null,
+    gallery_url: document.getElementById('ev-gallery').value.trim() || null,
     is_published: document.getElementById('ev-published').checked,
     image_url: document.getElementById('ev-img-url').value || null
   };

@@ -1437,6 +1437,61 @@ document.addEventListener('keydown', function(e) {
 })();
 
 </script>
+<script id="papi-galleria-nav">
+(function() {
+  /* Inject a "Galleria" link into the desktop Framer nav and the mobile menu,
+     positioned right after the Eventi/Events link. Idempotent + retried. */
+  function injectDesktop() {
+    var navs = document.querySelectorAll('nav[data-framer-name="Links"]');
+    for (var i = 0; i < navs.length; i++) {
+      var nav = navs[i];
+      if (nav.querySelector('a[href="galleria.html"]')) continue;
+      var links = nav.querySelectorAll('a');
+      if (!links.length) continue;
+      var afterEv = nav.querySelector('a[href="events.html"]') || links[links.length - 1];
+      var clone = afterEv.cloneNode(true);
+      clone.setAttribute('href', 'galleria.html');
+      clone.setAttribute('name', 'Gallery');
+      var p = clone.querySelector('.framer-text') || clone.querySelector('p, div[data-framer-name="Label"]');
+      if (p) p.textContent = 'Galleria'; else clone.textContent = 'Galleria';
+      afterEv.parentNode.insertBefore(clone, afterEv.nextSibling);
+    }
+  }
+
+  function injectMobile() {
+    var links = document.querySelector('#papi-mob-menu .pm-links');
+    if (!links) return;
+    if (links.querySelector('a[href="galleria.html"]')) return;
+    var a = document.createElement('a');
+    a.href = 'galleria.html';
+    a.textContent = 'Galleria';
+    var afterEv = links.querySelector('a[href="events.html"]');
+    if (afterEv && afterEv.nextSibling) links.insertBefore(a, afterEv.nextSibling);
+    else if (afterEv) links.appendChild(a);
+    else links.appendChild(a);
+    a.addEventListener('click', function() {
+      var m = document.getElementById('papi-mob-menu');
+      if (m) m.classList.remove('is-open');
+      document.body.style.overflow = '';
+    });
+  }
+
+  function ensureStagger() {
+    if (document.getElementById('papi-galleria-nav-css')) return;
+    var st = document.createElement('style');
+    st.id = 'papi-galleria-nav-css';
+    st.textContent = '#papi-mob-menu.is-open .pm-links a:nth-child(6){animation-delay:0.36s;}';
+    document.head.appendChild(st);
+  }
+
+  function run() { injectDesktop(); injectMobile(); ensureStagger(); }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+  var n = 0;
+  var iv = setInterval(function(){ run(); if (++n > 12) clearInterval(iv); }, 400);
+})();
+</script>
 </body>
 
 </html>

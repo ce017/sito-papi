@@ -313,7 +313,7 @@ nav p, nav span, header nav p, nav label { color: #ffffff !important; }
 [id="undefined-zq3hri"] { display: none !important; }
 
 /* Hide Sponsors / partners section on events page — Tropify lives on main page only */
-[data-framer-name="Sponsors"] { display: none !important; }
+
 </style>
 
   <!-- Supabase SDK + Papi config -->
@@ -663,6 +663,11 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
   position:static !important; width:100% !important; height:auto !important; max-width:100% !important;
   object-fit:contain !important; display:block !important; margin:0 auto !important;
 }
+</style>
+<style id="papi-partner-show-fix">
+/* Ensure injected partner logos (Tropify etc.) show despite the
+   img:not(#papi-partner-logo) hide rule on some pages */
+#main [data-framer-name="Sponsors"] .papi-partners-grid-wrap img{display:block !important;}
 </style>
 </head>
 <body style="background-color:#111111!important;">
@@ -1611,6 +1616,67 @@ document.addEventListener('keydown', function(e) {
   } else { setTimeout(init, 100); }
 })();
 
+</script>
+<script id="papi-partners-late-inject">
+/* Sostituisce il contenuto della sezione Framer "Sponsors" con la griglia partner. */
+(function(){
+  var PARTNERS = [
+    { src: 'img-eventi/MF_logo%20TROPIFY-outlined.png', name: 'Tropify', url: '' },
+    /* { src: 'img-eventi/altro.png', name: 'Altro Evento', url: 'https://link' }, */
+  ];
+
+  function buildHTML(){
+    var inner = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:32px;max-width:1200px;margin:30px auto 0;width:100%;">';
+    PARTNERS.forEach(function(p){
+      var img = '<img src="'+p.src+'" alt="'+p.name+'" style="width:100%;height:180px;object-fit:contain;display:block;opacity:0.9;transition:opacity 0.25s,transform 0.25s;" ' +
+        'onmouseenter="this.style.opacity=\'1\';this.style.transform=\'scale(1.05)\'" ' +
+        'onmouseleave="this.style.opacity=\'0.9\';this.style.transform=\'\'">';
+      inner += p.url
+        ? '<a href="'+p.url+'" target="_blank" rel="noopener" style="text-decoration:none;display:block;padding:10px;height:200px;box-sizing:border-box;">'+img+'</a>'
+        : '<div style="display:block;padding:10px;height:200px;box-sizing:border-box;">'+img+'</div>';
+    });
+    inner += '</div>';
+    return inner;
+  }
+
+  function tryInject(){
+    var sponsors = document.querySelectorAll('[data-framer-name="Sponsors"]');
+    sponsors.forEach(function(sp){
+      if (sp.dataset.papiPartnersInjected) return;
+      var container = sp.querySelector('[data-framer-name="Container"]') || sp;
+      var existing = container.querySelector('.papi-partners-grid-wrap');
+      if (!existing) {
+        var wrap = document.createElement('div');
+        wrap.className = 'papi-partners-grid-wrap';
+        wrap.style.cssText = 'width:100%;';
+        wrap.innerHTML = buildHTML();
+        container.appendChild(wrap);
+      }
+      sp.dataset.papiPartnersInjected = '1';
+    });
+  }
+
+  function observe(){
+    tryInject();
+    var mo = new MutationObserver(function(){
+      var sponsors = document.querySelectorAll('[data-framer-name="Sponsors"]');
+      sponsors.forEach(function(sp){
+        if (!sp.querySelector('.papi-partners-grid-wrap')) {
+          delete sp.dataset.papiPartnersInjected;
+        }
+      });
+      tryInject();
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+    setTimeout(function(){ mo.disconnect(); }, 10000);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', observe);
+  } else {
+    observe();
+  }
+})();
 </script>
 </body>
 

@@ -308,8 +308,6 @@ nav p, nav span, header nav p, nav label { color: #ffffff !important; }
 #undefined-zq3hri,
 [id="undefined-zq3hri"] { display: none !important; }
 
-/* Hide Sponsors / partners section -- only appears on main page */
-[data-framer-name="Sponsors"] { display: none !important; }
 /* Reduce excess space under footer logo area */
 [data-framer-name="Papi logo + Address"] { padding-bottom: 0 !important; margin-bottom: 0 !important; }
 
@@ -715,6 +713,11 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
   position:static !important; width:100% !important; height:auto !important; max-width:100% !important;
   object-fit:contain !important; display:block !important; margin:0 auto !important;
 }
+</style>
+<style id="papi-partner-show-fix">
+/* Ensure injected partner logos (Tropify etc.) show despite the
+   img:not(#papi-partner-logo) hide rule on some pages */
+#main [data-framer-name="Sponsors"] .papi-partners-grid-wrap img{display:block !important;}
 </style>
 </head>
 <body style="background-color:#111111!important;">

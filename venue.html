@@ -309,7 +309,7 @@ nav p, nav span, header nav p, nav label { color: #ffffff !important; }
 [id="undefined-zq3hri"] { display: none !important; }
 
 /* Hide Sponsors / partners section -- only appears on main page */
-[data-framer-name="Sponsors"] { display: none !important; }
+
 /* Reduce excess space under footer logo area */
 [data-framer-name="Papi logo + Address"] { padding-bottom: 0 !important; margin-bottom: 0 !important; }
 
@@ -723,6 +723,11 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
   position:static !important; width:100% !important; height:auto !important; max-width:100% !important;
   object-fit:contain !important; display:block !important; margin:0 auto !important;
 }
+</style>
+<style id="papi-partner-show-fix">
+/* Ensure injected partner logos (Tropify etc.) show despite the
+   img:not(#papi-partner-logo) hide rule on some pages */
+#main [data-framer-name="Sponsors"] .papi-partners-grid-wrap img{display:block !important;}
 </style>
 </head>
 <body style="background-color:#111111!important;">
@@ -1262,7 +1267,7 @@ document.addEventListener('keydown', function(e) {
       st.id = 'papi-gmaps-css';
       st.textContent = '#papi-gmaps-wrapper{padding:0 40px 24px;}' +
         '@media(max-width:809px){#papi-gmaps-wrapper{padding:0 20px 24px;}}' +
-        '#papi-gmaps-iframe{max-width:920px;}';
+        '#papi-gmaps-iframe{max-width:920px;margin-left:auto;margin-right:auto;}';
       document.head.appendChild(st);
     }
     // Gold accent line (copied from the "Chi siamo" eyebrow), sits just above the heading.

@@ -526,7 +526,7 @@ nav.papi-island {
   backdrop-filter: blur(28px) saturate(180%) !important; -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
   border: 1px solid rgba(255,255,255,0.18) !important; border-radius: 999px !important;
   box-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.18) !important;
-  width: auto !important; max-width: 180px !important; padding: 8px 10px 8px 16px !important;
+  width: auto !important; max-width: 230px !important; padding: 8px 10px 8px 16px !important;
   margin: 10px auto 0 !important; gap: 8px !important; overflow: visible !important;
   display: flex !important; align-items: center !important; justify-content: flex-start !important; flex-direction: row !important;
 }
@@ -711,6 +711,17 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
   font-size: clamp(28px, 3vw, 38px) !important;
   font-weight: 300 !important;
   line-height: 1.1 !important;
+}
+</style>
+<style id="papi-footer-logo-fix">
+[data-framer-name="Papi logo + Address"] > a{
+  width:100% !important; max-width:150px !important; height:auto !important;
+  margin:0 auto !important; display:block !important; position:relative !important; aspect-ratio:auto !important;
+}
+[data-framer-name="Papi logo + Address"] > a > div{ position:static !important; inset:auto !important; }
+[data-framer-name="Papi logo + Address"] > a img{
+  position:static !important; width:100% !important; height:auto !important; max-width:100% !important;
+  object-fit:contain !important; display:block !important; margin:0 auto !important;
 }
 </style>
 </head>
@@ -1243,7 +1254,20 @@ document.addEventListener('keydown', function(e) {
     }
     var wrapper = document.createElement('div');
     wrapper.id = 'papi-gmaps-wrapper';
-    wrapper.style.cssText = 'width:100%;max-width:960px;margin:0 auto 0;padding:0 20px 24px;box-sizing:border-box;';
+    // Align content to the same left edge as the page's section titles (x = section padding).
+    wrapper.style.cssText = 'width:100%;max-width:1440px;margin:0 auto;box-sizing:border-box;';
+    // Responsive horizontal padding to match the venue section (40px desktop, 20px mobile)
+    if (!document.getElementById('papi-gmaps-css')) {
+      var st = document.createElement('style');
+      st.id = 'papi-gmaps-css';
+      st.textContent = '#papi-gmaps-wrapper{padding:0 40px 24px;}' +
+        '@media(max-width:809px){#papi-gmaps-wrapper{padding:0 20px 24px;}}' +
+        '#papi-gmaps-iframe{max-width:920px;}';
+      document.head.appendChild(st);
+    }
+    // Gold accent line (copied from the "Chi siamo" eyebrow), sits just above the heading.
+    var goldLine = document.createElement('div');
+    goldLine.style.cssText = 'width:36px;height:4px;background:#F5B800;border-radius:2px;margin:0 0 16px;';
     var heading = document.createElement('h3');
     heading.style.cssText = 'font-family:"Inter Display","Inter Display Placeholder","Inter",sans-serif;font-weight:500;font-size:32px;line-height:1;color:#ffffff;text-transform:none;letter-spacing:-0.04em;margin:0 0 20px;';
     heading.textContent = 'Come Arrivare';
@@ -1252,10 +1276,11 @@ document.addEventListener('keydown', function(e) {
     iframe.src = 'https://maps.google.com/maps?q=Via+XX+Settembre+289%2C+Roveredo+in+Piano%2C+PN+33080%2C+Italy&output=embed&hl=it&z=15';
     iframe.width = '100%';
     iframe.height = '380';
-    iframe.style.cssText = 'border:0;border-radius:16px;display:block;';
+    iframe.style.cssText = 'border:0;border-radius:16px;display:block;width:100%;';
     iframe.setAttribute('allowfullscreen', '');
     iframe.setAttribute('loading', 'lazy');
     iframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+    wrapper.appendChild(goldLine);
     wrapper.appendChild(heading);
     wrapper.appendChild(iframe);
     // Insert after the address element's parent section, or after addr itself

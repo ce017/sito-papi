@@ -719,6 +719,11 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
    template renders it at natural 1575x774 otherwise). */
 #main nav [data-framer-name="Logo"] img{width:100% !important;height:100% !important;max-width:100% !important;max-height:100% !important;object-fit:contain !important;display:block !important;}
 </style>
+<style id="papi-cta-fix">
+/* Make the "Biglietti & Tavoli" CTA match (slightly exceed) the nav link
+   pills instead of rendering shorter. */
+nav [data-framer-name="Primary Button"]{padding-top:9px !important;padding-bottom:9px !important;}
+</style>
 </head>
 <body style="background-color:#111111!important;">
 	

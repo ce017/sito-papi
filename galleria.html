@@ -1583,15 +1583,21 @@ document.addEventListener('keydown', function(e) {
      positioned right after the Eventi/Events link. Idempotent + retried. */
   function injectDesktop() {
     var navs = document.querySelectorAll('nav[data-framer-name="Links"]');
+    var cur = (window.location.pathname.split('/').pop() || 'index.html');
     for (var i = 0; i < navs.length; i++) {
       var nav = navs[i];
       if (nav.querySelector('a[href="galleria.html"]')) continue;
-      var evLink = nav.querySelector('a[href="events.html"]');
-      if (!evLink) continue;
-      var container = evLink.parentElement;
-      while (container && container.parentElement !== nav) container = container.parentElement;
-      if (!container) continue;
-      var clone = container.cloneNode(true);
+      var links = nav.querySelectorAll('a');
+      if (!links.length) continue;
+      var evLink = nav.querySelector('a[href="events.html"]') || links[links.length - 1];
+      var posContainer = evLink.parentElement;
+      while (posContainer && posContainer.parentElement !== nav) posContainer = posContainer.parentElement;
+      var srcLink = evLink;
+      for (var k = 0; k < links.length; k++) { var h = links[k].getAttribute('href'); if (h && h !== cur) { srcLink = links[k]; break; } }
+      var srcContainer = srcLink.parentElement;
+      while (srcContainer && srcContainer.parentElement !== nav) srcContainer = srcContainer.parentElement;
+      if (!srcContainer || !posContainer) continue;
+      var clone = srcContainer.cloneNode(true);
       clone.setAttribute('data-framer-name', 'Gallery');
       var a = clone.querySelector('a');
       if (a) {
@@ -1600,7 +1606,7 @@ document.addEventListener('keydown', function(e) {
         var p = a.querySelector('.framer-text') || a.querySelector('p');
         if (p) p.textContent = 'Galleria'; else a.textContent = 'Galleria';
       }
-      container.parentNode.insertBefore(clone, container.nextSibling);
+      posContainer.parentNode.insertBefore(clone, posContainer.nextSibling);
     }
   }
 

@@ -191,8 +191,14 @@
     </div>
 
     <div class="form-group">
-      <label class="form-label">Data e Ora</label>
+      <label class="form-label">Data e Ora inizio</label>
       <input class="form-input" id="ev-date" type="datetime-local">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Ora di fine <span style="color:rgba(255,255,255,0.3);text-transform:none;letter-spacing:0;">(il giorno dopo · facoltativa)</span></label>
+      <input class="form-input" id="ev-endtime" type="time">
+      <div style="font-size:11px;margin-top:6px;color:rgba(255,255,255,0.3);">Mostrata accanto all'inizio, es. <strong style="color:rgba(255,255,255,0.5);">22:30 - 03:00</strong>.</div>
     </div>
 
     <div class="form-group">
@@ -537,6 +543,7 @@ function openNew() {
   document.getElementById('modal-title').textContent = 'Nuovo Evento';
   document.getElementById('ev-title').value = '';
   document.getElementById('ev-date').value = '';
+  document.getElementById('ev-endtime').value = '';
   document.getElementById('ev-desc').value = '';
   document.getElementById('ev-ticket').value = '';
   document.getElementById('ev-gallery').value = '';
@@ -556,6 +563,7 @@ function openEdit(id) {
     document.getElementById('modal-title').textContent = 'Modifica Evento';
     document.getElementById('ev-title').value = ev.title || '';
     document.getElementById('ev-date').value = toLocalInput(ev.event_date);
+    document.getElementById('ev-endtime').value = ev.end_time || '';
     document.getElementById('ev-desc').value = ev.description || '';
     document.getElementById('ev-ticket').value = ev.ticket_url || '';
     document.getElementById('ev-gallery').value = ev.gallery_url || '';
@@ -588,6 +596,7 @@ async function saveEvent() {
     title: title,
     description: document.getElementById('ev-desc').value.trim() || null,
     event_date: toUtcIso(document.getElementById('ev-date').value),
+    end_time: document.getElementById('ev-endtime').value || null,
     ticket_url: document.getElementById('ev-ticket').value.trim() || null,
     gallery_url: document.getElementById('ev-gallery').value.trim() || null,
     is_published: document.getElementById('ev-published').checked,

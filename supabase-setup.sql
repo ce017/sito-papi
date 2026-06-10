@@ -40,3 +40,7 @@ create policy "auth_select"
 -- Safe to run multiple times.
 -- ============================================================
 alter table public.events add column if not exists gallery_url text;
+
+-- Optional end time shown next to the start time, e.g. "22:30 - 03:00".
+-- Stored as plain text (HH:MM) since it's just a label (the morning after).
+alter table public.events add column if not exists end_time text;

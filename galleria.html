@@ -14,6 +14,13 @@
 	<meta name="viewport" content="width=device-width">
 	<meta name="generator" content="Framer 0f5ea8b">
 	<title>Galleria - Papi on the Beach</title>
+	<style id="papi-galleria-hide">
+	  /* Bulletproof: hide the cloned page's content sections (incl. the old
+	     Privacy Policy hero) up-front via CSS so a Framer re-render can't show it.
+	     Keeps the nav, the footer, and our injected gallery wrapper. */
+	  #main section:not(#papi-galleria-wrap),
+	  #main header { display: none !important; }
+	</style>
     <meta name="description" content="L'esperienza definitiva del beach club a Roveredo in Piano, Italia. Musica, energia e notti indimenticabili — benvenuti a Papi on the Beach.">
     <meta name="framer-search-index" content="https://framerusercontent.com/sites/1JnAeEDOd95rNuXSLDukpA/searchIndex-TtHrHG0MsdHN.json">
     <meta name="framer-search-index-fallback" content="https://framerusercontent.com/sites/1JnAeEDOd95rNuXSLDukpA/searchIndex-fIe1smmjiOs8.json">
@@ -931,7 +938,7 @@ nav[style*="translateY(-100"]    { transform: translateY(0) !important; }
     '<section id="papi-club-info" style="padding:80px 40px;background:#0a0a0a;max-width:100%;">' +
       '<div style="max-width:960px;margin:0 auto;">' +
         '<div style="display:inline-block;background:#F5B800;color:#111;font-family:monospace;font-size:11px;font-weight:700;letter-spacing:0.15em;padding:4px 12px;border-radius:4px;margin-bottom:24px;text-transform:uppercase;">Il Locale</div>' +
-        '<h2 style="font-family:Impact,Arial Black,sans-serif;font-size:clamp(32px,5vw,52px);color:#F5B800;text-transform:uppercase;letter-spacing:2px;margin:0 0 20px;line-height:1.1;">Papi on the Beach</h2>' +
+        '<h2 style="font-family:Inter Display,Inter,Arial,sans-serif;font-weight:800;font-size:clamp(32px,5vw,52px);color:#F5B800;text-transform:uppercase;letter-spacing:2px;margin:0 0 20px;line-height:1.1;">Papi on the Beach</h2>' +
         '<p style="font-family:Arial,sans-serif;font-size:17px;line-height:1.75;color:rgba(255,255,255,0.75);max-width:680px;margin:0 0 32px;">' +
           'Un club unico nel suo genere, nato dall'amore per la musica e lo spirito mediterraneo. ' +
           'Papi on the Beach non &egrave; solo una discoteca: &egrave; un luogo di libert&agrave;, energia e connessione, ' +
@@ -1038,7 +1045,7 @@ nav[style*="translateY(-100"]    { transform: translateY(0) !important; }
       hdr.innerHTML =
         '<div style="max-width:960px;margin:0 auto;">' +
           '<div style="display:inline-block;background:#F5B800;color:#111;font-family:monospace;font-size:11px;font-weight:700;letter-spacing:0.15em;padding:4px 12px;border-radius:4px;margin-bottom:20px;text-transform:uppercase;">Il Locale</div>' +
-          '<h1 style="font-family:Impact,Arial Black,sans-serif;font-size:clamp(36px,6vw,72px);color:#F5B800;text-transform:uppercase;letter-spacing:3px;margin:0 0 16px;">Il Nostro Spazio</h1>' +
+          '<h1 style="font-family:Inter Display,Inter,Arial,sans-serif;font-weight:800;font-size:clamp(36px,6vw,72px);color:#F5B800;text-transform:uppercase;letter-spacing:3px;margin:0 0 16px;">Il Nostro Spazio</h1>' +
           '<p style="font-family:Arial,sans-serif;font-size:17px;color:rgba(255,255,255,0.7);max-width:600px;line-height:1.7;margin:0;">Un'esperienza unica in un ambiente esclusivo. Papi on the Beach offre spazi Tavoli, piste da ballo e un\'atmosfera che non dimenticherai.</p>' +
         '</div>';
       venue.parentNode.insertBefore(hdr, venue);
@@ -1053,7 +1060,7 @@ nav[style*="translateY(-100"]    { transform: translateY(0) !important; }
         rHdr.innerHTML =
           '<div style="max-width:960px;margin:0 auto;">' +
             '<div style="display:inline-block;background:#F5B800;color:#111;font-family:monospace;font-size:11px;font-weight:700;letter-spacing:0.15em;padding:4px 12px;border-radius:4px;margin-bottom:20px;text-transform:uppercase;">Ristorante</div>' +
-            '<h1 style="font-family:Impact,Arial Black,sans-serif;font-size:clamp(36px,6vw,72px);color:#F5B800;text-transform:uppercase;letter-spacing:3px;margin:0 0 16px;">Il Ristorante</h1>' +
+            '<h1 style="font-family:Inter Display,Inter,Arial,sans-serif;font-weight:800;font-size:clamp(36px,6vw,72px);color:#F5B800;text-transform:uppercase;letter-spacing:3px;margin:0 0 16px;">Il Ristorante</h1>' +
             '<p style="font-family:Arial,sans-serif;font-size:17px;color:rgba(255,255,255,0.7);max-width:600px;line-height:1.7;margin:0;">Cucina mediterranea e italiana con l'eleganza e la bravura del nostro chef. Un'esperienza gastronomica unica, di fronte al mare.</p>' +
           '</div>';
         var main = document.querySelector('#main') || document.body;
@@ -1106,7 +1113,7 @@ nav[style*="translateY(-100"]    { transform: translateY(0) !important; }
 
 <div id="papi-login-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#161616;border:1px solid rgba(245,184,0,0.3);border-radius:16px;padding:32px 28px;width:100%;max-width:360px;">
-    <div style="font-family:Impact,'Arial Black',sans-serif;font-size:26px;color:#F5B800;letter-spacing:3px;margin-bottom:28px;text-align:center;">PAPI ADMIN</div>
+    <div style="text-align:center;margin-bottom:24px;"><img src="papi-logo.svg" alt="Papi on the Beach" style="height:36px;width:auto;display:inline-block;"></div>
     <div style="margin-bottom:16px;">
       <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.4);margin-bottom:7px;font-family:Arial;">Username</label>
       <input id="papi-login-user" type="text" autocomplete="off" placeholder="Username"
@@ -1461,10 +1468,10 @@ document.addEventListener('keydown', function(e) {
 
   /* Hide the cloned legal page content; keep nav + footer */
   function hideTemplateContent() {
-    var sections = document.querySelectorAll('#main section');
-    for (var i = 0; i < sections.length; i++) {
-      if (sections[i].id === 'papi-galleria-wrap') continue;
-      sections[i].style.display = 'none';
+    var els = document.querySelectorAll('#main section, #main header');
+    for (var i = 0; i < els.length; i++) {
+      if (els[i].id === 'papi-galleria-wrap') continue;
+      els[i].style.display = 'none';
     }
   }
 
@@ -1483,10 +1490,10 @@ document.addEventListener('keydown', function(e) {
       '<div style="flex:1 0 0;max-width:1100px;">' +
         '<div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">' +
           '<span style="display:inline-block;width:28px;height:2px;background:#F5B800;flex-shrink:0;"></span>' +
-          '<span style="font-family:inherit;font-size:14px;font-weight:400;color:rgba(255,255,255,0.6);letter-spacing:0.04em;">Foto</span>' +
+          '<span style="font-family:Inter Display,Inter,Arial,sans-serif;font-size:14px;font-weight:400;color:rgba(255,255,255,0.6);letter-spacing:0.04em;">Foto</span>' +
         '</div>' +
-        '<h1 style="font-family:inherit;font-size:clamp(48px,8vw,96px);font-weight:300;color:#fff;letter-spacing:-0.02em;line-height:1.05;margin:0 0 20px;">Galleria</h1>' +
-        '<p style="font-family:inherit;font-size:15px;font-weight:400;color:rgba(255,255,255,0.4);margin:0 0 64px;max-width:560px;line-height:1.5;">Rivivi le serate passate a Papi on the Beach attraverso gli scatti dei nostri fotografi.</p>' +
+        '<h1 style="font-family:Inter Display,Inter,Arial,sans-serif;font-size:clamp(48px,8vw,96px);font-weight:300;color:#fff;letter-spacing:-0.02em;line-height:1.05;margin:0 0 20px;">Galleria</h1>' +
+        '<p style="font-family:Inter Display,Inter,Arial,sans-serif;font-size:15px;font-weight:400;color:rgba(255,255,255,0.4);margin:0 0 64px;max-width:560px;line-height:1.5;">Rivivi le serate passate a Papi on the Beach attraverso gli scatti dei nostri fotografi.</p>' +
         '<div id="papi-galleria-list" style="min-height:120px;">' +
           '<p style="color:rgba(255,255,255,0.2);font-size:14px;">Caricamento gallerie...</p>' +
         '</div>' +
@@ -1499,7 +1506,7 @@ document.addEventListener('keydown', function(e) {
     var embed = fid
       ? '<div style="border-radius:16px;overflow:hidden;border:1px solid rgba(245,184,0,0.2);background:#111;">' +
           '<iframe src="https://drive.google.com/embeddedfolderview?id=' + encodeURIComponent(fid) + '#grid" ' +
-          'style="width:100%;height:440px;border:0;display:block;" loading="lazy"></iframe>' +
+          'style="width:calc(100% + 18px);height:440px;border:0;display:block;" loading="lazy"></iframe>' +
         '</div>'
       : '<div style="border-radius:16px;border:1px dashed rgba(245,184,0,0.25);background:#111;padding:40px 24px;text-align:center;color:rgba(255,255,255,0.35);font-size:14px;">Anteprima non disponibile — apri la cartella per vedere le foto.</div>';
     var btn = ev.gallery_url
@@ -1509,7 +1516,7 @@ document.addEventListener('keydown', function(e) {
       : '';
     return '<div id="event-' + escHtml(String(ev.id)) + '" style="margin-bottom:88px;scroll-margin-top:110px;">' +
       '<div style="font-family:\'Inter Display\',\'Inter\',Arial,sans-serif;font-size:clamp(26px,3.6vw,42px);font-weight:600;color:#F5B800;letter-spacing:-0.02em;line-height:1;margin-bottom:6px;text-transform:capitalize;">' + escHtml(fmtDayMonth(ev.event_date)) + '</div>' +
-      '<h2 style="font-family:Impact,Arial Black,sans-serif;font-size:clamp(22px,3vw,34px);color:#fff;text-transform:uppercase;letter-spacing:1px;margin:0 0 24px;line-height:1.1;">' + escHtml(ev.title) + '</h2>' +
+      '<h2 style="font-family:Inter Display,Inter,Arial,sans-serif;font-weight:800;font-size:clamp(22px,3vw,34px);color:#fff;text-transform:uppercase;letter-spacing:1px;margin:0 0 24px;line-height:1.1;">' + escHtml(ev.title) + '</h2>' +
       embed +
       (btn ? '<div style="margin-top:20px;">' + btn + '</div>' : '') +
     '</div>';
@@ -1574,15 +1581,21 @@ document.addEventListener('keydown', function(e) {
     for (var i = 0; i < navs.length; i++) {
       var nav = navs[i];
       if (nav.querySelector('a[href="galleria.html"]')) continue;
-      var links = nav.querySelectorAll('a');
-      if (!links.length) continue;
-      var afterEv = nav.querySelector('a[href="events.html"]') || links[links.length - 1];
-      var clone = afterEv.cloneNode(true);
-      clone.setAttribute('href', 'galleria.html');
-      clone.setAttribute('name', 'Gallery');
-      var p = clone.querySelector('.framer-text') || clone.querySelector('p, div[data-framer-name="Label"]');
-      if (p) p.textContent = 'Galleria'; else clone.textContent = 'Galleria';
-      afterEv.parentNode.insertBefore(clone, afterEv.nextSibling);
+      var evLink = nav.querySelector('a[href="events.html"]');
+      if (!evLink) continue;
+      var container = evLink.parentElement;
+      while (container && container.parentElement !== nav) container = container.parentElement;
+      if (!container) continue;
+      var clone = container.cloneNode(true);
+      clone.setAttribute('data-framer-name', 'Gallery');
+      var a = clone.querySelector('a');
+      if (a) {
+        a.setAttribute('href', 'galleria.html');
+        a.setAttribute('name', 'Gallery');
+        var p = a.querySelector('.framer-text') || a.querySelector('p');
+        if (p) p.textContent = 'Galleria'; else a.textContent = 'Galleria';
+      }
+      container.parentNode.insertBefore(clone, container.nextSibling);
     }
   }
 

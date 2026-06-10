@@ -483,7 +483,7 @@ textarea::placeholder {
 <style id="papi-island-nav">
 
 /* Papi Island Nav v10 - Apple-style mobile overlay */
-:root { --papi-ease: cubic-bezier(0.32,0.72,0,1); --papi-dur: 1s; }
+:root { --papi-ease: cubic-bezier(0.32,0.72,0,1); --papi-dur: 0.4s; }
 
 .papi-nav-logo {
   display: inline-flex !important; align-items: center !important;
@@ -515,7 +515,6 @@ nav[data-framer-name="Desktop Home"], nav[data-framer-name="Desktop"],
 nav[data-framer-name="Tablet"], nav[data-framer-name="Phone"] {
   transition: width var(--papi-dur) var(--papi-ease), max-width var(--papi-dur) var(--papi-ease),
     padding var(--papi-dur) var(--papi-ease), background var(--papi-dur) ease,
-    backdrop-filter var(--papi-dur) ease, -webkit-backdrop-filter var(--papi-dur) ease,
     border-radius var(--papi-dur) var(--papi-ease), border-color var(--papi-dur) ease,
     box-shadow var(--papi-dur) ease, margin var(--papi-dur) var(--papi-ease),
     gap var(--papi-dur) var(--papi-ease) !important;
@@ -534,10 +533,10 @@ nav .framer-fzdypl [data-framer-name="Content"] > * {
 
 nav.papi-island {
   background: linear-gradient(135deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0.04) 50%,rgba(255,255,255,0.08) 100%) !important;
-  backdrop-filter: blur(28px) saturate(180%) !important; -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+  backdrop-filter: blur(13px) saturate(150%) !important; -webkit-backdrop-filter: blur(13px) saturate(150%) !important;
   border: 1px solid rgba(255,255,255,0.18) !important; border-radius: 999px !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.18) !important;
-  width: auto !important; max-width: 230px !important; padding: 8px 10px 8px 16px !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.12) !important;
+  width: auto !important; max-width: 230px !important; padding: 5px 8px 5px 14px !important;
   margin: 10px auto 0 !important; gap: 8px !important; overflow: visible !important;
   display: flex !important; align-items: center !important; justify-content: flex-start !important; flex-direction: row !important;
 }
@@ -650,6 +649,7 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
 /* Larger logo in island nav + mobile nav */
 .papi-nav-logo { height: 52px !important; }
 .papi-nav-logo img { max-width: 160px !important; }
+nav.papi-island .papi-nav-logo { height: 40px !important; }
 #papi-mob-nav .pm-logo img { height: 38px !important; }
 </style>
 
@@ -1004,7 +1004,7 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
     '<section id="papi-club-info" style="padding:80px 40px;background:#0a0a0a;max-width:100%;">' +
       '<div style="max-width:960px;margin:0 auto;">' +
         '<div style="display:inline-block;background:#F5B800;color:#111;font-family:monospace;font-size:11px;font-weight:700;letter-spacing:0.15em;padding:4px 12px;border-radius:4px;margin-bottom:24px;text-transform:uppercase;">Il Locale</div>' +
-        '<h2 style="font-family:Impact,Arial Black,sans-serif;font-size:clamp(32px,5vw,52px);color:#F5B800;text-transform:uppercase;letter-spacing:2px;margin:0 0 20px;line-height:1.1;">Papi on the Beach</h2>' +
+        '<h2 style="font-family:Inter Display,Inter,Arial,sans-serif;font-weight:800;font-size:clamp(32px,5vw,52px);color:#F5B800;text-transform:uppercase;letter-spacing:2px;margin:0 0 20px;line-height:1.1;">Papi on the Beach</h2>' +
         '<p style="font-family:Arial,sans-serif;font-size:17px;line-height:1.75;color:rgba(255,255,255,0.75);max-width:680px;margin:0 0 32px;">' +
           'Un club unico nel suo genere, nato dall'amore per la musica e lo spirito mediterraneo. ' +
           'Papi on the Beach non &egrave; solo una discoteca: &egrave; un luogo di libert&agrave;, energia e connessione, ' +
@@ -1111,7 +1111,7 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
       hdr.innerHTML =
         '<div style="max-width:960px;margin:0 auto;">' +
           '<div style="display:inline-block;background:#F5B800;color:#111;font-family:monospace;font-size:11px;font-weight:700;letter-spacing:0.15em;padding:4px 12px;border-radius:4px;margin-bottom:20px;text-transform:uppercase;">Il Locale</div>' +
-          '<h1 style="font-family:Impact,Arial Black,sans-serif;font-size:clamp(36px,6vw,72px);color:#F5B800;text-transform:uppercase;letter-spacing:3px;margin:0 0 16px;">Il Nostro Spazio</h1>' +
+          '<h1 style="font-family:Inter Display,Inter,Arial,sans-serif;font-weight:800;font-size:clamp(36px,6vw,72px);color:#F5B800;text-transform:uppercase;letter-spacing:3px;margin:0 0 16px;">Il Nostro Spazio</h1>' +
           '<p style="font-family:Arial,sans-serif;font-size:17px;color:rgba(255,255,255,0.7);max-width:600px;line-height:1.7;margin:0;">Un'esperienza unica in un ambiente esclusivo. Papi on the Beach offre spazi Tavoli, piste da ballo e un\'atmosfera che non dimenticherai.</p>' +
         '</div>';
       venue.parentNode.insertBefore(hdr, venue);
@@ -1126,7 +1126,7 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
         rHdr.innerHTML =
           '<div style="max-width:960px;margin:0 auto;">' +
             '<div style="display:inline-block;background:#F5B800;color:#111;font-family:monospace;font-size:11px;font-weight:700;letter-spacing:0.15em;padding:4px 12px;border-radius:4px;margin-bottom:20px;text-transform:uppercase;">Ristorante</div>' +
-            '<h1 style="font-family:Impact,Arial Black,sans-serif;font-size:clamp(36px,6vw,72px);color:#F5B800;text-transform:uppercase;letter-spacing:3px;margin:0 0 16px;">Il Ristorante</h1>' +
+            '<h1 style="font-family:Inter Display,Inter,Arial,sans-serif;font-weight:800;font-size:clamp(36px,6vw,72px);color:#F5B800;text-transform:uppercase;letter-spacing:3px;margin:0 0 16px;">Il Ristorante</h1>' +
             '<p style="font-family:Arial,sans-serif;font-size:17px;color:rgba(255,255,255,0.7);max-width:600px;line-height:1.7;margin:0;">Cucina mediterranea e italiana con l'eleganza e la bravura del nostro chef. Un'esperienza gastronomica unica, di fronte al mare.</p>' +
           '</div>';
         var main = document.querySelector('#main') || document.body;
@@ -1179,7 +1179,7 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
 
 <div id="papi-login-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#161616;border:1px solid rgba(245,184,0,0.3);border-radius:16px;padding:32px 28px;width:100%;max-width:360px;">
-    <div style="font-family:Impact,'Arial Black',sans-serif;font-size:26px;color:#F5B800;letter-spacing:3px;margin-bottom:28px;text-align:center;">PAPI ADMIN</div>
+    <div style="text-align:center;margin-bottom:24px;"><img src="papi-logo.svg" alt="Papi on the Beach" style="height:36px;width:auto;display:inline-block;"></div>
     <div style="margin-bottom:16px;">
       <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.4);margin-bottom:7px;font-family:Arial;">Username</label>
       <input id="papi-login-user" type="text" autocomplete="off" placeholder="Username"
@@ -1284,7 +1284,7 @@ document.addEventListener('keydown', function(e) {
       imgBox +
       '<div style="padding:14px;flex:1;display:flex;flex-direction:column;gap:6px;">' +
         '<div style="font-size:9px;font-family:monospace;color:#F5B800;letter-spacing:0.12em;text-transform:uppercase;">' + (fmtDate(ev.event_date) || 'Prossimo Evento') + '</div>' +
-        '<h2 style="font-family:Impact,Arial Black,sans-serif;font-size:17px;color:#fff;text-transform:uppercase;letter-spacing:1px;margin:0;line-height:1.1;">' + escHtml(ev.title) + '</h2>' +
+        '<h2 style="font-family:Inter Display,Inter,Arial,sans-serif;font-weight:800;font-size:17px;color:#fff;text-transform:uppercase;letter-spacing:1px;margin:0;line-height:1.1;">' + escHtml(ev.title) + '</h2>' +
         (ev.event_date ? '<div style="color:rgba(255,255,255,0.4);font-size:11px;">' + fmtTime(ev.event_date) + '</div>' : '') +
         (btn ? '<div style="margin-top:auto;padding-top:10px;">' + btn + '</div>' : '') +
       '</div>' +
@@ -1324,19 +1324,19 @@ document.addEventListener('keydown', function(e) {
       '<div style="flex:1 0 0;max-width:1440px;">' +
         '<div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">' +
           '<span style="display:inline-block;width:28px;height:2px;background:#F5B800;flex-shrink:0;"></span>' +
-          '<span style="font-family:inherit;font-size:14px;font-weight:400;color:rgba(255,255,255,0.6);letter-spacing:0.04em;">Eventi</span>' +
+          '<span style="font-family:Inter Display,Inter,Arial,sans-serif;font-size:14px;font-weight:400;color:rgba(255,255,255,0.6);letter-spacing:0.04em;">Eventi</span>' +
         '</div>' +
-        '<h1 style="font-family:inherit;font-size:clamp(48px,8vw,96px);font-weight:300;color:#fff;letter-spacing:-0.02em;line-height:1.05;margin:0 0 20px;">I prossimi eventi</h1>' +
-        '<p style="font-family:inherit;font-size:15px;font-weight:400;color:rgba(255,255,255,0.4);margin:0 0 56px;max-width:520px;line-height:1.5;">Acquista i biglietti o leggi informazioni sugli eventi</p>' +
+        '<h1 style="font-family:Inter Display,Inter,Arial,sans-serif;font-size:clamp(48px,8vw,96px);font-weight:300;color:#fff;letter-spacing:-0.02em;line-height:1.05;margin:0 0 20px;">I prossimi eventi</h1>' +
+        '<p style="font-family:Inter Display,Inter,Arial,sans-serif;font-size:15px;font-weight:400;color:rgba(255,255,255,0.4);margin:0 0 56px;max-width:520px;line-height:1.5;">Acquista i biglietti o leggi informazioni sugli eventi</p>' +
         '<div id="papi-events-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;min-height:120px;">' +
           '<p style="color:rgba(255,255,255,0.2);font-size:14px;">Caricamento eventi...</p>' +
         '</div>' +
         '<div id="papi-past-section" style="display:none;margin-top:96px;">' +
           '<div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">' +
             '<span style="display:inline-block;width:28px;height:2px;background:#F5B800;flex-shrink:0;"></span>' +
-            '<span style="font-family:inherit;font-size:14px;font-weight:400;color:rgba(255,255,255,0.6);letter-spacing:0.04em;">Archivio</span>' +
+            '<span style="font-family:Inter Display,Inter,Arial,sans-serif;font-size:14px;font-weight:400;color:rgba(255,255,255,0.6);letter-spacing:0.04em;">Archivio</span>' +
           '</div>' +
-          '<h2 style="font-family:inherit;font-size:clamp(34px,5vw,60px);font-weight:300;color:#fff;letter-spacing:-0.02em;line-height:1.05;margin:0 0 40px;">Eventi passati</h2>' +
+          '<h2 style="font-family:Inter Display,Inter,Arial,sans-serif;font-size:clamp(34px,5vw,60px);font-weight:300;color:#fff;letter-spacing:-0.02em;line-height:1.05;margin:0 0 40px;">Eventi passati</h2>' +
           '<div id="papi-events-past-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;"></div>' +
         '</div>' +
       '</div>';
@@ -1754,15 +1754,21 @@ document.addEventListener('keydown', function(e) {
     for (var i = 0; i < navs.length; i++) {
       var nav = navs[i];
       if (nav.querySelector('a[href="galleria.html"]')) continue;
-      var links = nav.querySelectorAll('a');
-      if (!links.length) continue;
-      var afterEv = nav.querySelector('a[href="events.html"]') || links[links.length - 1];
-      var clone = afterEv.cloneNode(true);
-      clone.setAttribute('href', 'galleria.html');
-      clone.setAttribute('name', 'Gallery');
-      var p = clone.querySelector('.framer-text') || clone.querySelector('p, div[data-framer-name="Label"]');
-      if (p) p.textContent = 'Galleria'; else clone.textContent = 'Galleria';
-      afterEv.parentNode.insertBefore(clone, afterEv.nextSibling);
+      var evLink = nav.querySelector('a[href="events.html"]');
+      if (!evLink) continue;
+      var container = evLink.parentElement;
+      while (container && container.parentElement !== nav) container = container.parentElement;
+      if (!container) continue;
+      var clone = container.cloneNode(true);
+      clone.setAttribute('data-framer-name', 'Gallery');
+      var a = clone.querySelector('a');
+      if (a) {
+        a.setAttribute('href', 'galleria.html');
+        a.setAttribute('name', 'Gallery');
+        var p = a.querySelector('.framer-text') || a.querySelector('p');
+        if (p) p.textContent = 'Galleria'; else a.textContent = 'Galleria';
+      }
+      container.parentNode.insertBefore(clone, container.nextSibling);
     }
   }
 

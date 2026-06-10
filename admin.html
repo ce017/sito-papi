@@ -516,6 +516,22 @@ function escHtml(s) {
 }
 
 /* ── EVENT EDITOR ── */
+/* datetime-local <-> UTC helpers so the saved time matches what's typed.
+   The <input type="datetime-local"> value is naive local time; we must
+   convert to a real UTC ISO string on save, and back to local on load. */
+function toUtcIso(localValue) {
+  if (!localValue) return null;
+  var d = new Date(localValue);          // parses as LOCAL time
+  return isNaN(d.getTime()) ? null : d.toISOString();
+}
+function toLocalInput(iso) {
+  if (!iso) return '';
+  var d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  var local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 16);
+}
+
 function openNew() {
   editingId = null;
   document.getElementById('modal-title').textContent = 'Nuovo Evento';
@@ -539,7 +555,7 @@ function openEdit(id) {
     editingId = id;
     document.getElementById('modal-title').textContent = 'Modifica Evento';
     document.getElementById('ev-title').value = ev.title || '';
-    document.getElementById('ev-date').value = ev.event_date ? ev.event_date.slice(0, 16) : '';
+    document.getElementById('ev-date').value = toLocalInput(ev.event_date);
     document.getElementById('ev-desc').value = ev.description || '';
     document.getElementById('ev-ticket').value = ev.ticket_url || '';
     document.getElementById('ev-gallery').value = ev.gallery_url || '';
@@ -571,7 +587,7 @@ async function saveEvent() {
   var data = {
     title: title,
     description: document.getElementById('ev-desc').value.trim() || null,
-    event_date: document.getElementById('ev-date').value || null,
+    event_date: toUtcIso(document.getElementById('ev-date').value),
     ticket_url: document.getElementById('ev-ticket').value.trim() || null,
     gallery_url: document.getElementById('ev-gallery').value.trim() || null,
     is_published: document.getElementById('ev-published').checked,

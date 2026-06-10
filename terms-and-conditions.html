@@ -707,6 +707,11 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
   object-fit:contain !important; display:block !important; margin:0 auto !important;
 }
 </style>
+<style id="papi-navlogo-fix">
+/* Constrain the Framer nav logo image to its container (legal-page
+   template renders it at natural 1575x774 otherwise). */
+#main nav [data-framer-name="Logo"] img{width:100% !important;height:100% !important;max-width:100% !important;max-height:100% !important;object-fit:contain !important;display:block !important;}
+</style>
 </head>
 <body style="background-color:#111111!important;">
 	

@@ -720,6 +720,9 @@ nav.papi-island .papi-nav-logo { height: 46px !important; }
 </style>
 <style id="papi-restaurant-spacer-fix">
 .framer-ihkh6y{display:none !important;}
+/* The hidden spacer left the template's min-height:100vh showing as ~628px of
+   dead space below the footer. Let the content define the height instead. */
+#main [data-layout-template="true"]{min-height:0 !important;}
 </style>
 <style id="papi-cta-fix">
 /* Make the "Biglietti & Tavoli" CTA match (slightly exceed) the nav link

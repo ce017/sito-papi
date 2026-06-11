@@ -710,7 +710,7 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
 <style id="papi-navlogo-fix">
 /* Constrain the Framer nav logo image to its container (legal-page
    template renders it at natural 1575x774 otherwise). */
-#main nav [data-framer-name="Logo"] img{width:100% !important;height:100% !important;max-width:100% !important;max-height:100% !important;object-fit:contain !important;display:block !important;}
+#main nav [data-framer-name="Logo"]{display:none !important;}
 </style>
 <style id="papi-cta-fix">
 /* Make the "Biglietti & Tavoli" CTA match (slightly exceed) the nav link
@@ -871,8 +871,8 @@ figure[data-framer-name="Logo Papi"] img { object-fit:contain!important; max-hei
 header[data-framer-name="Hero"] { min-height:100vh!important; position:relative!important; }
 [data-framer-name="Text"] p, [data-framer-name="Text"] div p { color:#ffffff!important; }
 .framer-7sznpq p { color:#ffffff!important; }
-section { background:#0a0a0a!important; }
-#main { background:#0a0a0a!important; }
+section { background:#111111!important; }
+#main { background:#111111!important; }
 
 .papi-nav-logo {
   position: absolute; left: 24px; top: 50%; transform: translateY(-50%);

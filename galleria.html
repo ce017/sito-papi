@@ -20,6 +20,8 @@
 	     Keeps the nav, the footer, and our injected gallery wrapper. */
 	  #main section:not(#papi-galleria-wrap),
 	  #main header { display: none !important; }
+	  /* Empty Framer spacer that sat above the gallery -> remove it. */
+	  #main .framer-ihkh6y { display: none !important; }
 	</style>
     <meta name="description" content="L'esperienza definitiva del beach club a Roveredo in Piano, Italia. Musica, energia e notti indimenticabili — benvenuti a Papi on the Beach.">
     <meta name="framer-search-index" content="https://framerusercontent.com/sites/1JnAeEDOd95rNuXSLDukpA/searchIndex-TtHrHG0MsdHN.json">
@@ -715,9 +717,11 @@ nav:not(.papi-island) .papi-nav-logo { margin-right: 24px; }
 }
 </style>
 <style id="papi-navlogo-fix">
-/* Constrain the Framer nav logo image to its container (legal-page
-   template renders it at natural 1575x774 otherwise). */
-#main nav [data-framer-name="Logo"] img{width:100% !important;height:100% !important;max-width:100% !important;max-height:100% !important;object-fit:contain !important;display:block !important;}
+/* Hide the Framer nav logo on the legal-page template. Our island-nav script
+   injects its own .papi-nav-logo, so the Framer one was a duplicate (and at its
+   natural 1575x774 it created a huge top gap). Hiding it leaves a single logo,
+   matching the main pages. */
+#main nav [data-framer-name="Logo"]{display:none !important;}
 </style>
 <style id="papi-cta-fix">
 /* Make the "Biglietti & Tavoli" CTA match (slightly exceed) the nav link
@@ -878,8 +882,8 @@ figure[data-framer-name="Logo Papi"] img { object-fit:contain!important; max-hei
 header[data-framer-name="Hero"] { min-height:100vh!important; position:relative!important; }
 [data-framer-name="Text"] p, [data-framer-name="Text"] div p { color:#ffffff!important; }
 .framer-7sznpq p { color:#ffffff!important; }
-section { background:#0a0a0a!important; }
-#main { background:#0a0a0a!important; }
+section { background:#111111!important; }
+#main { background:#111111!important; }
 
 .papi-nav-logo {
   position: absolute; left: 24px; top: 50%; transform: translateY(-50%);
@@ -1495,7 +1499,7 @@ document.addEventListener('keydown', function(e) {
     if (!footer) return;
     var wrap = document.createElement('section');
     wrap.id = 'papi-galleria-wrap';
-    wrap.style.cssText = 'padding:140px 40px 80px;background:#0a0a0a;width:100%;box-sizing:border-box;display:flex;justify-content:center;align-items:flex-start;';
+    wrap.style.cssText = 'padding:120px 40px 80px;background:transparent;width:100%;box-sizing:border-box;display:flex;justify-content:center;align-items:flex-start;';
     wrap.innerHTML =
       '<div style="flex:1 0 0;max-width:1100px;">' +
         '<div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">' +
@@ -1508,7 +1512,19 @@ document.addEventListener('keydown', function(e) {
           '<p style="color:rgba(255,255,255,0.2);font-size:14px;">Caricamento gallerie...</p>' +
         '</div>' +
       '</div>';
-    footer.parentNode.insertBefore(wrap, footer);
+    /* The footer exists as desktop/tablet/phone SSR variants; the desktop one
+       (the first match) lives in a container that's display:none on mobile.
+       Insert at the layout-template level (before the footer's outermost wrapper)
+       so the gallery is visible on every breakpoint. */
+    var template = document.querySelector('#main [data-layout-template="true"]')
+                || (footer.closest && footer.closest('.framer-Bfrpt'))
+                || footer.parentElement;
+    var anchor = footer;
+    while (anchor.parentElement && anchor.parentElement !== template) {
+      anchor = anchor.parentElement;
+    }
+    if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(wrap, anchor);
+    else footer.parentNode.insertBefore(wrap, footer);
   }
 
   function renderGallery(ev) {

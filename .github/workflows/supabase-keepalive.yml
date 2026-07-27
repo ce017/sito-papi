@@ -1,0 +1,59 @@
+name: Supabase keepalive
+
+# Impedisce la pausa automatica del progetto Supabase "papi-on-the-beach".
+# I progetti free vengono messi in pausa dopo 7 giorni senza richieste API:
+# questo workflow fa un ping al giorno, con ampio margine.
+
+on:
+  schedule:
+    # Da domenica a venerdi: solo ping. 06:17 UTC (orario "dispari" di proposito:
+    # i cron a :00 sono i piu congestionati su GitHub e vengono ritardati).
+    - cron: '17 6 * * 0-5'
+    # Sabato: ping + commit di keepalive (vedi nota sui 60 giorni piu sotto).
+    - cron: '17 6 * * 6'
+  workflow_dispatch: # permette di lanciarlo a mano dalla tab Actions
+
+permissions:
+  contents: write # serve solo per il commit settimanale di keepalive
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        env:
+          # Chiave "publishable": e' pubblica per definizione (viaggia gia' nel
+          # bundle JS del sito), quindi non e' un segreto. Se un giorno la ruoti,
+          # aggiorna questa riga oppure spostala in un repository secret.
+          SUPABASE_URL: https://hrdvikkafvvfwgwvrdzz.supabase.co
+          SUPABASE_KEY: sb_publishable_5YFQeAXAdkXc1Q35cIOsgQ_ofmp9HHe
+        run: |
+          # Se rinomini/elimini la tabella "analytics", cambia il path qui sotto.
+          code=$(curl -sS -o /dev/null -w '%{http_code}' \
+            "$SUPABASE_URL/rest/v1/analytics?select=id&limit=1" \
+            -H "apikey: $SUPABASE_KEY")
+
+          echo "HTTP $code"
+          if [ "$code" != "200" ]; then
+            echo "::error::Ping fallito (HTTP $code). Il progetto potrebbe essere gia' in pausa, oppure la chiave/tabella e' cambiata."
+            exit 1
+          fi
+          echo "Progetto Supabase raggiungibile."
+
+      # GitHub disattiva i workflow schedulati dopo 60 giorni di INATTIVITA' del
+      # repository (i run schedulati da soli non contano). Un commit settimanale
+      # azzera quel contatore, cosi' il keepalive non muore a sua volta.
+      # "[skip ci]" evita che Vercel faccia un redeploy inutile a ogni commit.
+      - name: Checkout (solo per il commit settimanale)
+        if: github.event.schedule == '17 6 * * 6'
+        uses: actions/checkout@v4
+
+      - name: Commit keepalive timestamp
+        if: github.event.schedule == '17 6 * * 6'
+        run: |
+          date -u +'Ultimo keepalive: %Y-%m-%d %H:%M UTC' > .github/keepalive.txt
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .github/keepalive.txt
+          git diff --staged --quiet || git commit -m 'chore: supabase keepalive [skip ci]'
+          git push

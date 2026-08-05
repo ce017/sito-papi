@@ -192,7 +192,11 @@
 
     <div class="form-group">
       <label class="form-label">Data e Ora inizio</label>
-      <input class="form-input" id="ev-date" type="datetime-local">
+      <div style="display:flex;gap:8px;">
+        <input class="form-input" id="ev-date" type="text" inputmode="numeric" autocomplete="off" placeholder="gg/mm/aaaa" maxlength="10" style="flex:1;min-width:0;">
+        <input class="form-input" id="ev-starttime" type="time" style="flex:0 0 118px;min-width:0;">
+      </div>
+      <div style="font-size:11px;margin-top:6px;color:rgba(255,255,255,0.3);">Formato <strong style="color:rgba(255,255,255,0.5);">giorno/mese/anno</strong> · es. 15/08/2026 = 15 agosto.</div>
     </div>
 
     <div class="form-group">
@@ -522,27 +526,75 @@ function escHtml(s) {
 }
 
 /* ── EVENT EDITOR ── */
-/* datetime-local <-> UTC helpers so the saved time matches what's typed.
-   The <input type="datetime-local"> value is naive local time; we must
-   convert to a real UTC ISO string on save, and back to local on load. */
-function toUtcIso(localValue) {
-  if (!localValue) return null;
-  var d = new Date(localValue);          // parses as LOCAL time
-  return isNaN(d.getTime()) ? null : d.toISOString();
+/* dd/mm/yyyy + HH:MM <-> UTC helpers so the saved time matches what's typed.
+   The date is typed as an explicit gg/mm/aaaa string (never a native
+   datetime-local, which renders mm/dd/yyyy on US-locale browsers).
+   Both fields are naive local time; we convert to a real UTC ISO string on
+   save, and back to local on load. The stored column format is unchanged. */
+var pad2 = function(n) { return String(n).padStart(2, '0'); };
+
+function toUtcIso(dateValue, timeValue) {
+  if (!dateValue) return null;
+  var m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(String(dateValue).trim());
+  if (!m) return null;
+  var day = +m[1], month = +m[2], year = +m[3];
+  var t = /^(\d{1,2}):(\d{2})/.exec(String(timeValue || '').trim());
+  var hh = t ? +t[1] : 0, mi = t ? +t[2] : 0;
+  var d = new Date(year, month - 1, day, hh, mi, 0, 0);   // LOCAL time
+  // reject impossible dates like 31/02/2026 (JS would roll them over)
+  if (isNaN(d.getTime()) || d.getDate() !== day || d.getMonth() !== month - 1 || d.getFullYear() !== year) return null;
+  return d.toISOString();
 }
+
+/* returns { date: 'dd/mm/yyyy', time: 'HH:MM' } in local time */
 function toLocalInput(iso) {
-  if (!iso) return '';
+  if (!iso) return { date: '', time: '' };
   var d = new Date(iso);
-  if (isNaN(d.getTime())) return '';
-  var local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-  return local.toISOString().slice(0, 16);
+  if (isNaN(d.getTime())) return { date: '', time: '' };
+  return {
+    date: pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear(),
+    time: pad2(d.getHours()) + ':' + pad2(d.getMinutes())
+  };
 }
+
+/* auto-insert the slashes while typing, digits only */
+(function() {
+  var input = document.getElementById('ev-date');
+  if (!input) return;
+  input.addEventListener('input', function(e) {
+    var out = input.value;
+    var atEnd = input.selectionStart === out.length;
+    if (/^\d{0,2}(\/(\d{0,2}(\/\d{0,4})?)?)?$/.test(out)) {
+      // already a well-formed (partial) g/m/aaaa — keep the user's own slashes,
+      // just advance past each completed segment while typing forwards
+      if (atEnd && e.inputType !== 'deleteContentBackward') {
+        if (/^\d{2}$/.test(out) || /^\d{1,2}\/\d{2}$/.test(out)) out += '/';
+      }
+    } else {
+      // anything else (e.g. a pasted "15082026") — pack the digits into gg/mm/aaaa
+      var digits = out.replace(/\D/g, '').slice(0, 8);
+      out = digits.slice(0, 2);
+      if (digits.length > 2) out += '/' + digits.slice(2, 4);
+      if (digits.length > 4) out += '/' + digits.slice(4, 8);
+    }
+    if (out !== input.value) {
+      input.value = out;
+      if (atEnd) input.setSelectionRange(out.length, out.length);
+    }
+  });
+  // normalise a pasted "5/8/2026" into "05/08/2026" when leaving the field
+  input.addEventListener('blur', function() {
+    var m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(input.value.trim());
+    if (m) input.value = pad2(m[1]) + '/' + pad2(m[2]) + '/' + m[3];
+  });
+})();
 
 function openNew() {
   editingId = null;
   document.getElementById('modal-title').textContent = 'Nuovo Evento';
   document.getElementById('ev-title').value = '';
   document.getElementById('ev-date').value = '';
+  document.getElementById('ev-starttime').value = '';
   document.getElementById('ev-endtime').value = '';
   document.getElementById('ev-desc').value = '';
   document.getElementById('ev-ticket').value = '';
@@ -562,7 +614,9 @@ function openEdit(id) {
     editingId = id;
     document.getElementById('modal-title').textContent = 'Modifica Evento';
     document.getElementById('ev-title').value = ev.title || '';
-    document.getElementById('ev-date').value = toLocalInput(ev.event_date);
+    var startParts = toLocalInput(ev.event_date);
+    document.getElementById('ev-date').value = startParts.date;
+    document.getElementById('ev-starttime').value = startParts.time;
     document.getElementById('ev-endtime').value = ev.end_time || '';
     document.getElementById('ev-desc').value = ev.description || '';
     document.getElementById('ev-ticket').value = ev.ticket_url || '';
@@ -590,12 +644,20 @@ async function saveEvent() {
     err.style.display = 'block';
     return;
   }
+  var dateRaw = document.getElementById('ev-date').value.trim();
+  var eventDate = toUtcIso(dateRaw, document.getElementById('ev-starttime').value);
+  if (dateRaw && !eventDate) {
+    var errDate = document.getElementById('modal-err');
+    errDate.textContent = 'Data non valida. Usa il formato giorno/mese/anno, es. 15/08/2026.';
+    errDate.style.display = 'block';
+    return;
+  }
   document.getElementById('modal-err').style.display = 'none';
 
   var data = {
     title: title,
     description: document.getElementById('ev-desc').value.trim() || null,
-    event_date: toUtcIso(document.getElementById('ev-date').value),
+    event_date: eventDate,
     end_time: document.getElementById('ev-endtime').value || null,
     ticket_url: document.getElementById('ev-ticket').value.trim() || null,
     gallery_url: document.getElementById('ev-gallery').value.trim() || null,

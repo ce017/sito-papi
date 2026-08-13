@@ -20,9 +20,24 @@
     footer:  'In collaborazione con 1%'
   };
 
-  /* Palette Papi, coerente con le card evento già presenti nel sito. */
+  /* Papi: ambra del sito, usata per etichetta e pulsante.
+     1%: valori presi dal loro sito — rosso di marca, grigio, e il
+     carattere Anton con cui compongono il segno "1%".            */
   var AMBER = '#F5B800';
-  var RED   = '#E0242B';   // richiamo al segno di 1%, usato solo come punto
+  var RED   = '#e0181f';   // --color-brand-red di unpercento.it
+  var GRAY  = '#a3a3a3';   // --color-brand-gray di unpercento.it
+
+  /* Anton (SIL Open Font License) ospitato in locale, come i font Framer
+     già presenti nel repo: nessuna richiesta a terze parti. */
+  function injectFont() {
+    if (document.getElementById('papi-unpercento-font')) return;
+    var st = document.createElement('style');
+    st.id = 'papi-unpercento-font';
+    st.textContent =
+      "@font-face{font-family:'Anton';font-style:normal;font-weight:400;" +
+      "font-display:swap;src:url('fonts/anton-latin.woff2') format('woff2');}";
+    document.head.appendChild(st);
+  }
 
   function isHome() {
     var p = window.location.pathname.split('/').pop().replace('.html', '');
@@ -40,19 +55,19 @@
         '<div style="background:#161616;border:1px solid rgba(245,184,0,0.2);border-radius:16px;' +
              'padding:32px;display:flex;flex-wrap:wrap;gap:28px;align-items:center;">' +
 
+          /* il segno 1% come lo compongono loro: Anton, rosso di marca */
           '<div style="flex:0 0 auto;min-width:120px;">' +
-            '<div style="font-family:Inter Display,Inter,Arial,sans-serif;font-weight:800;font-size:56px;' +
-                 'line-height:1;color:#fff;letter-spacing:-2px;">' + UNPERCENTO.name + '</div>' +
-            '<div style="font-size:12px;color:rgba(255,255,255,0.35);letter-spacing:0.08em;margin-top:6px;">' +
+            '<div style="font-family:Anton,Impact,Haettenschweiler,sans-serif;font-weight:400;' +
+                 'font-size:64px;line-height:0.9;color:' + RED + ';letter-spacing:0.01em;">' +
+              UNPERCENTO.name + '</div>' +
+            '<div style="font-size:10px;color:' + GRAY + ';letter-spacing:0.3em;' +
+                 'text-transform:uppercase;margin-top:10px;white-space:nowrap;">' +
               UNPERCENTO.tagline + '</div>' +
           '</div>' +
 
           '<div style="flex:1;min-width:240px;">' +
             '<div style="font-size:10px;font-family:monospace;color:' + AMBER + ';letter-spacing:0.15em;' +
-                 'text-transform:uppercase;margin-bottom:10px;">' +
-              '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:' + RED + ';' +
-                   'margin-right:7px;vertical-align:middle;"></span>' + UNPERCENTO.label +
-            '</div>' +
+                 'text-transform:uppercase;margin-bottom:10px;">' + UNPERCENTO.label + '</div>' +
             '<p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.65;margin:0 0 20px;">' +
               UNPERCENTO.text + '</p>' +
             '<a href="' + UNPERCENTO.url + '" target="_blank" rel="noopener noreferrer" ' +
@@ -116,6 +131,7 @@
      controllare per qualche secondo e reinseriamo i nodi se spariscono.
      Le due funzioni sono idempotenti, quindi ripassarci non duplica nulla. */
   function run() {
+    injectFont();
     var tries = 0;
     var timer = setInterval(function () {
       injectBlock();

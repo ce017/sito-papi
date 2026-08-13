@@ -17,6 +17,8 @@
 (function () {
   'use strict';
 
+  var AMBER = '#F5B800';   /* ambra del sito, come le altre etichette */
+
   var PARTNERS = [
     { src: 'img-eventi/MF_logo%20TROPIFY-outlined.png', name: 'Tropify', url: '' },
     /* { src: 'img-eventi/altro.png', name: 'Altro Evento', url: 'https://link' }, */
@@ -118,9 +120,21 @@
     sec.style.cssText = 'padding:56px 24px 24px;background:#111;';
     var innerWrap = document.createElement('div');
     innerWrap.style.cssText = 'max-width:1200px;margin:0 auto;';
+
+    /* Stessa intestazione della sezione "Sponsors" in home: etichetta piccola
+       sopra, titolo grande sotto. Il titolo riprende la tipografia che
+       papi-partners-css applica all'h2 della sezione in home
+       (Inter Display, clamp(28px,3vw,38px), weight 300), così le due
+       sezioni si leggono identiche. */
     innerWrap.innerHTML =
-      '<div style="font-size:10px;font-family:monospace;color:#F5B800;letter-spacing:0.15em;' +
-           'text-transform:uppercase;text-align:center;margin-bottom:4px;">I nostri eventi</div>';
+      '<div style="text-align:center;">' +
+        '<div style="display:inline-block;background:' + AMBER + ';color:#111;' +
+             'font-family:monospace;font-size:11px;font-weight:700;letter-spacing:0.15em;' +
+             'padding:4px 12px;border-radius:4px;text-transform:uppercase;">Partner</div>' +
+        '<h2 style="font-family:\'Inter Display\',Inter,Arial,sans-serif;font-weight:300;' +
+             'font-size:clamp(28px,3vw,38px);line-height:1.1;letter-spacing:-0.04em;' +
+             'color:#fff;margin:16px 0 0;">I nostri eventi</h2>' +
+      '</div>';
     innerWrap.appendChild(makeGrid());
     sec.appendChild(innerWrap);
 

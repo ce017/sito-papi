@@ -1280,6 +1280,13 @@ document.addEventListener('keydown', function(e) {
 
 
 <style id="papi-contact-form-css">
+/* Il form originale di Framer viene sostituito dal nostro via JS, ma lo
+   script parte ~400ms dopo il caricamento: fino a quel momento il form
+   vecchio resta a schermo e si vede un lampo. Lo nascondiamo subito da
+   CSS così non viene mai disegnato. Se per qualche motivo il nostro form
+   non venisse inserito, lo script rimette visibile questo. */
+form[data-framer-name="Contact Form"] { display: none !important; }
+
 /* ── Papi Contact Form ─────────────────────────────────────── */
 #papi-contact-wrap {
   width: 100%;
@@ -1401,7 +1408,13 @@ document.addEventListener('keydown', function(e) {
 
     /* Trova il container del form Framer per inserire accanto */
     var container = framerForm ? framerForm.parentElement : null;
-    if (!container) return;
+    if (!container) {
+      /* rete di sicurezza: il CSS nasconde il form Framer, quindi se non
+         riusciamo a inserire il nostro va rimesso visibile, altrimenti la
+         pagina resterebbe senza nessun form */
+      if (framerForm) framerForm.style.setProperty('display', 'block', 'important');
+      return;
+    }
 
     var wrap = document.createElement('div');
     wrap.id = 'papi-contact-wrap';

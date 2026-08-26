@@ -304,7 +304,10 @@
     var sec = document.createElement('section');
     sec.id = 'papi-countdown';
     sec.setAttribute('data-papi-ev', String(ev.id));
-    sec.style.cssText = 'padding:56px 24px;background:#0d0d0d;border-top:1px solid rgba(245,184,0,0.14);' +
+    /* trasparente: sotto scorre lo sfondo del sito con le stelle, un
+       blocco pieno lo copriva. Restano le due righe ambra a delimitarlo. */
+    sec.style.cssText = 'padding:56px 24px;background:transparent;' +
+                        'border-top:1px solid rgba(245,184,0,0.14);' +
                         'border-bottom:1px solid rgba(245,184,0,0.14);';
     sec.innerHTML =
       '<div style="max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:32px;' +

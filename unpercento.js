@@ -79,7 +79,9 @@
   function buildBlock() {
     var wrap = document.createElement('section');
     wrap.id = 'papi-unpercento';
-    wrap.style.cssText = 'padding:60px 24px;background:#111;';
+    /* solo il riquadro interno ha un fondo: la sezione resta trasparente
+       cosi' si vede lo sfondo del sito. */
+    wrap.style.cssText = 'padding:60px 24px;background:transparent;';
 
     wrap.innerHTML =
       '<div style="max-width:960px;margin:0 auto;">' +

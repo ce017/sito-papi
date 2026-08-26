@@ -20,11 +20,14 @@
   var TITOLO = 'I nostri eventi';
 
   var EVENTI = [
+    /* Tropify e We Love Reggaeton sono ancora senza link: quelli arrivati
+       erano copie di perreo.events e unpercento.official. Finche' `ig` resta
+       vuoto il logo non e' cliccabile. */
     { src: 'img-eventi/MF_logo%20TROPIFY-outlined.png', name: 'Tropify',           ig: '' },
-    { src: 'img-eventi/maldita.png',                    name: 'Maldita',           ig: '' },
-    { src: 'img-eventi/perreo.png',                     name: 'Perreo',            ig: '' },
+    { src: 'img-eventi/maldita.png',                    name: 'Maldita',           ig: 'https://www.instagram.com/maldita.official_' },
+    { src: 'img-eventi/perreo.png',                     name: 'Perreo',            ig: 'https://www.instagram.com/perreo.events' },
     { src: 'img-eventi/we-love-reggaeton.png',          name: 'We Love Reggaeton', ig: '' },
-    { src: 'img-eventi/trenches-party.png',             name: 'Trenches Party',    ig: '' },
+    { src: 'img-eventi/trenches-party.png',             name: 'Trenches Party',    ig: 'https://www.instagram.com/trenches.party' },
     { src: 'img-eventi/tutt-altro.png',                 name: "Tutt'Altro",        ig: '' },
   ];
 
@@ -38,18 +41,18 @@
   }
 
   function buildHTML() {
-    var inner = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px;max-width:900px;margin:30px auto 0;width:100%;">';
+    var inner = '<div class="papi-partners-griglia" style="display:grid;gap:20px;margin:26px auto 0;width:100%;">';
     EVENTI.forEach(function (p) {
       var img = '<img src="' + escAttr(p.src) + '" alt="' + escAttr(p.name) + '" ' +
-        'style="width:100%;height:180px;object-fit:contain;display:block;opacity:0.9;">';
+        'style="width:100%;height:74px;object-fit:contain;display:block;opacity:0.9;">';
       var ig = safeUrl(p.ig);
       inner += ig
         /* title + aria-label: al tocco su mobile non c'è hover che spieghi
            dove porta il logo, quindi lo diciamo esplicitamente. */
         ? '<a class="papi-partner-link" href="' + escAttr(ig) + '" target="_blank" rel="noopener noreferrer" ' +
           'title="' + escAttr(p.name) + ' su Instagram" aria-label="' + escAttr(p.name) + ' su Instagram" ' +
-          'style="text-decoration:none;display:block;padding:10px;height:200px;box-sizing:border-box;">' + img + '</a>'
-        : '<div style="display:block;padding:10px;height:200px;box-sizing:border-box;">' + img + '</div>';
+          'style="text-decoration:none;display:block;padding:6px;box-sizing:border-box;">' + img + '</a>'
+        : '<div style="display:block;padding:6px;box-sizing:border-box;">' + img + '</div>';
     });
     inner += '</div>';
     return inner;
@@ -65,7 +68,11 @@
     st.id = 'papi-partners-fallback-css';
     st.textContent =
       '#papi-partners-fallback .papi-partners-grid-wrap{display:block !important;' +
-        'max-width:900px;margin-left:auto;margin-right:auto;}' +
+        'max-width:1100px;margin-left:auto;margin-right:auto;}' +
+      /* Sei loghi in fila su desktop; scendono a 3 e poi a 2 quando non ci stanno. */
+      '.papi-partners-griglia{grid-template-columns:repeat(6,1fr);}' +
+      '@media (max-width:900px){.papi-partners-griglia{grid-template-columns:repeat(3,1fr);}}' +
+      '@media (max-width:520px){.papi-partners-griglia{grid-template-columns:repeat(2,1fr);}}' +
       '#papi-partners-fallback .papi-partners-grid-wrap > div,' +
       '#papi-partners-fallback .papi-partners-grid-wrap > a{' +
         'width:100% !important;min-width:0 !important;max-width:100% !important;}' +
@@ -110,11 +117,11 @@
     injectCss();
 
     /* se c'è già ma è finito in una variante nascosta (o il breakpoint è
-       cambiato), lo spostiamo sopra il footer attualmente visibile */
+       cambiato), lo spostiamo dentro al footer attualmente visibile */
     var existing = document.getElementById('papi-partners-fallback');
     if (existing) {
-      if (isVisible(existing) || existing.nextElementSibling === footer) return true;
-      footer.parentNode.insertBefore(existing, footer);
+      if (isVisible(existing) && existing.parentNode === footer) return true;
+      footer.appendChild(existing);
       return true;
     }
 
@@ -123,7 +130,9 @@
        questa griglia. */
     var sec = document.createElement('div');
     sec.id = 'papi-partners-fallback';
-    sec.style.cssText = 'padding:56px 24px 24px;background:#111;';
+    /* niente sfondo pieno: sotto c'e' lo sfondo del sito con le stelle,
+       un blocco opaco lo tagliava via. */
+    sec.style.cssText = 'padding:48px 24px 32px;background:transparent;';
     var innerWrap = document.createElement('div');
     innerWrap.style.cssText = 'max-width:1200px;margin:0 auto;';
 
@@ -138,7 +147,9 @@
     innerWrap.appendChild(makeGrid());
     sec.appendChild(innerWrap);
 
-    footer.parentNode.insertBefore(sec, footer);
+    /* In coda al footer e non prima: cosi' "I nostri eventi" chiude la
+       pagina, dopo l'indirizzo e "Come Arrivare", uguale ovunque. */
+    footer.appendChild(sec);
     return true;
   }
 

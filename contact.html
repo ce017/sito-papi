@@ -317,6 +317,23 @@ nav p, nav span, header nav p, nav label { color: #ffffff !important; }
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <script src="unpercento.js" defer></script>
+<style id="papi-bg-fix">
+/* Le sezioni che aggiungiamo noi devono lasciar vedere lo sfondo del sito
+   (il gradiente ambra e le stelle del canvas): le regole generiche
+   "section { background:...!important }" piu' su le coprivano con un
+   rettangolo pieno. I selettori per id vincono comunque sul tag. */
+#papi-countdown,
+#papi-home-events,
+#papi-unpercento,
+#papi-club-info,
+#papi-venue-header,
+#papi-restaurant-header,
+#papi-dynamic-events,
+#papi-events-live-wrap,
+#papi-events-section,
+#papi-galleria-wrap,
+#papi-partners-fallback { background: transparent !important; }
+</style>
   <script src="partners.js" defer></script>
   <script src="contatti.js" defer></script>
 <style id="papi-visual-fix">
@@ -980,11 +997,15 @@ nav [data-framer-name="Primary Button"]{padding-top:9px !important;padding-botto
     });
 
     /* ── 7. Fix venue page: add header if missing ── */
-    var venue = document.querySelector('#thevenue');
+    /* "#thevenue" non e' solo della pagina Locale: il template Framer usa
+       lo stesso id anche in Contatti e Ristorante, e li' finiva un'intestazione
+       "IL NOSTRO SPAZIO" che non c'entrava niente. */
+    var _pgV = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
+    var venue = (_pgV === 'venue') ? document.querySelector('#thevenue') : null;
     if (venue && !document.querySelector('#papi-venue-header')) {
       var hdr = document.createElement('section');
       hdr.id = 'papi-venue-header';
-      hdr.style.cssText = 'padding:120px 40px 60px;background:#0a0a0a;';
+      hdr.style.cssText = 'padding:120px 40px 60px;background:transparent;';
       hdr.innerHTML =
         '<div style="max-width:960px;margin:0 auto;">' +
           '<div style="display:inline-block;background:#F5B800;color:#111;font-family:monospace;font-size:11px;font-weight:700;letter-spacing:0.15em;padding:4px 12px;border-radius:4px;margin-bottom:20px;text-transform:uppercase;">Il Locale</div>' +
@@ -999,7 +1020,7 @@ nav [data-framer-name="Primary Button"]{padding-top:9px !important;padding-botto
       if (!document.querySelector('#papi-restaurant-header')) {
         var rHdr = document.createElement('section');
         rHdr.id = 'papi-restaurant-header';
-        rHdr.style.cssText = 'padding:120px 40px 60px;background:#0a0a0a;';
+        rHdr.style.cssText = 'padding:120px 40px 60px;background:transparent;';
         rHdr.innerHTML =
           '<div style="max-width:960px;margin:0 auto;">' +
             '<div style="display:inline-block;background:#F5B800;color:#111;font-family:monospace;font-size:11px;font-weight:700;letter-spacing:0.15em;padding:4px 12px;border-radius:4px;margin-bottom:20px;text-transform:uppercase;">Ristorante</div>' +
@@ -1562,6 +1583,11 @@ form[data-framer-name="Contact Form"] { display: none !important; }
     logoLink.className = 'papi-nav-logo';
     logoLink.innerHTML = '<img src="' + LOGO_SRC + '" alt="Papi on the Beach">';
     nav.insertBefore(logoLink, nav.firstChild);
+    /* La nav di Framer ha gia' il suo logo dentro il Container: lasciandolo
+       li' se ne vedevano due affiancati in alto a sinistra. */
+    nav.querySelectorAll('[data-framer-name="Logo"]').forEach(function (el) {
+      if (!el.contains(logoLink)) el.style.setProperty('display', 'none', 'important');
+    });
     var burger = document.createElement('button');
     burger.className = 'papi-nav-burger';
     burger.setAttribute('aria-label', 'Menu');

@@ -89,8 +89,7 @@
          larghezza naturale e sborderebbero dalla colonna. */
       '#papi-partners-fallback .papi-partners-griglia img{width:100% !important;min-width:0 !important;' +
         'max-width:100% !important;height:74px !important;max-height:none !important;' +
-        'object-fit:contain !important;' +
-        'filter:drop-shadow(0 8px 16px rgba(0,0,0,0.75));}' +
+        'object-fit:contain !important;}' +
       '@media (max-width:900px){#papi-partners-fallback .papi-partners-griglia{gap:14px;}' +
         '#papi-partners-fallback .papi-partners-griglia img{height:56px !important;}}' +
 
@@ -110,9 +109,7 @@
           'gap:14px;width:max-content;margin-top:26px;}' +
         '#papi-partners-fallback .papi-partner-link[aria-hidden="true"]{display:block;}' +
         '#papi-partners-fallback .papi-partner-link{flex:0 0 auto;width:132px;padding:14px 16px;' +
-          'border-radius:16px;background:rgba(255,255,255,0.045);' +
-          'border:1px solid rgba(255,255,255,0.07);' +
-          'box-shadow:0 10px 24px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.06);}' +
+          'background:none;border:0;box-shadow:none;}' +
         '#papi-partners-fallback .papi-partners-griglia img{height:64px !important;}' +
       '}' +
 

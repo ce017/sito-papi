@@ -22,7 +22,7 @@
     whatsapp:    '393792771571',
     instagram:   'https://www.instagram.com/papi_onthebeach/',
     /* messaggio già scritto quando si apre WhatsApp */
-    waTesto:     'Ciao Papi! Vorrei qualche informazione.'
+    waTesto:     'Ciao Papi on the Beach! Vorrei qualche informazione.'
   };
 
   /* Reso disponibile al resto della pagina: il form usa la stessa mail,

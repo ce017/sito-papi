@@ -65,41 +65,57 @@ Verificato leggendo le policy vere, non la documentazione.
 
 **Da sistemare, in ordine di importanza:**
 
-### 1. Le policy dicono "chiunque sia autenticato", non "l'admin"
+### 1. ~~Le policy dicevano "chiunque sia autenticato"~~ — CHIUSA
 
-Oggi `events` e `event-images` si aprono a chi ha `auth.role() =
-'authenticated'`. Vuol dire **qualsiasi utente registrato**, non solo noi. Se
-in Supabase la registrazione libera è accesa, uno può crearsi un account da
-solo e da lì modificare o cancellare tutti gli eventi.
+**Era una falla vera, non teorica.** Verificato che `disable_signup` fosse
+`false`: con la chiave pubblica presente nel sorgente della pagina chiunque
+poteva registrarsi da solo, diventare `authenticated`, e da lì riscrivere o
+cancellare tutti gli eventi e caricare file nel bucket. Il pannello con
+username e password non c'entrava niente: quella è una schermata, il cancello
+vero sono le policy.
 
-Al momento nel progetto c'è **un solo utente** (`admin@papibeach.it`), quindi
-non è successo niente. Ma conviene legare le policy a quell'account preciso,
-così la cosa non dipende da un'impostazione che qualcuno potrebbe cambiare.
+Sistemata con la migrazione `restringi_scrittura_agli_admin`. Ora esiste una
+tabella `public.admins` con dentro gli account autorizzati, e le policy
+chiedono `public.is_admin()` invece di "sei autenticato". La tabella non ha
+policy proprie, quindi dal browser non è né leggibile né scrivibile: si tocca
+solo dalla dashboard.
+
+Registrarsi ora non serve a niente: un account nuovo non può leggere le
+statistiche né toccare gli eventi.
+
+**Verificato simulando i tre casi:**
+
+| Caso | Esito |
+|---|---|
+| Admin: riconosciuto | sì |
+| Admin: scrive sugli eventi | sì |
+| Admin: legge le statistiche | 723 righe |
+| Utente registrato qualsiasi: riconosciuto come admin | no |
+| Utente registrato qualsiasi: INSERT sugli eventi | respinta |
+| Utente registrato qualsiasi: UPDATE sugli eventi | 0 righe modificate |
+| Utente registrato qualsiasi: legge le statistiche | 0 righe |
+| Visitatore non registrato: vede gli eventi | 12 |
+| Visitatore non registrato: INSERT sugli eventi | respinta |
+
+**Per aggiungere un secondo amministratore** (dall'editor SQL della dashboard):
 
 ```sql
--- Solo l'account admin puo' scrivere sugli eventi
+insert into public.admins (user_id, nota)
+select id, 'chi e' from auth.users where email = 'INDIRIZZO@ESEMPIO.IT';
+```
+
+**Per tornare indietro**, se qualcosa non tornasse:
+
+```sql
 drop policy if exists "Admin full access events" on public.events;
 create policy "Admin full access events" on public.events
   for all to authenticated
-  using  (auth.uid() = '7bc88c2d-1004-44fb-8a8d-7e1447aa7085')
-  with check (auth.uid() = '7bc88c2d-1004-44fb-8a8d-7e1447aa7085');
-
--- Solo l'account admin puo' caricare o cancellare le foto degli eventi
-drop policy if exists "Admin upload event images" on storage.objects;
-create policy "Admin upload event images" on storage.objects
-  for insert to authenticated
-  with check (bucket_id = 'event-images'
-              and auth.uid() = '7bc88c2d-1004-44fb-8a8d-7e1447aa7085');
-
-drop policy if exists "Admin delete event images" on storage.objects;
-create policy "Admin delete event images" on storage.objects
-  for delete to authenticated
-  using (bucket_id = 'event-images'
-         and auth.uid() = '7bc88c2d-1004-44fb-8a8d-7e1447aa7085');
+  using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 ```
 
-E in **Authentication → Providers → Email**, spegnere *"Allow new users to
-sign up"*: nessuno deve potersi registrare da solo.
+Spegnere *"Allow new users to sign up"* resta comunque consigliato: non è più
+una questione di sicurezza, ma evita che qualcuno riempia `auth.users` di
+registrazioni inutili.
 
 ### 2. Chiunque può riempire la tabella `analytics`
 

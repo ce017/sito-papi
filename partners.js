@@ -100,12 +100,14 @@
       '@media (max-width:700px){' +
         '#papi-partners-fallback{overflow:hidden;}' +
         '#papi-partners-fallback .papi-partners-grid-wrap{max-width:none !important;' +
-          'margin-left:-24px;margin-right:-24px;width:calc(100% + 48px);overflow:hidden;' +
+          'margin-left:-24px;margin-right:-24px;width:calc(100% + 48px);' +
+          'overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;' +
+          'scrollbar-width:none;overscroll-behavior-x:contain;' +
           '-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);' +
           'mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);}' +
+        '#papi-partners-fallback .papi-partners-grid-wrap::-webkit-scrollbar{display:none;}' +
         '#papi-partners-fallback .papi-partners-griglia{display:flex !important;flex-wrap:nowrap;' +
-          'gap:14px;width:max-content;margin-top:26px;' +
-          'animation:papiNastro 34s linear infinite;}' +
+          'gap:14px;width:max-content;margin-top:26px;}' +
         '#papi-partners-fallback .papi-partner-link[aria-hidden="true"]{display:block;}' +
         '#papi-partners-fallback .papi-partner-link{flex:0 0 auto;width:132px;padding:14px 16px;' +
           'border-radius:16px;background:rgba(255,255,255,0.045);' +
@@ -113,11 +115,7 @@
           'box-shadow:0 10px 24px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.06);}' +
         '#papi-partners-fallback .papi-partners-griglia img{height:64px !important;}' +
       '}' +
-      /* meta' esatta: la lista e' stampata due volte, quindi il giro si
-         chiude senza salti */
-      '@keyframes papiNastro{from{transform:translateX(-50%);}to{transform:translateX(0);}}' +
-      '@media (prefers-reduced-motion:reduce){' +
-        '#papi-partners-fallback .papi-partners-griglia{animation:none !important;}}' +
+
       '#papi-partners-fallback .papi-partners-grid-wrap > div,' +
       '#papi-partners-fallback .papi-partners-grid-wrap > a{' +
         'width:100% !important;min-width:0 !important;max-width:100% !important;}' +
@@ -125,6 +123,66 @@
       '.papi-partner-link:hover img{opacity:1 !important;transform:scale(1.05);}' +
       '.papi-partner-link:focus-visible{outline:2px solid ' + AMBER + ';outline-offset:4px;border-radius:8px;}';
     document.head.appendChild(st);
+  }
+
+  /* Quanti secondi per far passare l'intera lista una volta. Piu' basso =
+     piu' veloce. */
+  var GIRO_SECONDI = 26;
+
+  /* Il nastro lo muoviamo cambiando lo scorrimento del contenitore invece
+     che con un'animazione CSS: cosi' il dito puo' trascinarlo davvero, e
+     quando lo lasci riparte da solo. La lista e' stampata due volte, quindi
+     arrivati a meta' si torna all'inizio senza che si veda il salto. */
+  function avviaNastro(wrap) {
+    if (!wrap || wrap.papiNastroAttivo) return;
+    wrap.papiNastroAttivo = true;
+
+    var track = wrap.querySelector('.papi-partners-griglia');
+    var stretto = window.matchMedia('(max-width:700px)');
+    var menoMoto = window.matchMedia('(prefers-reduced-motion:reduce)');
+    var pos = 0;
+    var fermoFino = 0;
+    var ultimo = 0;
+
+    function meta() { return track ? track.scrollWidth / 2 : 0; }
+
+    function pausa(ms) { fermoFino = Date.now() + ms; }
+
+    /* Mentre il dito e' sopra non muoviamo niente; dopo che ha lasciato
+       diamo un attimo di respiro (lo scorrimento per inerzia continua). */
+    ['pointerdown', 'touchstart', 'wheel'].forEach(function (ev) {
+      wrap.addEventListener(ev, function () { pausa(60000); }, { passive: true });
+    });
+    ['pointerup', 'pointercancel', 'touchend', 'touchcancel'].forEach(function (ev) {
+      wrap.addEventListener(ev, function () { pausa(1600); }, { passive: true });
+    });
+
+    function passo(ts) {
+      requestAnimationFrame(passo);
+      if (!ultimo) { ultimo = ts; return; }
+      var dt = ts - ultimo;
+      ultimo = ts;
+      if (dt > 200) return;                       /* scheda tornata in primo piano */
+      if (!stretto.matches || menoMoto.matches) return;
+      var m = meta();
+      if (!m) return;
+
+      /* se nel frattempo l'ha spostato il dito, ripartiamo da dove sta lui */
+      if (Math.abs(wrap.scrollLeft - pos) > 2) pos = wrap.scrollLeft;
+      if (Date.now() < fermoFino) return;
+
+      /* verso destra: lo scorrimento cala */
+      pos -= (m / (GIRO_SECONDI * 1000)) * dt;
+      if (pos <= 0) pos += m;
+      else if (pos >= m) pos -= m;
+      wrap.scrollLeft = pos;
+    }
+
+    /* partiamo da meta' cosi' c'e' contenuto sia a destra sia a sinistra */
+    requestAnimationFrame(function () {
+      if (stretto.matches) { pos = meta(); wrap.scrollLeft = pos; }
+      requestAnimationFrame(passo);
+    });
   }
 
   function makeGrid() {
@@ -205,6 +263,7 @@
 
     footer.appendChild(sec);
     ordina(footer, sec);
+    avviaNastro(sec.querySelector('.papi-partners-grid-wrap'));
     return true;
   }
 

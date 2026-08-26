@@ -157,6 +157,22 @@
         'border-radius:99px;border:2px solid transparent;background-clip:content-box;}' +
       '#papi-ev-modal-box::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.28);' +
         'border:2px solid transparent;background-clip:content-box;}' +
+      '#papi-cd-cifre{flex:0 1 auto;display:flex;gap:20px;text-align:center;flex-wrap:nowrap;}' +
+      '.papi-cd-cella{min-width:74px;}' +
+      '.papi-cd-num{font-family:"Inter Display",Inter,Arial,sans-serif;font-weight:800;' +
+        'font-size:clamp(30px,5vw,52px);line-height:1;color:#fff;font-variant-numeric:tabular-nums;}' +
+      '.papi-cd-lab{font-family:monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;' +
+        'color:rgba(255,255,255,0.4);margin-top:8px;}' +
+      /* Da telefono le quattro cifre stanno su una riga sola: le celle si
+         dividono lo spazio invece di avere una larghezza minima fissa, e il
+         pannello stringe i suoi margini per lasciarne di piu'. */
+      '@media (max-width:700px){' +
+        '#papi-countdown .papi-glass{padding:28px 20px !important;gap:22px !important;}' +
+        '#papi-cd-cifre{width:100%;gap:6px;justify-content:space-between;}' +
+        '.papi-cd-cella{min-width:0;flex:1 1 0;}' +
+        '.papi-cd-num{font-size:clamp(24px,8.2vw,38px);}' +
+        '.papi-cd-lab{font-size:9px;letter-spacing:0.1em;margin-top:6px;}' +
+      '}' +
       '[data-papi-ev]{cursor:pointer;}' +
       '@keyframes papiOggiPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}' +
       '@media (max-width:640px){' +
@@ -312,12 +328,9 @@
   }
 
   function cellaHtml(valore, etichetta) {
-    return '<div style="min-width:74px;">' +
-      '<div class="papi-cd-num" style="font-family:\'Inter Display\',Inter,Arial,sans-serif;font-weight:800;' +
-           'font-size:clamp(30px,5vw,52px);line-height:1;color:#fff;font-variant-numeric:tabular-nums;">' +
-        valore + '</div>' +
-      '<div style="font-family:monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;' +
-           'color:rgba(255,255,255,0.4);margin-top:8px;">' + etichetta + '</div>' +
+    return '<div class="papi-cd-cella">' +
+      '<div class="papi-cd-num">' + valore + '</div>' +
+      '<div class="papi-cd-lab">' + etichetta + '</div>' +
     '</div>';
   }
 
@@ -342,8 +355,7 @@
               (ev.end_time ? ' - ' + escHtml(ev.end_time) : '') : '') +
           '</div>' +
         '</div>' +
-        '<div id="papi-cd-cifre" style="flex:0 1 auto;display:flex;gap:20px;text-align:center;' +
-             'flex-wrap:wrap;"></div>' +
+        '<div id="papi-cd-cifre"></div>' +
       '</div>';
     return sec;
   }

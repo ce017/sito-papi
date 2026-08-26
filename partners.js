@@ -27,6 +27,9 @@
     { src: 'img-eventi/trenches-party.png',             name: 'Trenches Party',    ig: 'https://www.instagram.com/trenches.party' },
     { src: 'img-eventi/unpercento.png',                 name: '1%',                ig: 'https://www.instagram.com/unpercento.official' },
     { src: 'img-eventi/tutt-altro.png',                 name: "Tutt'Altro",        ig: 'https://www.instagram.com/__tuttaltro' },
+    /* in webp e non png: e' un render pieno di sfumature, in png pesava
+       244 kB contro 59, a parita' di resa */
+    { src: 'img-eventi/project-x.webp',                 name: 'Project X',         ig: 'https://www.instagram.com/daproject_x' },
   ];
 
   /* Una riga sola: tante colonne quanti sono i loghi, cosi' aggiungendone

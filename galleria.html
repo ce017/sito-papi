@@ -1592,10 +1592,9 @@ document.addEventListener('keydown', function(e) {
     /* `width:calc(100% + 18px)` spinge fuori la barra di scorrimento che
        Drive disegna dentro l'iframe; overflow:hidden sul padre la taglia. */
     var embed = fid
-      ? '<div style="overflow:hidden;background:#0d0d0d;">' +
+      ? '<div class="papi-gal-frame">' +
           '<iframe src="https://drive.google.com/embeddedfolderview?id=' + encodeURIComponent(fid) + '#grid" ' +
-          'style="width:calc(100% + 18px);height:420px;border:0;display:block;" loading="lazy" ' +
-          'title="Foto di ' + escHtml(ev.title) + '"></iframe>' +
+          'loading="lazy" title="Foto di ' + escHtml(ev.title) + '"></iframe>' +
         '</div>'
       : '<div style="background:#0d0d0d;padding:48px 24px;text-align:center;color:rgba(255,255,255,0.3);font-size:14px;">Anteprima non disponibile &mdash; apri la cartella per vedere le foto.</div>';
 
@@ -1620,6 +1619,17 @@ document.addEventListener('keydown', function(e) {
     var st = document.createElement('style');
     st.id = 'papi-gal-css';
     st.textContent =
+      /* Il riquadro delle foto: era fisso a 420px e lasciava spazio vuoto
+         in fondo. Ora si adatta all'altezza dello schermo, con un minimo
+         e un massimo, cosi' si vedono piu' foto in una volta senza che su
+         un portatile basso il riquadro mangi tutta la pagina. */
+      '.papi-gal-frame{overflow:hidden;background:#0d0d0d;' +
+        'height:clamp(460px,72vh,760px);}' +
+      '.papi-gal-frame iframe{display:block;border:0;height:100%;' +
+        /* i 18px in piu' spingono fuori la barra di scorrimento che Drive
+           disegna dentro l'iframe; overflow:hidden sul padre la taglia */
+        'width:calc(100% + 18px);}' +
+      '@media (max-width:700px){.papi-gal-frame{height:clamp(380px,64vh,560px);}}' +
       '.papi-gal-card{margin-bottom:48px;scroll-margin-top:110px;background:#131313;' +
         'border:1px solid rgba(255,255,255,0.07);border-radius:16px;overflow:hidden;}' +
       '.papi-gal-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;' +

@@ -26,8 +26,7 @@
     { src: 'img-eventi/we-love-reggaeton.png',          name: 'We Love Reggaeton', ig: 'https://www.instagram.com/welovereggaeton_tour' },
     { src: 'img-eventi/trenches-party.png',             name: 'Trenches Party',    ig: 'https://www.instagram.com/trenches.party' },
     { src: 'img-eventi/unpercento.png',                 name: '1%',                ig: 'https://www.instagram.com/unpercento.official' },
-    /* Tutt'Altro e' l'unico ancora senza link Instagram. */
-    { src: 'img-eventi/tutt-altro.png',                 name: "Tutt'Altro",        ig: '' },
+    { src: 'img-eventi/tutt-altro.png',                 name: "Tutt'Altro",        ig: 'https://www.instagram.com/__tuttaltro' },
   ];
 
   /* Una riga sola: tante colonne quanti sono i loghi, cosi' aggiungendone

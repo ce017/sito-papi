@@ -102,14 +102,20 @@
           'margin-left:-24px;margin-right:-24px;width:calc(100% + 48px);' +
           'overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;' +
           'scrollbar-width:none;overscroll-behavior-x:contain;' +
-          '-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);' +
-          'mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);}' +
+          '-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);' +
+          'mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);}' +
         '#papi-partners-fallback .papi-partners-grid-wrap::-webkit-scrollbar{display:none;}' +
         '#papi-partners-fallback .papi-partners-griglia{display:flex !important;flex-wrap:nowrap;' +
           'gap:14px;width:max-content;margin-top:26px;}' +
         '#papi-partners-fallback .papi-partner-link[aria-hidden="true"]{display:block;}' +
+        /* Fondo pieno e non semitrasparente: con rgba ogni piastrella
+           prendeva il colore di quello che le passava dietro (stelle e
+           sfumatura ambra), e i box risultavano di colori diversi fra loro.
+           Cosi' invece sono tutti identici. */
         '#papi-partners-fallback .papi-partner-link{flex:0 0 auto;width:132px;padding:14px 16px;' +
-          'background:none;border:0;box-shadow:none;}' +
+          'border-radius:16px;background:#161616;' +
+          'border:1px solid rgba(255,255,255,0.07);' +
+          'box-shadow:0 10px 24px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.06);}' +
         '#papi-partners-fallback .papi-partners-griglia img{height:64px !important;}' +
       '}' +
 

@@ -400,6 +400,12 @@ nav p, nav span, header nav p, nav label { color: #ffffff !important; }
 #papi-dynamic-events,
 #papi-events-section { width: 100%; box-sizing: border-box; }
 .papi-cont { max-width: 1320px; margin-left: auto; margin-right: auto; width: 100%; }
+
+/* Il pulsante "Biglietti & Tavoli" della barra: tolto. Puntava a
+   events.html#calendar@, un'ancora che non esiste, e la voce "Eventi" porta
+   gia' allo stesso posto. La prenotazione tavolo e' diventata un bottone
+   accanto a quello dei biglietti. */
+nav [data-framer-name="Primary Button"] { display: none !important; }
 @media (max-width: 700px) {
   .papi-sez { padding-left: 24px; padding-right: 24px; }
 }
@@ -1367,7 +1373,7 @@ document.addEventListener('keydown', function(e) {
     var badge = oggi ? '<span class="papi-oggi-badge">OGGI!</span>' : '';
     var imgBox = ev.image_url
       ? '<div style="width:100%;aspect-ratio:1/1;overflow:hidden;background:#0a0a0a;position:relative;"><img src="'+escHtml(ev.image_url)+'" style="width:100%;height:100%;object-fit:cover;display:block;">'+badge+'</div>'
-      : '<div style="width:100%;aspect-ratio:1/1;background:linear-gradient(135deg,#1a1400,#111);display:flex;align-items:center;justify-content:center;position:relative;"><span style="font-size:36px;">🎵</span>'+badge+'</div>';
+      : '<div class="papi-ev-vuoto" style="width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;position:relative;"><span style="font-size:36px;opacity:0.35;">🎵</span>'+badge+'</div>';
     var btn = '';
     if (past) {
       if (ev.gallery_url) {
@@ -1376,6 +1382,15 @@ document.addEventListener('keydown', function(e) {
     } else if (ev.ticket_url) {
       btn = '<a href="'+escHtml(safeUrl(ev.ticket_url))+'" target="_blank" rel="noopener" style="display:inline-block;background:#F5B800;color:#111;font-weight:700;padding:7px 14px;border-radius:6px;text-decoration:none;font-size:11px;letter-spacing:0.04em;">🎟️ Biglietti</a>';
     }
+    /* Prenota tavolo accanto ai biglietti, solo sulle serate non passate.
+       Numero e messaggio arrivano da contatti.js. */
+    if (!past) {
+      var tavoloUrl = (window.PapiContatti && window.PapiContatti.linkTavolo)
+        ? window.PapiContatti.linkTavolo() : '';
+      if (tavoloUrl) {
+        btn += '<a href="'+escHtml(tavoloUrl)+'" target="_blank" rel="noopener noreferrer" style="display:inline-block;background:#25D366;color:#0b2a16;font-weight:700;padding:7px 14px;border-radius:6px;text-decoration:none;font-size:11px;letter-spacing:0.04em;">🍾 Tavolo</a>';
+      }
+    }
     var bcolor = oggi ? 'rgba(245,184,0,0.6)' : 'rgba(245,184,0,0.2)';
     return '<div class="papi-ev-card'+(oggi?' papi-ev-oggi':'')+'" data-papi-ev="'+escHtml(String(ev.id))+'" style="border:1px solid '+bcolor+';overflow:hidden;display:flex;flex-direction:column;transition:transform 0.2s,border-color 0.2s;'+(past?'opacity:0.94;':'')+'" onmouseenter="this.style.transform=\'translateY(-3px)\';this.style.borderColor=\'rgba(245,184,0,0.5)\'" onmouseleave="this.style.transform=\'\';this.style.borderColor=\''+bcolor+'\'">' +
       imgBox +
@@ -1383,7 +1398,7 @@ document.addEventListener('keydown', function(e) {
         '<div style="font-size:9px;font-family:monospace;color:#F5B800;letter-spacing:0.12em;text-transform:uppercase;">' + (fmtDate(ev.event_date) || 'Prossimo Evento') + '</div>' +
         '<h2 style="font-family:Inter Display,Inter,Arial,sans-serif;font-weight:800;font-size:17px;color:#fff;text-transform:uppercase;letter-spacing:1px;margin:0;line-height:1.1;">' + escHtml(ev.title) + '</h2>' +
         (ev.event_date ? '<div style="color:rgba(255,255,255,0.4);font-size:11px;">' + fmtTime(ev.event_date) + (ev.end_time ? ' - ' + escHtml(ev.end_time) : '') + '</div>' : '') +
-        (btn ? '<div style="margin-top:auto;padding-top:10px;">' + btn + '</div>' : '') +
+        (btn ? '<div style="margin-top:auto;padding-top:10px;display:flex;flex-wrap:wrap;gap:6px;">' + btn + '</div>' : '') +
       '</div>' +
     '</div>';
   }
@@ -1394,10 +1409,20 @@ document.addEventListener('keydown', function(e) {
     st.id = 'papi-events-live-css';
     st.textContent =
       '.papi-ev-card{position:relative;border-radius:16px;' +
-        'background:linear-gradient(148deg,rgba(26,26,26,0.60) 0%,rgba(10,10,10,0.72) 58%,rgba(6,6,6,0.78) 100%);' +
-        '-webkit-backdrop-filter:blur(22px) saturate(150%);backdrop-filter:blur(22px) saturate(150%);' +
-        'box-shadow:0 24px 60px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.10),' +
-          'inset 0 -1px 0 rgba(0,0,0,0.55);}' +
+        'background:linear-gradient(148deg,rgba(42,42,42,0.55) 0%,rgba(14,14,14,0.70) 58%,rgba(6,6,6,0.78) 100%);' +
+        '-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);' +
+        'box-shadow:0 24px 60px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.14),' +
+          'inset 1px 0 0 rgba(255,255,255,0.05),inset 0 -1px 0 rgba(0,0,0,0.55);}' +
+      /* Il riflesso: e' questo che fa leggere il pannello come vetro.
+         Sui pannelli grandi c'era gia', sulle card l'avevo dimenticato e
+         restavano dei rettangoli scuri qualunque. */
+      '.papi-ev-card::before{content:"";position:absolute;inset:0;pointer-events:none;' +
+        'border-radius:inherit;' +
+        'background:radial-gradient(125% 65% at 10% -12%,rgba(255,255,255,0.13) 0%,rgba(255,255,255,0) 58%),' +
+          'radial-gradient(90% 55% at 105% 0%,rgba(245,184,0,0.09) 0%,rgba(245,184,0,0) 70%);}' +
+      /* Senza locandina il riquadro in alto era un blocco pieno che tappava
+         il vetro: ora lascia passare. */
+      '.papi-ev-card .papi-ev-vuoto{background:transparent !important;}' +
       '@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){' +
         '.papi-ev-card{background:rgba(9,9,9,0.92);}}' +
       '.papi-oggi-badge{position:absolute;top:10px;left:10px;background:#F5B800;color:#111;' +

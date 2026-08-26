@@ -22,12 +22,24 @@
     whatsapp:    '393792771571',
     instagram:   'https://www.instagram.com/papi_onthebeach/',
     /* messaggio già scritto quando si apre WhatsApp */
-    waTesto:     'Ciao Papi on the Beach! Vorrei qualche informazione.'
+    waTesto:     'Ciao Papi on the Beach! Vorrei qualche informazione.',
+    /* messaggio del bottone "Prenota tavolo" accanto ai biglietti */
+    waTavolo:    'Ciao, vorrei prenotare un tavolo. Quali sono i prezzi?'
   };
 
-  /* Reso disponibile al resto della pagina: il form usa la stessa mail,
-     così c'è un posto solo da aggiornare. */
+  /* Reso disponibile al resto della pagina: il form usa la stessa mail e il
+     bottone "Prenota tavolo" lo stesso numero, così c'è un posto solo da
+     aggiornare. */
   window.PapiContatti = CONTATTI;
+
+  /* Link WhatsApp già pronto per la prenotazione tavolo. Torna stringa vuota
+     se il numero non è compilato, così chi lo usa non mette un bottone che
+     non porta da nessuna parte. */
+  CONTATTI.linkTavolo = function () {
+    if (!CONTATTI.whatsapp) return '';
+    return 'https://wa.me/' + CONTATTI.whatsapp +
+           (CONTATTI.waTavolo ? '?text=' + encodeURIComponent(CONTATTI.waTavolo) : '');
+  };
 
   var AMBER = '#F5B800';
   var WA_GREEN = '#25D366';

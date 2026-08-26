@@ -405,6 +405,12 @@ nav p, nav span, header nav p, nav label { color: #ffffff !important; }
 #papi-dynamic-events,
 #papi-events-section { width: 100%; box-sizing: border-box; }
 .papi-cont { max-width: 1320px; margin-left: auto; margin-right: auto; width: 100%; }
+
+/* Il pulsante "Biglietti & Tavoli" della barra: tolto. Puntava a
+   events.html#calendar@, un'ancora che non esiste, e la voce "Eventi" porta
+   gia' allo stesso posto. La prenotazione tavolo e' diventata un bottone
+   accanto a quello dei biglietti. */
+nav [data-framer-name="Primary Button"] { display: none !important; }
 @media (max-width: 700px) {
   .papi-sez { padding-left: 24px; padding-right: 24px; }
 }

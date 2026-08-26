@@ -25,6 +25,7 @@
     minuti:    'min',
     secondi:   'sec',
     biglietti: '🎟️ Acquista biglietti',
+    tavolo:    '🍾 Prenota tavolo',
     galleria:  '📸 Guarda la galleria',
     lineup:    'Line-up',
     dove:      'Dove',
@@ -251,6 +252,17 @@
     if (ticket) {
       azioni += '<a class="papi-ev-cta" href="' + escHtml(ticket) + '" target="_blank" rel="noopener" ' +
                 'style="background:' + AMBER + ';color:#111;">' + T.biglietti + '</a>';
+    }
+
+    /* Prenota tavolo, accanto ai biglietti. Solo per le serate non ancora
+       finite: per un evento passato non avrebbe senso. Il numero e il testo
+       del messaggio stanno in contatti.js. */
+    var fine = fineEvento(ev);
+    var tavolo = (window.PapiContatti && window.PapiContatti.linkTavolo)
+      ? window.PapiContatti.linkTavolo() : '';
+    if (tavolo && fine && fine.getTime() > Date.now()) {
+      azioni += '<a class="papi-ev-cta" href="' + escHtml(tavolo) + '" target="_blank" rel="noopener noreferrer" ' +
+                'style="background:#25D366;color:#0b2a16;">' + T.tavolo + '</a>';
     }
     if (galleria) {
       azioni += '<a class="papi-ev-cta" href="galleria.html#event-' + escHtml(String(ev.id)) + '" ' +

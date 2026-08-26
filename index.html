@@ -1386,9 +1386,9 @@ document.addEventListener('keydown', function(e) {
     return '<div data-papi-ev="'+escHtml(String(ev.id))+'" style="background:#161616;border:1px solid rgba(245,184,0,0.2);border-radius:16px;overflow:hidden;display:flex;flex-wrap:wrap;margin-bottom:20px;">' +
       (ev.image_url ? '<img src="'+escHtml(ev.image_url)+'" style="width:100%;max-width:300px;height:200px;object-fit:cover;flex-shrink:0;">' : '') +
       '<div style="padding:24px;flex:1;min-width:220px;">' +
-        '<div style="font-size:10px;font-family:monospace;color:#F5B800;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Prossimo Evento</div>' +
+        '<div style="font-size:10px;font-family:monospace;color:#F5B800;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">' + (fmtDate(ev.event_date) || 'In programma') + '</div>' +
         '<h2 style="font-family:Inter Display,Inter,Arial,sans-serif;font-weight:800;font-size:26px;color:#fff;text-transform:uppercase;letter-spacing:2px;margin:0 0 6px;line-height:1.1;">' + escHtml(ev.title) + '</h2>' +
-        '<div style="color:rgba(255,255,255,0.45);font-size:13px;margin-bottom:12px;">' + fmtDate(ev.event_date) + (ev.event_date ? ' &middot; ' + fmtTime(ev.event_date) + (ev.end_time ? ' - ' + escHtml(ev.end_time) : '') : '') + '</div>' +
+        (ev.event_date ? '<div style="color:rgba(255,255,255,0.45);font-size:13px;margin-bottom:12px;">' + fmtTime(ev.event_date) + (ev.end_time ? ' - ' + escHtml(ev.end_time) : '') + '</div>' : '') +
         (ev.description ? '<p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.65;margin:0 0 18px;">' + escHtml(ev.description) + '</p>' : '') +
         (ev.ticket_url ? '<a href="'+escHtml(safeUrl(ev.ticket_url))+'" target="_blank" rel="noopener" style="display:inline-block;background:#F5B800;color:#111;font-weight:700;padding:12px 22px;border-radius:8px;text-decoration:none;font-size:14px;letter-spacing:0.04em;">🎫 Acquista Biglietti</a>' : '') +
       '</div>' +

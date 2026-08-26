@@ -16,9 +16,10 @@
 
   var CONTATTI = {
     email:       'info@papionthebeach.com',
-    tel:         '',                       /* es. '393331234567' */
-    telVisibile: '',                       /* es. '+39 333 123 4567' */
-    whatsapp:    '',                       /* es. '393331234567' */
+    tel:         '393792771571',
+    telVisibile: '+39 379 277 1571',
+    /* stesso numero del telefono: se il WhatsApp e' un altro, cambia qui */
+    whatsapp:    '393792771571',
     instagram:   'https://www.instagram.com/papi_onthebeach/',
     /* messaggio già scritto quando si apre WhatsApp */
     waTesto:     'Ciao Papi! Vorrei qualche informazione.'
@@ -114,7 +115,8 @@
       '.papi-ct-txt{min-width:0;}' +
       '.papi-ct-lab{font-family:monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;' +
         'opacity:0.65;margin-bottom:2px;}' +
-      '.papi-ct-val{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
+      '.papi-ct-val{font-size:14px;font-weight:600;line-height:1.35;' +
+        'white-space:normal;overflow-wrap:anywhere;}' +
       '@media (max-width:600px){#papi-contatti-griglia{grid-template-columns:1fr;}}';
     document.head.appendChild(st);
   }

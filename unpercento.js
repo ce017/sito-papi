@@ -21,7 +21,9 @@
     name:    '1%',
     tagline: 'not for everyone',
     text:    'Il collettivo di Pordenone. Tessera, stand e premi durante le serate — drink, shot, magliette e altro.',
+    ig:      'https://www.instagram.com/unpercento.official',
     cta:     'Scopri 1%',
+    ctaIg:   'Instagram',
     footer:  'In collaborazione con 1%'
   };
 
@@ -60,10 +62,16 @@
      rosso di marca — con il claim sotto. */
   function marchioHtml() {
     if (UNPERCENTO.logo) {
-      return '<div style="flex:0 0 auto;min-width:120px;max-width:180px;">' +
+      /* il marchio stesso e' un link al loro sito */
+      return '<a href="' + escAttr(UNPERCENTO.url) + '" target="_blank" rel="noopener noreferrer" ' +
+                'aria-label="' + escAttr(UNPERCENTO.logoAlt) + '" ' +
+                'style="flex:0 0 auto;min-width:120px;max-width:180px;display:block;' +
+                'text-decoration:none;transition:transform 0.25s,opacity 0.25s;" ' +
+                'onmouseenter="this.style.transform=\'scale(1.04)\';this.style.opacity=\'0.9\'" ' +
+                'onmouseleave="this.style.transform=\'\';this.style.opacity=\'\'">' +
         '<img src="' + escAttr(UNPERCENTO.logo) + '" alt="' + escAttr(UNPERCENTO.logoAlt) + '" ' +
              'style="width:100%;height:auto;max-height:90px;object-fit:contain;display:block;">' +
-      '</div>';
+      '</a>';
     }
     return '<div style="flex:0 0 auto;min-width:120px;">' +
       '<div style="font-family:Anton,Impact,Haettenschweiler,sans-serif;font-weight:400;' +
@@ -95,10 +103,18 @@
                  'text-transform:uppercase;margin-bottom:10px;">' + UNPERCENTO.label + '</div>' +
             '<p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.65;margin:0 0 20px;">' +
               UNPERCENTO.text + '</p>' +
-            '<a href="' + UNPERCENTO.url + '" target="_blank" rel="noopener noreferrer" ' +
-               'style="display:inline-block;background:' + AMBER + ';color:#111;font-weight:700;' +
-               'padding:12px 22px;border-radius:8px;text-decoration:none;font-size:14px;letter-spacing:0.04em;">' +
-              UNPERCENTO.cta + ' →</a>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:10px;">' +
+              '<a href="' + escAttr(UNPERCENTO.url) + '" target="_blank" rel="noopener noreferrer" ' +
+                 'style="display:inline-block;background:' + AMBER + ';color:#111;font-weight:700;' +
+                 'padding:12px 22px;border-radius:8px;text-decoration:none;font-size:14px;letter-spacing:0.04em;">' +
+                UNPERCENTO.cta + ' →</a>' +
+              (UNPERCENTO.ig
+                ? '<a href="' + escAttr(UNPERCENTO.ig) + '" target="_blank" rel="noopener noreferrer" ' +
+                     'style="display:inline-block;border:1px solid rgba(245,184,0,0.5);color:' + AMBER + ';' +
+                     'font-weight:700;padding:12px 22px;border-radius:8px;text-decoration:none;' +
+                     'font-size:14px;letter-spacing:0.04em;">' + UNPERCENTO.ctaIg + ' ↗</a>'
+                : '') +
+            '</div>' +
           '</div>' +
 
         '</div>' +

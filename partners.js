@@ -20,16 +20,19 @@
   var TITOLO = 'I nostri eventi';
 
   var EVENTI = [
-    /* Tropify e We Love Reggaeton sono ancora senza link: quelli arrivati
-       erano copie di perreo.events e unpercento.official. Finche' `ig` resta
-       vuoto il logo non e' cliccabile. */
-    { src: 'img-eventi/MF_logo%20TROPIFY-outlined.png', name: 'Tropify',           ig: '' },
+    { src: 'img-eventi/MF_logo%20TROPIFY-outlined.png', name: 'Tropify',           ig: 'https://www.instagram.com/tropify.events' },
     { src: 'img-eventi/maldita.png',                    name: 'Maldita',           ig: 'https://www.instagram.com/maldita.official_' },
     { src: 'img-eventi/perreo.png',                     name: 'Perreo',            ig: 'https://www.instagram.com/perreo.events' },
-    { src: 'img-eventi/we-love-reggaeton.png',          name: 'We Love Reggaeton', ig: '' },
+    { src: 'img-eventi/we-love-reggaeton.png',          name: 'We Love Reggaeton', ig: 'https://www.instagram.com/welovereggaeton_tour' },
     { src: 'img-eventi/trenches-party.png',             name: 'Trenches Party',    ig: 'https://www.instagram.com/trenches.party' },
+    { src: 'img-eventi/unpercento.png',                 name: '1%',                ig: 'https://www.instagram.com/unpercento.official' },
+    /* Tutt'Altro e' l'unico ancora senza link Instagram. */
     { src: 'img-eventi/tutt-altro.png',                 name: "Tutt'Altro",        ig: '' },
   ];
+
+  /* Una riga sola: tante colonne quanti sono i loghi, cosi' aggiungendone
+     uno non serve ritoccare il CSS a mano. */
+  var COLONNE = Math.min(EVENTI.length, 8);
 
   function escAttr(s) {
     return String(s == null ? '' : s)
@@ -68,9 +71,9 @@
     st.id = 'papi-partners-fallback-css';
     st.textContent =
       '#papi-partners-fallback .papi-partners-grid-wrap{display:block !important;' +
-        'max-width:1100px;margin-left:auto;margin-right:auto;}' +
+        'max-width:1200px;margin-left:auto;margin-right:auto;}' +
       /* Sei loghi in fila su desktop; scendono a 3 e poi a 2 quando non ci stanno. */
-      '.papi-partners-griglia{grid-template-columns:repeat(6,1fr);}' +
+      '.papi-partners-griglia{grid-template-columns:repeat(' + COLONNE + ',1fr);}' +
       '@media (max-width:900px){.papi-partners-griglia{grid-template-columns:repeat(3,1fr);}}' +
       '@media (max-width:520px){.papi-partners-griglia{grid-template-columns:repeat(2,1fr);}}' +
       '#papi-partners-fallback .papi-partners-grid-wrap > div,' +

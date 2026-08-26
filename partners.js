@@ -72,9 +72,19 @@
       '#papi-partners-fallback .papi-partners-grid-wrap{display:block !important;' +
         'max-width:1200px;margin-left:auto;margin-right:auto;}' +
       /* Sei loghi in fila su desktop; scendono a 3 e poi a 2 quando non ci stanno. */
-      '.papi-partners-griglia{grid-template-columns:repeat(' + COLONNE + ',1fr);}' +
-      '@media (max-width:900px){.papi-partners-griglia{grid-template-columns:repeat(3,1fr);}}' +
-      '@media (max-width:520px){.papi-partners-griglia{grid-template-columns:repeat(2,1fr);}}' +
+      /* Sempre tutti in fila, anche da telefono: rimpiccioliscono, non vanno
+         a capo. Su schermi stretti stringiamo spazi e altezza del logo. */
+      '.papi-partners-griglia{grid-template-columns:repeat(' + COLONNE + ',minmax(0,1fr));}' +
+      '#papi-partners-fallback .papi-partners-griglia img{width:100% !important;min-width:0 !important;' +
+        'max-width:100% !important;height:74px !important;max-height:none !important;' +
+        'object-fit:contain !important;}' +
+      '@media (max-width:900px){#papi-partners-fallback .papi-partners-griglia{gap:10px;}' +
+        '#papi-partners-fallback .papi-partners-griglia img{height:48px !important;}}' +
+      '@media (max-width:600px){#papi-partners-fallback{padding-left:12px;padding-right:12px;}' +
+        '#papi-partners-fallback .papi-partners-griglia{gap:6px;}' +
+        '#papi-partners-fallback .papi-partners-griglia img{height:32px !important;}' +
+        '#papi-partners-fallback .papi-partners-griglia > a,' +
+        '#papi-partners-fallback .papi-partners-griglia > div{padding:2px !important;}}' +
       '#papi-partners-fallback .papi-partners-grid-wrap > div,' +
       '#papi-partners-fallback .papi-partners-grid-wrap > a{' +
         'width:100% !important;min-width:0 !important;max-width:100% !important;}' +
@@ -113,6 +123,23 @@
     return null;
   }
 
+  /* Ordine in fondo alla pagina: prima tutto il resto (compresa la mappa
+     "Come Arrivare", che un altro script sposta in coda al footer dopo di
+     noi), poi la griglia dei loghi, e per ultimo il blocco "logo Papi +
+     indirizzo", che deve chiudere la pagina qualunque cosa aggiungiamo.
+     Rimettiamo in ordine solo se serve: spostare nodi a ogni giro per
+     nulla farebbe sfarfallare quello che c'e' dentro. */
+  function ordina(footer, sec) {
+    var indirizzo = footer.querySelector('[data-framer-name="Papi logo + Address"]');
+    if (indirizzo) {
+      if (sec.nextElementSibling === indirizzo && footer.lastElementChild === indirizzo) return;
+      footer.appendChild(sec);
+      footer.appendChild(indirizzo);
+    } else if (footer.lastElementChild !== sec) {
+      footer.appendChild(sec);
+    }
+  }
+
   function place() {
     var footer = visibleFooter();
     if (!footer) return false;
@@ -122,8 +149,7 @@
        cambiato), lo spostiamo dentro al footer attualmente visibile */
     var existing = document.getElementById('papi-partners-fallback');
     if (existing) {
-      if (isVisible(existing) && existing.parentNode === footer) return true;
-      footer.appendChild(existing);
+      ordina(footer, existing);
       return true;
     }
 
@@ -138,20 +164,17 @@
     var innerWrap = document.createElement('div');
     innerWrap.style.cssText = 'max-width:1200px;margin:0 auto;';
 
-    /* Solo il titolo grande, senza la vecchia targhetta gialla "Partner":
-       la sezione si chiama "I nostri eventi" e basta, uguale su ogni pagina. */
+    /* Stessa lineetta + titolo delle sezioni del sito, centrati. */
     innerWrap.innerHTML =
       '<div style="text-align:center;">' +
-        '<h2 style="font-family:\'Inter Display\',Inter,Arial,sans-serif;font-weight:300;' +
-             'font-size:clamp(28px,3vw,38px);line-height:1.1;letter-spacing:-0.04em;' +
-             'color:#fff;margin:0;">' + TITOLO + '</h2>' +
+        '<div class="papi-tag papi-tag--center"><span>Le crew</span></div>' +
+        '<h2 class="papi-h" style="margin:0;">' + TITOLO + '</h2>' +
       '</div>';
     innerWrap.appendChild(makeGrid());
     sec.appendChild(innerWrap);
 
-    /* In coda al footer e non prima: cosi' "I nostri eventi" chiude la
-       pagina, dopo l'indirizzo e "Come Arrivare", uguale ovunque. */
     footer.appendChild(sec);
+    ordina(footer, sec);
     return true;
   }
 
@@ -161,7 +184,7 @@
     var tries = 0;
     var timer = setInterval(function () {
       place();
-      if (++tries >= 30) clearInterval(timer);
+      if (++tries >= 40) clearInterval(timer);
     }, 300);
   }
 

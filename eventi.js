@@ -313,13 +313,9 @@
       '<div style="max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:32px;' +
            'align-items:center;justify-content:space-between;">' +
         '<div style="flex:1 1 260px;min-width:0;">' +
-          '<div id="papi-cd-label" style="display:inline-block;background:' + AMBER + ';color:#111;' +
-               'font-family:monospace;font-size:11px;font-weight:700;letter-spacing:0.15em;' +
-               'padding:4px 12px;border-radius:4px;text-transform:uppercase;">' + T.prossimo + '</div>' +
-          '<h2 style="font-family:\'Inter Display\',Inter,Arial,sans-serif;font-weight:800;' +
-               'font-size:clamp(26px,4vw,42px);color:#fff;text-transform:uppercase;letter-spacing:1.5px;' +
-               'margin:16px 0 0;line-height:1.08;">' + escHtml(ev.title) + '</h2>' +
-          '<div style="color:rgba(255,255,255,0.45);font-size:14px;margin-top:8px;">' +
+          '<div class="papi-tag"><span id="papi-cd-label">' + T.prossimo + '</span></div>' +
+          '<h2 class="papi-h" style="margin:0;">' + escHtml(ev.title) + '</h2>' +
+          '<div style="color:rgba(255,255,255,0.45);font-size:14px;margin-top:14px;">' +
             fmtDataLunga(ev.event_date) +
             (ev.event_date ? ' &middot; ' + fmtOra(ev.event_date) +
               (ev.end_time ? ' - ' + escHtml(ev.end_time) : '') : '') +
@@ -346,7 +342,8 @@
       /* durante la serata il countdown lascia il posto a "LIVE ORA" */
       if (ora >= inizio && ora < fineMs) {
         label.textContent = T.live;
-        label.style.animation = 'papiOggiPulse 1.6s ease-in-out infinite';
+        label.style.color = AMBER;
+        label.style.fontWeight = '600';
         cifre.innerHTML = '';
         return;
       }
@@ -380,8 +377,7 @@
   /* Subito sotto la hero: il primo blocco che incontri scendendo è la
      sezione eventi, quindi ci infiliamo appena prima. */
   function ancoraCountdown() {
-    return document.getElementById('papi-home-events')
-        || document.getElementById('eventselection')
+    return document.getElementById('eventselection')
         || document.getElementById('aboutku')
         || document.getElementById('about');
   }

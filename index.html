@@ -399,6 +399,21 @@ nav p, nav span, header nav p, nav label { color: #ffffff !important; }
    gia' allo stesso posto. La prenotazione tavolo e' diventata un bottone
    accanto a quello dei biglietti. */
 nav [data-framer-name="Primary Button"] { display: none !important; }
+
+/* Claim della hero. Con 40px di margine per lato, su un telefono da 390px
+   restavano 270px per un testo che ne chiede 292: andavano a capo sia "mai"
+   sia "ricordo", da soli. Da telefono i margini si stringono; text-wrap
+   balance, dove il browser lo supporta, distribuisce le righe invece di
+   lasciare una parola orfana. */
+.papi-hero-claim { padding: 10px 40px 0; }
+.papi-hero-claim p { text-wrap: balance; }
+@media (max-width: 700px) { .papi-hero-claim { padding: 10px 18px 0; } }
+@media (max-width: 360px) {
+  .papi-hero-claim { padding: 10px 12px 0; }
+  .papi-hero-claim p { font-size: 18px !important; }
+}
+/* iPhone SE e simili: gli ultimi pixel per non spezzare la prima riga */
+@media (max-width: 340px) { .papi-hero-claim { padding: 10px 6px 0; } }
 @media (max-width: 700px) {
   .papi-sez { padding-left: 24px; padding-right: 24px; }
 }
@@ -804,7 +819,7 @@ nav [data-framer-name="Primary Button"]{padding-top:9px !important;padding-botto
     <!-- End of bodyEnd -->
 <script id="papi-hero-fix">
 (function(){
-  var ITALIAN = '<div style="text-align:center;padding:10px 40px 0;"><p style="font-family:Inter Display,Inter,sans-serif;font-size:clamp(20px,2.8vw,38px);font-weight:600;letter-spacing:-0.03em;line-height:1.25;color:#ffffff;margin:0;">Dove la musica non si ferma mai<br><span style="color:#F5B800;">e ogni notte diventa un ricordo</span></p></div>';
+  var ITALIAN = '<div class="papi-hero-claim" style="text-align:center;"><p style="font-family:Inter Display,Inter,sans-serif;font-size:clamp(20px,2.8vw,38px);font-weight:600;letter-spacing:-0.03em;line-height:1.25;color:#ffffff;margin:0;">Dove la musica non si ferma&nbsp;mai<br><span style="color:#F5B800;">e ogni notte diventa un&nbsp;ricordo</span></p></div>';
 
   function fixHero(){
     var hero = document.querySelector('[data-framer-name="Hero"]');

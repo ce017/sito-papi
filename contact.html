@@ -349,6 +349,57 @@ nav p, nav span, header nav p, nav label { color: #ffffff !important; }
   .papi-tag span { font-size:15px; }
   .papi-tag::before { width:28px; height:3px; }
 }
+
+/* ── Liquid glass, versione scura ──────────────────────────────
+   Vetro smerigliato: sfoca e satura quello che ci passa dietro (le stelle
+   e il gradiente ambra restano leggibili sotto), fondo quasi nero, bordo
+   con luce in alto a sinistra e ombra in basso a destra, piu' una velatura
+   diagonale che fa il riflesso. */
+.papi-glass {
+  position: relative;
+  background: linear-gradient(148deg, rgba(26,26,26,0.60) 0%, rgba(10,10,10,0.72) 58%, rgba(6,6,6,0.78) 100%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 22px;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    inset 0 -1px 0 rgba(0,0,0,0.55),
+    inset 1px 0 0 rgba(255,255,255,0.04);
+  overflow: hidden;
+}
+/* il riflesso: una banda chiara sottilissima in alto, che sfuma subito */
+.papi-glass::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 60% at 12% -10%, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0) 60%),
+    radial-gradient(90% 50% at 100% 0%, rgba(245,184,0,0.06) 0%, rgba(245,184,0,0) 70%);
+}
+/* Su Safari/iOS senza backdrop-filter il fondo resterebbe troppo trasparente */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .papi-glass { background: rgba(9,9,9,0.92); }
+}
+
+/* ── Allineamento: tutte le sezioni che aggiungiamo noi partono dallo
+   stesso bordo dei titoli gia' presenti nel sito (40px di lato, contenuto
+   largo al massimo 1320px). Prima ognuna aveva il suo contenitore e i
+   titoli finivano a x diverse. */
+/* width:100% e' indispensabile: queste sezioni stanno dentro contenitori
+   flex di Framer e senza larghezza esplicita si restringono al contenuto
+   (680px invece di 1400), finendo centrate e disallineate dal resto. */
+.papi-sez { padding-left: 40px; padding-right: 40px; width: 100%; box-sizing: border-box; }
+#papi-venue-header,
+#papi-restaurant-header,
+#papi-club-info,
+#papi-dynamic-events,
+#papi-events-section { width: 100%; box-sizing: border-box; }
+.papi-cont { max-width: 1320px; margin-left: auto; margin-right: auto; width: 100%; }
+@media (max-width: 700px) {
+  .papi-sez { padding-left: 24px; padding-right: 24px; }
+}
 </style>
   <script src="partners.js" defer></script>
   <script src="contatti.js" defer></script>

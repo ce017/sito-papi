@@ -352,6 +352,57 @@ nav p, nav span, header nav p, nav label { color: #ffffff !important; }
   .papi-tag span { font-size:15px; }
   .papi-tag::before { width:28px; height:3px; }
 }
+
+/* ── Liquid glass, versione scura ──────────────────────────────
+   Vetro smerigliato: sfoca e satura quello che ci passa dietro (le stelle
+   e il gradiente ambra restano leggibili sotto), fondo quasi nero, bordo
+   con luce in alto a sinistra e ombra in basso a destra, piu' una velatura
+   diagonale che fa il riflesso. */
+.papi-glass {
+  position: relative;
+  background: linear-gradient(148deg, rgba(26,26,26,0.60) 0%, rgba(10,10,10,0.72) 58%, rgba(6,6,6,0.78) 100%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 22px;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    inset 0 -1px 0 rgba(0,0,0,0.55),
+    inset 1px 0 0 rgba(255,255,255,0.04);
+  overflow: hidden;
+}
+/* il riflesso: una banda chiara sottilissima in alto, che sfuma subito */
+.papi-glass::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 60% at 12% -10%, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0) 60%),
+    radial-gradient(90% 50% at 100% 0%, rgba(245,184,0,0.06) 0%, rgba(245,184,0,0) 70%);
+}
+/* Su Safari/iOS senza backdrop-filter il fondo resterebbe troppo trasparente */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .papi-glass { background: rgba(9,9,9,0.92); }
+}
+
+/* ── Allineamento: tutte le sezioni che aggiungiamo noi partono dallo
+   stesso bordo dei titoli gia' presenti nel sito (40px di lato, contenuto
+   largo al massimo 1320px). Prima ognuna aveva il suo contenitore e i
+   titoli finivano a x diverse. */
+/* width:100% e' indispensabile: queste sezioni stanno dentro contenitori
+   flex di Framer e senza larghezza esplicita si restringono al contenuto
+   (680px invece di 1400), finendo centrate e disallineate dal resto. */
+.papi-sez { padding-left: 40px; padding-right: 40px; width: 100%; box-sizing: border-box; }
+#papi-venue-header,
+#papi-restaurant-header,
+#papi-club-info,
+#papi-dynamic-events,
+#papi-events-section { width: 100%; box-sizing: border-box; }
+.papi-cont { max-width: 1320px; margin-left: auto; margin-right: auto; width: 100%; }
+@media (max-width: 700px) {
+  .papi-sez { padding-left: 24px; padding-right: 24px; }
+}
 </style>
   <script src="partners.js" defer></script>
   <script src="contatti.js" defer></script>
@@ -759,17 +810,17 @@ nav [data-framer-name="Primary Button"]{padding-top:9px !important;padding-botto
 
   var CSS =
     /* section */
-    '#papi-events-section{background:#0a0a0a;padding:100px 32px 60px;width:100%;box-sizing:border-box;}' +
-    '@media(max-width:640px){#papi-events-section{padding:72px 16px 40px;}}' +
+    '#papi-events-section{background:#0a0a0a;padding:100px 40px 60px;width:100%;box-sizing:border-box;}' +
+    '@media(max-width:700px){#papi-events-section{padding:72px 24px 40px;}}' +
     /* header */
-    '.pe-hd{max-width:1100px;margin:0 auto 32px;}' +
+    '.pe-hd{max-width:1320px;margin:0 auto 32px;}' +
     '@media(max-width:640px){.pe-hd{margin-bottom:20px;}}' +
     '.pe-label{display:flex;align-items:center;gap:8px;font:400 18px/1.2 "Inter",Arial,sans-serif;color:rgba(255,255,255,.72);letter-spacing:normal;text-transform:none;margin-bottom:16px;}' +
     '.pe-label::before{content:"";display:block;flex:0 0 auto;width:36px;height:4px;background:#F5B800;}' +
     '.pe-h1{font:500 clamp(30px,4.4vw,60px)/1.02 "Inter Display","Inter",Arial,sans-serif;color:#fff;margin:0 0 20px;letter-spacing:-.04em;text-transform:none;}' +
     '@media(max-width:600px){.pe-label{font-size:15px;}.pe-label::before{width:28px;height:3px;}}' +
     /* grid */
-    '#papi-events-grid{display:grid;gap:16px;max-width:1100px;margin:0 auto;}' +
+    '#papi-events-grid{display:grid;gap:16px;max-width:1320px;margin:0 auto;}' +
     '@media(max-width:640px){#papi-events-grid{grid-template-columns:1fr !important;gap:12px;}}' +
     /* card */
     '.pe-card{background:#111;border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .25s;}' +

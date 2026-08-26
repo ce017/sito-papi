@@ -115,7 +115,10 @@
         'background:rgba(0,0,0,0.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);' +
         'opacity:0;transition:opacity 0.25s ease;}' +
       '#papi-ev-modal.is-open{display:flex;opacity:1;}' +
-      '#papi-ev-modal-box{position:relative;width:100%;max-width:880px;max-height:88vh;overflow-y:auto;' +
+      /* scrollbar sottile e scura: quella di sistema arrivava bianca e
+         spiccava sul pannello nero */
+      '#papi-ev-modal-box{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.18) transparent;' +
+        'position:relative;width:100%;max-width:880px;max-height:88vh;overflow-y:auto;overscroll-behavior:contain;' +
         'background:#141414;border:1px solid rgba(245,184,0,0.28);border-radius:18px;' +
         'box-shadow:0 30px 80px rgba(0,0,0,0.7);' +
         'transform:translateY(18px) scale(0.98);transition:transform 0.28s cubic-bezier(0.32,0.72,0,1);}' +
@@ -126,8 +129,17 @@
         'transition:background 0.2s ease,transform 0.2s ease;}' +
       '#papi-ev-modal-close:hover{background:' + AMBER + ';color:#111;transform:scale(1.08);}' +
       '.papi-ev-modal-body{padding:28px;}' +
-      '.papi-ev-modal-cover{width:100%;max-height:380px;object-fit:cover;display:block;' +
-        'border-radius:18px 18px 0 0;background:#0a0a0a;}' +
+      /* La locandina non viene ne' stirata ne' tagliata: sta intera dentro
+         al riquadro (object-fit:contain) e il vuoto ai lati lo riempie una
+         copia sfocata della stessa immagine, cosi' i poster verticali non
+         lasciano due bande nere. */
+      '.papi-ev-cover{position:relative;width:100%;height:min(52vh,420px);' +
+        'overflow:hidden;background:#0a0a0a;border-radius:18px 18px 0 0;}' +
+      '.papi-ev-cover-bg{position:absolute;inset:-8%;width:116%;height:116%;' +
+        'object-fit:cover;filter:blur(26px) saturate(130%) brightness(0.45);' +
+        'transform:scale(1.06);}' +
+      '.papi-ev-cover-img{position:relative;width:100%;height:100%;' +
+        'object-fit:contain;display:block;}' +
       '.papi-ev-chip{display:inline-block;background:rgba(245,184,0,0.12);color:' + AMBER + ';' +
         'border:1px solid rgba(245,184,0,0.3);border-radius:999px;padding:5px 14px;' +
         'font-family:monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;}' +
@@ -139,12 +151,18 @@
         'padding:12px 22px;border-radius:8px;text-decoration:none;letter-spacing:0.03em;' +
         'transition:opacity 0.2s ease,transform 0.2s ease;}' +
       '.papi-ev-cta:hover{opacity:0.88;transform:translateY(-1px);}' +
+      '#papi-ev-modal-box::-webkit-scrollbar{width:8px;}' +
+      '#papi-ev-modal-box::-webkit-scrollbar-track{background:transparent;}' +
+      '#papi-ev-modal-box::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.16);' +
+        'border-radius:99px;border:2px solid transparent;background-clip:content-box;}' +
+      '#papi-ev-modal-box::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.28);' +
+        'border:2px solid transparent;background-clip:content-box;}' +
       '[data-papi-ev]{cursor:pointer;}' +
       '@keyframes papiOggiPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}' +
       '@media (max-width:640px){' +
         '#papi-ev-modal{padding:0;}' +
         '#papi-ev-modal-box{max-width:100%;max-height:100vh;border-radius:0;border-left:0;border-right:0;}' +
-        '.papi-ev-modal-cover{border-radius:0;max-height:260px;}' +
+        '.papi-ev-cover{border-radius:0;height:min(46vh,320px);}' +
         '.papi-ev-modal-body{padding:22px 18px 32px;}}';
     document.head.appendChild(st);
   }
@@ -220,7 +238,10 @@
 
     cont.innerHTML =
       (ev.image_url
-        ? '<img class="papi-ev-modal-cover" src="' + escHtml(ev.image_url) + '" alt="' + escHtml(ev.title) + '">'
+        ? '<div class="papi-ev-cover">' +
+            '<img class="papi-ev-cover-bg" src="' + escHtml(ev.image_url) + '" alt="" aria-hidden="true">' +
+            '<img class="papi-ev-cover-img" src="' + escHtml(ev.image_url) + '" alt="' + escHtml(ev.title) + '">' +
+          '</div>'
         : '') +
       '<div class="papi-ev-modal-body">' +
         (sotto ? '<span class="papi-ev-chip">' + sotto + '</span>' : '') +
@@ -304,14 +325,14 @@
     var sec = document.createElement('section');
     sec.id = 'papi-countdown';
     sec.setAttribute('data-papi-ev', String(ev.id));
-    /* trasparente: sotto scorre lo sfondo del sito con le stelle, un
-       blocco pieno lo copriva. Restano le due righe ambra a delimitarlo. */
-    sec.style.cssText = 'padding:56px 24px;background:transparent;' +
-                        'border-top:1px solid rgba(245,184,0,0.14);' +
-                        'border-bottom:1px solid rgba(245,184,0,0.14);';
+    /* La sezione resta trasparente (sotto scorre lo sfondo del sito): il
+       vetro sta sul pannello interno, cosi' sfoca le stelle che ci passano
+       dietro invece di coprirle. */
+    sec.className = 'papi-sez';
+    sec.style.cssText = 'padding-top:56px;padding-bottom:56px;background:transparent;';
     sec.innerHTML =
-      '<div style="max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:32px;' +
-           'align-items:center;justify-content:space-between;">' +
+      '<div class="papi-cont papi-glass" style="display:flex;flex-wrap:wrap;gap:32px;' +
+           'align-items:center;justify-content:space-between;padding:40px 36px;box-sizing:border-box;">' +
         '<div style="flex:1 1 260px;min-width:0;">' +
           '<div class="papi-tag"><span id="papi-cd-label">' + T.prossimo + '</span></div>' +
           '<h2 class="papi-h" style="margin:0;">' + escHtml(ev.title) + '</h2>' +

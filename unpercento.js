@@ -65,12 +65,13 @@
       /* il marchio stesso e' un link al loro sito */
       return '<a href="' + escAttr(UNPERCENTO.url) + '" target="_blank" rel="noopener noreferrer" ' +
                 'aria-label="' + escAttr(UNPERCENTO.logoAlt) + '" ' +
-                'style="flex:0 0 auto;min-width:120px;max-width:180px;display:block;' +
+                'style="flex:0 0 auto;min-width:160px;max-width:260px;display:block;' +
                 'text-decoration:none;transition:transform 0.25s,opacity 0.25s;" ' +
                 'onmouseenter="this.style.transform=\'scale(1.04)\';this.style.opacity=\'0.9\'" ' +
                 'onmouseleave="this.style.transform=\'\';this.style.opacity=\'\'">' +
         '<img src="' + escAttr(UNPERCENTO.logo) + '" alt="' + escAttr(UNPERCENTO.logoAlt) + '" ' +
-             'style="width:100%;height:auto;max-height:90px;object-fit:contain;display:block;">' +
+             'style="width:100%;height:auto;max-height:140px;object-fit:contain;display:block;' +
+             'filter:drop-shadow(0 10px 24px rgba(224,24,31,0.28));">' +
       '</a>';
     }
     return '<div style="flex:0 0 auto;min-width:120px;">' +
@@ -87,32 +88,31 @@
   function buildBlock() {
     var wrap = document.createElement('section');
     wrap.id = 'papi-unpercento';
-    /* solo il riquadro interno ha un fondo: la sezione resta trasparente
-       cosi' si vede lo sfondo del sito. */
-    wrap.style.cssText = 'padding:60px 24px;background:transparent;';
+    /* la sezione resta trasparente, il vetro sta sul riquadro interno */
+    wrap.className = 'papi-sez';
+    wrap.style.cssText = 'padding-top:80px;padding-bottom:80px;background:transparent;';
 
     wrap.innerHTML =
-      '<div style="max-width:960px;margin:0 auto;">' +
-        '<div style="background:#161616;border:1px solid rgba(245,184,0,0.2);border-radius:16px;' +
-             'padding:32px;display:flex;flex-wrap:wrap;gap:28px;align-items:center;">' +
+      '<div class="papi-cont">' +
+        '<div class="papi-glass" style="padding:52px 48px;display:flex;flex-wrap:wrap;' +
+             'gap:44px;align-items:center;">' +
 
           marchioHtml() +
 
-          '<div style="flex:1;min-width:240px;">' +
-            '<div style="font-size:10px;font-family:monospace;color:' + AMBER + ';letter-spacing:0.15em;' +
-                 'text-transform:uppercase;margin-bottom:10px;">' + UNPERCENTO.label + '</div>' +
-            '<p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.65;margin:0 0 20px;">' +
-              UNPERCENTO.text + '</p>' +
+          '<div style="flex:1;min-width:260px;">' +
+            '<div class="papi-tag"><span>' + UNPERCENTO.label + '</span></div>' +
+            '<p style="color:rgba(255,255,255,0.66);font-size:17px;line-height:1.7;margin:0 0 26px;' +
+                 'max-width:620px;">' + UNPERCENTO.text + '</p>' +
             '<div style="display:flex;flex-wrap:wrap;gap:10px;">' +
               '<a href="' + escAttr(UNPERCENTO.url) + '" target="_blank" rel="noopener noreferrer" ' +
                  'style="display:inline-block;background:' + AMBER + ';color:#111;font-weight:700;' +
-                 'padding:12px 22px;border-radius:8px;text-decoration:none;font-size:14px;letter-spacing:0.04em;">' +
+                 'padding:14px 28px;border-radius:10px;text-decoration:none;font-size:15px;letter-spacing:0.04em;">' +
                 UNPERCENTO.cta + ' →</a>' +
               (UNPERCENTO.ig
                 ? '<a href="' + escAttr(UNPERCENTO.ig) + '" target="_blank" rel="noopener noreferrer" ' +
                      'style="display:inline-block;border:1px solid rgba(245,184,0,0.5);color:' + AMBER + ';' +
-                     'font-weight:700;padding:12px 22px;border-radius:8px;text-decoration:none;' +
-                     'font-size:14px;letter-spacing:0.04em;">' + UNPERCENTO.ctaIg + ' ↗</a>'
+                     'font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;' +
+                     'font-size:15px;letter-spacing:0.04em;">' + UNPERCENTO.ctaIg + ' ↗</a>'
                 : '') +
             '</div>' +
           '</div>' +

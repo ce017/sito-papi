@@ -125,10 +125,7 @@
     var aside = document.createElement('aside');
     aside.id = 'papi-contatti-aside';
 
-    var html =
-      '<div style="font-family:monospace;font-size:10px;color:' + AMBER + ';letter-spacing:0.15em;' +
-           'text-transform:uppercase;margin-bottom:14px;">Scrivici subito</div>' +
-      '<div id="papi-contatti-griglia">';
+    var html = '<div id="papi-contatti-griglia">';
 
     voci().forEach(function (v) {
       var extra = v.esterno ? ' target="_blank" rel="noopener noreferrer"' : '';

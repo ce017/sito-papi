@@ -42,20 +42,25 @@
     return /^https?:\/\//i.test(String(u || '')) ? u : '';
   }
 
+  function voce(p, copia) {
+    var img = '<img src="' + escAttr(p.src) + '" alt="' + (copia ? '' : escAttr(p.name)) + '" ' +
+      'style="display:block;opacity:0.92;">';
+    var ig = safeUrl(p.ig);
+    var extra = copia ? ' aria-hidden="true" tabindex="-1"' : '';
+    return ig
+      /* title + aria-label: al tocco su mobile non c'è hover che spieghi
+         dove porta il logo, quindi lo diciamo esplicitamente. */
+      ? '<a class="papi-partner-link" href="' + escAttr(ig) + '" target="_blank" rel="noopener noreferrer" ' +
+        'title="' + escAttr(p.name) + ' su Instagram" aria-label="' + escAttr(p.name) + ' su Instagram"' + extra + '>' +
+        img + '</a>'
+      : '<div class="papi-partner-link"' + extra + '>' + img + '</div>';
+  }
+
   function buildHTML() {
-    var inner = '<div class="papi-partners-griglia" style="display:grid;gap:20px;margin:26px auto 0;width:100%;">';
-    EVENTI.forEach(function (p) {
-      var img = '<img src="' + escAttr(p.src) + '" alt="' + escAttr(p.name) + '" ' +
-        'style="width:100%;height:74px;object-fit:contain;display:block;opacity:0.9;">';
-      var ig = safeUrl(p.ig);
-      inner += ig
-        /* title + aria-label: al tocco su mobile non c'è hover che spieghi
-           dove porta il logo, quindi lo diciamo esplicitamente. */
-        ? '<a class="papi-partner-link" href="' + escAttr(ig) + '" target="_blank" rel="noopener noreferrer" ' +
-          'title="' + escAttr(p.name) + ' su Instagram" aria-label="' + escAttr(p.name) + ' su Instagram" ' +
-          'style="text-decoration:none;display:block;padding:6px;box-sizing:border-box;">' + img + '</a>'
-        : '<div style="display:block;padding:6px;box-sizing:border-box;">' + img + '</div>';
-    });
+    var inner = '<div class="papi-partners-griglia">';
+    EVENTI.forEach(function (p) { inner += voce(p, false); });
+    /* copia per il nastro scorrevole del telefono */
+    EVENTI.forEach(function (p) { inner += voce(p, true); });
     inner += '</div>';
     return inner;
   }
@@ -70,21 +75,49 @@
     st.id = 'papi-partners-fallback-css';
     st.textContent =
       '#papi-partners-fallback .papi-partners-grid-wrap{display:block !important;' +
-        'max-width:1200px;margin-left:auto;margin-right:auto;}' +
+        'max-width:100%;margin-left:auto;margin-right:auto;}' +
       /* Sei loghi in fila su desktop; scendono a 3 e poi a 2 quando non ci stanno. */
-      /* Sempre tutti in fila, anche da telefono: rimpiccioliscono, non vanno
-         a capo. Su schermi stretti stringiamo spazi e altezza del logo. */
-      '.papi-partners-griglia{grid-template-columns:repeat(' + COLONNE + ',minmax(0,1fr));}' +
+      /* Da schermo largo: tutti in riga, una griglia con tante colonne
+         quanti sono i loghi. La seconda copia della lista sta nascosta. */
+      '#papi-partners-fallback .papi-partners-griglia{display:grid;gap:20px;margin:26px auto 0;width:100%;' +
+        'grid-template-columns:repeat(' + COLONNE + ',minmax(0,1fr));}' +
+      '#papi-partners-fallback .papi-partner-link{display:block;padding:6px;box-sizing:border-box;' +
+        'text-decoration:none;}' +
+      '#papi-partners-fallback .papi-partner-link[aria-hidden="true"]{display:none;}' +
+      /* Una vecchia regola in pagina forza width:auto e max-width:160px con
+         !important su questi loghi: senza !important qui tornerebbero alla
+         larghezza naturale e sborderebbero dalla colonna. */
       '#papi-partners-fallback .papi-partners-griglia img{width:100% !important;min-width:0 !important;' +
         'max-width:100% !important;height:74px !important;max-height:none !important;' +
-        'object-fit:contain !important;}' +
-      '@media (max-width:900px){#papi-partners-fallback .papi-partners-griglia{gap:10px;}' +
-        '#papi-partners-fallback .papi-partners-griglia img{height:48px !important;}}' +
-      '@media (max-width:600px){#papi-partners-fallback{padding-left:12px;padding-right:12px;}' +
-        '#papi-partners-fallback .papi-partners-griglia{gap:6px;}' +
-        '#papi-partners-fallback .papi-partners-griglia img{height:32px !important;}' +
-        '#papi-partners-fallback .papi-partners-griglia > a,' +
-        '#papi-partners-fallback .papi-partners-griglia > div{padding:2px !important;}}' +
+        'object-fit:contain !important;' +
+        'filter:drop-shadow(0 8px 16px rgba(0,0,0,0.75));}' +
+      '@media (max-width:900px){#papi-partners-fallback .papi-partners-griglia{gap:14px;}' +
+        '#papi-partners-fallback .papi-partners-griglia img{height:56px !important;}}' +
+
+      /* Da telefono: nastro che scorre lento verso destra, loghi grandi.
+         Ogni logo sta su una piastrella di vetro scuro, cosi' anche quelli
+         chiari o molto scuri si staccano dallo sfondo. */
+      '@media (max-width:700px){' +
+        '#papi-partners-fallback{overflow:hidden;}' +
+        '#papi-partners-fallback .papi-partners-grid-wrap{max-width:none !important;' +
+          'margin-left:-24px;margin-right:-24px;width:calc(100% + 48px);overflow:hidden;' +
+          '-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);' +
+          'mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);}' +
+        '#papi-partners-fallback .papi-partners-griglia{display:flex !important;flex-wrap:nowrap;' +
+          'gap:14px;width:max-content;margin-top:26px;' +
+          'animation:papiNastro 34s linear infinite;}' +
+        '#papi-partners-fallback .papi-partner-link[aria-hidden="true"]{display:block;}' +
+        '#papi-partners-fallback .papi-partner-link{flex:0 0 auto;width:132px;padding:14px 16px;' +
+          'border-radius:16px;background:rgba(255,255,255,0.045);' +
+          'border:1px solid rgba(255,255,255,0.07);' +
+          'box-shadow:0 10px 24px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.06);}' +
+        '#papi-partners-fallback .papi-partners-griglia img{height:64px !important;}' +
+      '}' +
+      /* meta' esatta: la lista e' stampata due volte, quindi il giro si
+         chiude senza salti */
+      '@keyframes papiNastro{from{transform:translateX(-50%);}to{transform:translateX(0);}}' +
+      '@media (prefers-reduced-motion:reduce){' +
+        '#papi-partners-fallback .papi-partners-griglia{animation:none !important;}}' +
       '#papi-partners-fallback .papi-partners-grid-wrap > div,' +
       '#papi-partners-fallback .papi-partners-grid-wrap > a{' +
         'width:100% !important;min-width:0 !important;max-width:100% !important;}' +
@@ -160,14 +193,13 @@
     sec.id = 'papi-partners-fallback';
     /* niente sfondo pieno: sotto c'e' lo sfondo del sito con le stelle,
        un blocco opaco lo tagliava via. */
-    sec.style.cssText = 'padding:48px 24px 32px;background:transparent;';
+    sec.className = 'papi-sez';
+    sec.style.cssText = 'padding-top:48px;padding-bottom:32px;background:transparent;';
     var innerWrap = document.createElement('div');
-    innerWrap.style.cssText = 'max-width:1200px;margin:0 auto;';
+    innerWrap.className = 'papi-cont';
 
-    innerWrap.innerHTML =
-      '<div style="text-align:center;">' +
-        '<h2 class="papi-h" style="margin:0;">' + TITOLO + '</h2>' +
-      '</div>';
+    /* a sinistra come tutti gli altri titoli del sito, non centrato */
+    innerWrap.innerHTML = '<h2 class="papi-h" style="margin:0;">' + TITOLO + '</h2>';
     innerWrap.appendChild(makeGrid());
     sec.appendChild(innerWrap);
 

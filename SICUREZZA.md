@@ -1,0 +1,195 @@
+# Sicurezza del sito
+
+Nota su cos'è questo sito, perché cambia tutto: sono **pagine statiche** su
+Vercel più **Supabase** come database. Non c'è un server nostro che riceve le
+richieste, quindi non esiste un punto dove mettere un "rate limiter" fatto da
+noi. Tutto quello che conta davvero succede in due posti: le **intestazioni
+HTTP** (Vercel) e le **policy RLS** (Supabase).
+
+---
+
+## Fatto: intestazioni di sicurezza (`vercel.json`)
+
+| Intestazione | A cosa serve |
+|---|---|
+| `Strict-Transport-Security` | Il browser rifiuta di parlare col sito in HTTP: niente downgrade, niente intercettazioni sul wifi del locale. |
+| `X-Content-Type-Options: nosniff` | Il browser non "indovina" il tipo di un file. Blocca il trucco di far passare uno script per un'immagine. |
+| `X-Frame-Options: DENY` | Nessuno può mettere il sito dentro un iframe sul proprio dominio per rubare i click (clickjacking). |
+| `Referrer-Policy` | Uscendo dal sito non regaliamo l'indirizzo completo della pagina di partenza. |
+| `Permissions-Policy` | Fotocamera, microfono, posizione e pagamenti restano spenti: se un giorno finisse in pagina uno script ostile, non può chiederli. |
+| `Cross-Origin-Opener-Policy` | Le finestre aperte con "apri in una nuova scheda" non possono più toccare la nostra. |
+| `X-Robots-Tag` su `/admin` | Il pannello non finisce su Google. |
+| `Cache-Control: no-store` su `/admin` | Il pannello non resta nella cache del browser dopo il logout. |
+
+### La CSP è volutamente in "solo segnalazione"
+
+`Content-Security-Policy-Report-Only` dice al browser di **segnalare** cosa
+bloccherebbe, senza bloccare niente. È di proposito: il sito carica roba da
+otto domini diversi (Framer, Google Fonts, Drive, Maps, jsDelivr, Supabase,
+Liveticket) e una CSP sbagliata manda in bianco mezza pagina.
+
+**Come passare a bloccare davvero**, quando siamo tranquilli:
+
+1. Naviga il sito (home, eventi, galleria, contatti, locale, ristorante,
+   admin) con la console del browser aperta.
+2. Se non compare nessun avviso `Content Security Policy`, rinomina la chiave
+   in `vercel.json` da `Content-Security-Policy-Report-Only` a
+   `Content-Security-Policy`.
+3. Se compaiono avvisi, aggiungi il dominio segnalato alla direttiva giusta
+   e ricontrolla.
+
+Va detto: la CSP qui protegge meno del normale, perché il sito ha centinaia di
+script e gestori scritti dentro l'HTML e serve `'unsafe-inline'`. Resta utile
+per `connect-src` e `frame-ancestors`, che chiudono l'esfiltrazione dei dati
+verso domini estranei.
+
+---
+
+## Come stanno le cose su Supabase
+
+Verificato leggendo le policy vere, non la documentazione.
+
+**Quello che va bene:**
+
+- La chiave `anon` nel codice **è pubblica per progetto**, è normale che si
+  veda. Non è una password: quello che può fare lo decidono le policy.
+- Tabella `events`: chi non è autenticato può **solo leggere** gli eventi
+  pubblicati. Scrittura e cancellazione richiedono l'accesso.
+- Bucket `event-images`: lettura pubblica, **caricamento e cancellazione solo
+  da autenticati**. Nessuno può caricare file arbitrari.
+- Il login non ha password nel codice: usa la vera autenticazione Supabase,
+  che ha già un limite ai tentativi lato server. Un "blocco dopo 5 tentativi"
+  scritto in JavaScript sarebbe solo scenografia, si aggira con un `curl`.
+- Il modulo contatti apre la mail del visitatore, non manda niente a un
+  server nostro: non c'è un endpoint da inondare.
+
+**Da sistemare, in ordine di importanza:**
+
+### 1. Le policy dicono "chiunque sia autenticato", non "l'admin"
+
+Oggi `events` e `event-images` si aprono a chi ha `auth.role() =
+'authenticated'`. Vuol dire **qualsiasi utente registrato**, non solo noi. Se
+in Supabase la registrazione libera è accesa, uno può crearsi un account da
+solo e da lì modificare o cancellare tutti gli eventi.
+
+Al momento nel progetto c'è **un solo utente** (`admin@papibeach.it`), quindi
+non è successo niente. Ma conviene legare le policy a quell'account preciso,
+così la cosa non dipende da un'impostazione che qualcuno potrebbe cambiare.
+
+```sql
+-- Solo l'account admin puo' scrivere sugli eventi
+drop policy if exists "Admin full access events" on public.events;
+create policy "Admin full access events" on public.events
+  for all to authenticated
+  using  (auth.uid() = '7bc88c2d-1004-44fb-8a8d-7e1447aa7085')
+  with check (auth.uid() = '7bc88c2d-1004-44fb-8a8d-7e1447aa7085');
+
+-- Solo l'account admin puo' caricare o cancellare le foto degli eventi
+drop policy if exists "Admin upload event images" on storage.objects;
+create policy "Admin upload event images" on storage.objects
+  for insert to authenticated
+  with check (bucket_id = 'event-images'
+              and auth.uid() = '7bc88c2d-1004-44fb-8a8d-7e1447aa7085');
+
+drop policy if exists "Admin delete event images" on storage.objects;
+create policy "Admin delete event images" on storage.objects
+  for delete to authenticated
+  using (bucket_id = 'event-images'
+         and auth.uid() = '7bc88c2d-1004-44fb-8a8d-7e1447aa7085');
+```
+
+E in **Authentication → Providers → Email**, spegnere *"Allow new users to
+sign up"*: nessuno deve potersi registrare da solo.
+
+### 2. Chiunque può riempire la tabella `analytics`
+
+La policy di inserimento è `with check (true)`: chiunque abbia la chiave
+pubblica (cioè chiunque legga il sorgente della pagina) può scriverci dentro
+quanto vuole. Oggi sono 716 righe per 168 kB, nessun abuso, ma non c'è niente
+che lo impedisca.
+
+Non si può limitare per indirizzo IP senza salvarlo, e salvarlo sarebbe un
+dato personale da dichiarare nella privacy policy. La strada pulita è **tenere
+la tabella piccola** e mettere un tetto alla frequenza:
+
+```sql
+-- 1. tetto per sessione: max 60 visite al minuto dalla stessa sessione
+create or replace function public.analytics_limite()
+returns trigger language plpgsql security definer as $$
+begin
+  if (select count(*) from public.analytics
+      where session_id = new.session_id
+        and visited_at > now() - interval '1 minute') >= 60 then
+    raise exception 'troppe richieste';
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists analytics_limite_trg on public.analytics;
+create trigger analytics_limite_trg before insert on public.analytics
+  for each row execute function public.analytics_limite();
+
+create index if not exists analytics_sessione_tempo
+  on public.analytics (session_id, visited_at desc);
+
+-- 2. conservazione: si buttano i dati piu' vecchi di 90 giorni
+--    (da lanciare a mano, oppure con pg_cron se lo attiviamo)
+delete from public.analytics where visited_at < now() - interval '90 days';
+```
+
+Da solo il tetto per sessione non ferma chi cambia `session_id` a ogni
+richiesta, ma insieme alla pulizia periodica toglie il danno: la tabella non
+cresce all'infinito.
+
+### 3. Protezione password compromesse (spenta)
+
+Il controllo di Supabase la segnala. In **Authentication → Policies** accendere
+*"Leaked password protection"*: rifiuta le password già finite in violazioni
+note. Già che ci siamo, attivare anche l'**MFA** sull'account admin.
+
+### 4. Lo script esterno non è bloccato a una versione
+
+Tutte le pagine caricano `@supabase/supabase-js@2` da jsDelivr. Quel `@2` vuol
+dire **l'ultima 2.x, qualunque sia**: se un giorno quel pacchetto venisse
+compromesso, il codice ostile girerebbe sulle nostre pagine con accesso alla
+sessione admin. Da fare:
+
+```bash
+# scegliere una versione precisa e calcolarne l'impronta
+curl -s https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0 \
+  | openssl dgst -sha384 -binary | openssl base64 -A
+```
+
+poi in tutte le pagine:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0"
+        integrity="sha384-QUI-L-IMPRONTA"
+        crossorigin="anonymous"></script>
+```
+
+Così il browser rifiuta il file se non corrisponde. Non l'ho fatto da qui
+perché jsDelivr è irraggiungibile dall'ambiente in cui lavoro e tirare a
+indovinare la versione avrebbe rotto il sito.
+
+---
+
+## Rate limiting e blocco IP: come stanno le cose davvero
+
+Domanda giusta, ma su un sito statico la risposta è meno scontata di quanto
+sembri.
+
+- **Login**: già coperto. Supabase limita i tentativi lato server, che è
+  l'unico posto dove un limite non si aggira.
+- **Lettura degli eventi**: è contenuto pubblico. Limitarla non protegge
+  niente e romperebbe il sito ai visitatori veri.
+- **Scrittura**: già chiusa dalle policy, non serve un limite.
+- **Analytics**: l'unico punto davvero aperto, si chiude nel database (sopra).
+- **Blocco IP e regole anti-bot**: su Vercel si fanno col **Firewall**, che è
+  incluso nei piani a pagamento. Il piano Hobby ha solo la protezione DDoS di
+  base, che c'è già e non si configura. L'alternativa sarebbe mettere una
+  Edge Function davanti al sito, ma vorrebbe dire trasformare un sito statico
+  in un progetto con build: sproporzionato per quello che ci guadagniamo.
+
+In pratica: le due cose che spostano l'ago sono **legare le policy all'account
+admin** e **spegnere la registrazione libera**. Il resto è rifinitura.

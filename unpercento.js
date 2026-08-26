@@ -13,6 +13,11 @@
   var UNPERCENTO = {
     url:     'https://www.unpercento.it',
     label:   'In collaborazione con',
+    /* Metti qui il file del logo (es. 'img-eventi/1percento.svg') e il
+       marchio diventa quell'immagine. Se resta vuoto disegniamo la scritta
+       "1%" col carattere Anton, come adesso. */
+    logo:    '',
+    logoAlt: '1% — not for everyone',
     name:    '1%',
     tagline: 'not for everyone',
     text:    'Il collettivo di Pordenone. Tessera, stand e premi durante le serate — drink, shot, magliette e altro.',
@@ -44,6 +49,32 @@
     return p === '' || p === 'index';
   }
 
+  function escAttr(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* Con un file: il logo vero, senza claim sotto (di solito ce l'ha già
+     dentro). Senza file: il segno "1%" come lo compongono loro — Anton,
+     rosso di marca — con il claim sotto. */
+  function marchioHtml() {
+    if (UNPERCENTO.logo) {
+      return '<div style="flex:0 0 auto;min-width:120px;max-width:180px;">' +
+        '<img src="' + escAttr(UNPERCENTO.logo) + '" alt="' + escAttr(UNPERCENTO.logoAlt) + '" ' +
+             'style="width:100%;height:auto;max-height:90px;object-fit:contain;display:block;">' +
+      '</div>';
+    }
+    return '<div style="flex:0 0 auto;min-width:120px;">' +
+      '<div style="font-family:Anton,Impact,Haettenschweiler,sans-serif;font-weight:400;' +
+           'font-size:64px;line-height:0.9;color:' + RED + ';letter-spacing:0.01em;">' +
+        UNPERCENTO.name + '</div>' +
+      '<div style="font-size:10px;color:' + GRAY + ';letter-spacing:0.3em;' +
+           'text-transform:uppercase;margin-top:10px;white-space:nowrap;">' +
+        UNPERCENTO.tagline + '</div>' +
+    '</div>';
+  }
+
   /* ── blocco home ── */
   function buildBlock() {
     var wrap = document.createElement('section');
@@ -55,15 +86,7 @@
         '<div style="background:#161616;border:1px solid rgba(245,184,0,0.2);border-radius:16px;' +
              'padding:32px;display:flex;flex-wrap:wrap;gap:28px;align-items:center;">' +
 
-          /* il segno 1% come lo compongono loro: Anton, rosso di marca */
-          '<div style="flex:0 0 auto;min-width:120px;">' +
-            '<div style="font-family:Anton,Impact,Haettenschweiler,sans-serif;font-weight:400;' +
-                 'font-size:64px;line-height:0.9;color:' + RED + ';letter-spacing:0.01em;">' +
-              UNPERCENTO.name + '</div>' +
-            '<div style="font-size:10px;color:' + GRAY + ';letter-spacing:0.3em;' +
-                 'text-transform:uppercase;margin-top:10px;white-space:nowrap;">' +
-              UNPERCENTO.tagline + '</div>' +
-          '</div>' +
+          marchioHtml() +
 
           '<div style="flex:1;min-width:240px;">' +
             '<div style="font-size:10px;font-family:monospace;color:' + AMBER + ';letter-spacing:0.15em;' +

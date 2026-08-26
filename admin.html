@@ -211,6 +211,22 @@
     </div>
 
     <div class="form-group">
+      <label class="form-label">Line-up</label>
+      <textarea class="form-input" id="ev-lineup" placeholder="Un DJ per riga&#10;(oppure separati da virgola)"></textarea>
+      <div style="font-size:11px;margin-top:6px;color:rgba(255,255,255,0.3);line-height:1.5;">
+        Lascia vuoto se non c'&egrave;: sul sito non comparir&agrave; nessuna sezione line-up.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Sala / Location</label>
+      <input class="form-input" id="ev-location" type="text" placeholder="Main Room, Terrazza, ...">
+      <div style="font-size:11px;margin-top:6px;color:rgba(255,255,255,0.3);line-height:1.5;">
+        Lascia vuoto se non serve: verr&agrave; semplicemente nascosto.
+      </div>
+    </div>
+
+    <div class="form-group">
       <label class="form-label">Foto Evento</label>
       <input type="hidden" id="ev-img-url">
       <div class="upload-area" onclick="document.getElementById('ev-img-file').click()">
@@ -597,6 +613,8 @@ function openNew() {
   document.getElementById('ev-starttime').value = '';
   document.getElementById('ev-endtime').value = '';
   document.getElementById('ev-desc').value = '';
+  document.getElementById('ev-lineup').value = '';
+  document.getElementById('ev-location').value = '';
   document.getElementById('ev-ticket').value = '';
   document.getElementById('ev-gallery').value = '';
   document.getElementById('ev-published').checked = false;
@@ -619,6 +637,8 @@ function openEdit(id) {
     document.getElementById('ev-starttime').value = startParts.time;
     document.getElementById('ev-endtime').value = ev.end_time || '';
     document.getElementById('ev-desc').value = ev.description || '';
+    document.getElementById('ev-lineup').value = ev.lineup || '';
+    document.getElementById('ev-location').value = ev.location || '';
     document.getElementById('ev-ticket').value = ev.ticket_url || '';
     document.getElementById('ev-gallery').value = ev.gallery_url || '';
     document.getElementById('ev-published').checked = !!ev.is_published;
@@ -659,6 +679,8 @@ async function saveEvent() {
     description: document.getElementById('ev-desc').value.trim() || null,
     event_date: eventDate,
     end_time: document.getElementById('ev-endtime').value || null,
+    lineup: document.getElementById('ev-lineup').value.trim() || null,
+    location: document.getElementById('ev-location').value.trim() || null,
     ticket_url: document.getElementById('ev-ticket').value.trim() || null,
     gallery_url: document.getElementById('ev-gallery').value.trim() || null,
     is_published: document.getElementById('ev-published').checked,

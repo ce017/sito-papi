@@ -164,10 +164,8 @@
     var innerWrap = document.createElement('div');
     innerWrap.style.cssText = 'max-width:1200px;margin:0 auto;';
 
-    /* Stessa lineetta + titolo delle sezioni del sito, centrati. */
     innerWrap.innerHTML =
       '<div style="text-align:center;">' +
-        '<div class="papi-tag papi-tag--center"><span>Le crew</span></div>' +
         '<h2 class="papi-h" style="margin:0;">' + TITOLO + '</h2>' +
       '</div>';
     innerWrap.appendChild(makeGrid());

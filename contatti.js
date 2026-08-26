@@ -99,12 +99,12 @@
     var st = document.createElement('style');
     st.id = 'papi-contatti-css';
     st.textContent =
-      '#papi-contatti-layout{display:flex;gap:32px;align-items:flex-start;width:100%;}' +
-      '#papi-contatti-aside{flex:0 0 300px;position:sticky;top:110px;}' +
-      '#papi-contatti-layout > #papi-contact-wrap{flex:1 1 420px;min-width:0;}' +
+      '#papi-contatti-aside{margin-top:28px;width:100%;}' +
+      '#papi-contatti-griglia{display:grid;gap:12px;' +
+        'grid-template-columns:repeat(auto-fit,minmax(210px,1fr));}' +
       '.papi-ct-btn{display:flex;align-items:center;gap:14px;text-decoration:none;' +
         'background:#161616;border:1px solid rgba(245,184,0,0.22);border-radius:12px;' +
-        'padding:14px 16px;margin-bottom:12px;color:#fff;' +
+        'padding:14px 16px;color:#fff;' +
         'transition:border-color 0.2s ease,transform 0.2s ease,background 0.2s ease;}' +
       '.papi-ct-btn:hover{transform:translateY(-2px);border-color:rgba(245,184,0,0.55);background:#1b1b1b;}' +
       '.papi-ct-btn:focus-visible{outline:2px solid ' + AMBER + ';outline-offset:3px;}' +
@@ -115,11 +115,7 @@
       '.papi-ct-lab{font-family:monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;' +
         'opacity:0.65;margin-bottom:2px;}' +
       '.papi-ct-val{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
-      /* Sotto i 900px la colonna va sopra al form e smette di essere sticky:
-         su telefono un blocco appiccicato mangerebbe mezzo schermo. */
-      '@media (max-width:900px){' +
-        '#papi-contatti-layout{flex-direction:column;gap:24px;}' +
-        '#papi-contatti-aside{position:static;top:auto;flex:1 1 auto;width:100%;}}';
+      '@media (max-width:600px){#papi-contatti-griglia{grid-template-columns:1fr;}}';
     document.head.appendChild(st);
   }
 
@@ -129,7 +125,8 @@
 
     var html =
       '<div style="font-family:monospace;font-size:10px;color:' + AMBER + ';letter-spacing:0.15em;' +
-           'text-transform:uppercase;margin-bottom:14px;">Scrivici subito</div>';
+           'text-transform:uppercase;margin-bottom:14px;">Scrivici subito</div>' +
+      '<div id="papi-contatti-griglia">';
 
     voci().forEach(function (v) {
       var extra = v.esterno ? ' target="_blank" rel="noopener noreferrer"' : '';
@@ -145,24 +142,47 @@
         '</a>';
     });
 
-    aside.innerHTML = html;
+    aside.innerHTML = html + '</div>';
     return aside;
   }
 
-  /* Il form è iniettato da `papi-contact-form-js` poco dopo il caricamento:
-     aspettiamo che compaia, poi lo affianchiamo. */
-  function place() {
+  /* La colonna di sinistra è quella di Framer: ci sono già "Contattaci", il
+     sottotitolo e la nota sulle prenotazioni Tavoli. Non la tocchiamo, i
+     bottoni li appendiamo semplicemente in fondo a quel blocco.
+     Non ha un id suo, quindi la riconosciamo così: è il fratello del form
+     che non è né il form di Framer né il nostro. */
+  function colonnaSinistra() {
     var form = document.getElementById('papi-contact-wrap');
-    if (!form || !form.parentNode) return false;
-    if (document.getElementById('papi-contatti-aside')) return true;
+    if (!form || !form.parentNode) return null;
+    var figli = form.parentNode.children;
+    for (var i = 0; i < figli.length; i++) {
+      var c = figli[i];
+      if (c === form || c.tagName === 'FORM') continue;
+      if (c.id === 'papi-contatti-aside' || c.contains(form)) continue;
+      return c;
+    }
+    return null;
+  }
+
+  /* Il form è iniettato da `papi-contact-form-js` poco dopo il caricamento:
+     aspettiamo che compaia, poi agganciamo i bottoni alla colonna accanto. */
+  function place() {
+    if (!document.getElementById('papi-contact-wrap')) return false;
     if (!voci().length) return true;   /* nessun contatto compilato: non mostriamo niente */
 
+    var sinistra = colonnaSinistra();
+    if (!sinistra) return false;
+
+    var esistente = document.getElementById('papi-contatti-aside');
+    if (esistente) {
+      /* Framer può ricostruire la colonna: se i bottoni sono finiti fuori
+         li rimettiamo dentro invece di duplicarli. */
+      if (esistente.parentNode !== sinistra) sinistra.appendChild(esistente);
+      return true;
+    }
+
     injectCss();
-    var layout = document.createElement('div');
-    layout.id = 'papi-contatti-layout';
-    form.parentNode.insertBefore(layout, form);
-    layout.appendChild(buildAside());
-    layout.appendChild(form);
+    sinistra.appendChild(buildAside());
     return true;
   }
 

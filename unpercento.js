@@ -16,7 +16,7 @@
     /* Metti qui il file del logo (es. 'img-eventi/1percento.svg') e il
        marchio diventa quell'immagine. Se resta vuoto disegniamo la scritta
        "1%" col carattere Anton, come adesso. */
-    logo:    '',
+    logo:    'img-eventi/unpercento.png',
     logoAlt: '1% — not for everyone',
     name:    '1%',
     tagline: 'not for everyone',

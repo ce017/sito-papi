@@ -20,8 +20,12 @@
   var TITOLO = 'I nostri eventi';
 
   var EVENTI = [
-    { src: 'img-eventi/MF_logo%20TROPIFY-outlined.png', name: 'Tropify', ig: '' },
-    /* { src: 'img-eventi/nome-logo.png', name: 'Nome Evento', ig: 'https://www.instagram.com/handle/' }, */
+    { src: 'img-eventi/MF_logo%20TROPIFY-outlined.png', name: 'Tropify',           ig: '' },
+    { src: 'img-eventi/maldita.png',                    name: 'Maldita',           ig: '' },
+    { src: 'img-eventi/perreo.png',                     name: 'Perreo',            ig: '' },
+    { src: 'img-eventi/we-love-reggaeton.png',          name: 'We Love Reggaeton', ig: '' },
+    { src: 'img-eventi/trenches-party.png',             name: 'Trenches Party',    ig: '' },
+    { src: 'img-eventi/tutt-altro.png',                 name: "Tutt'Altro",        ig: '' },
   ];
 
   function escAttr(s) {
@@ -34,7 +38,7 @@
   }
 
   function buildHTML() {
-    var inner = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:32px;max-width:1200px;margin:30px auto 0;width:100%;">';
+    var inner = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px;max-width:900px;margin:30px auto 0;width:100%;">';
     EVENTI.forEach(function (p) {
       var img = '<img src="' + escAttr(p.src) + '" alt="' + escAttr(p.name) + '" ' +
         'style="width:100%;height:180px;object-fit:contain;display:block;opacity:0.9;">';
@@ -60,7 +64,8 @@
     var st = document.createElement('style');
     st.id = 'papi-partners-fallback-css';
     st.textContent =
-      '#papi-partners-fallback .papi-partners-grid-wrap{display:block !important;}' +
+      '#papi-partners-fallback .papi-partners-grid-wrap{display:block !important;' +
+        'max-width:900px;margin-left:auto;margin-right:auto;}' +
       '#papi-partners-fallback .papi-partners-grid-wrap > div,' +
       '#papi-partners-fallback .papi-partners-grid-wrap > a{' +
         'width:100% !important;min-width:0 !important;max-width:100% !important;}' +

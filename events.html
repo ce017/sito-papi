@@ -1275,7 +1275,7 @@ nav [data-framer-name="Primary Button"]{padding-top:9px !important;padding-botto
   title="">&#128274;</button>
 
 <div id="papi-login-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#161616;border:1px solid rgba(245,184,0,0.3);border-radius:16px;padding:32px 28px;width:100%;max-width:360px;">
+  <div class="papi-glass" style="padding:32px 28px;width:100%;max-width:360px;">
     <div style="text-align:center;margin-bottom:24px;"><img src="papi-logo.svg" alt="Papi on the Beach" style="height:36px;width:auto;display:inline-block;"></div>
     <div style="margin-bottom:16px;">
       <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.4);margin-bottom:7px;font-family:Arial;">Username</label>
@@ -1377,7 +1377,7 @@ document.addEventListener('keydown', function(e) {
       btn = '<a href="'+escHtml(safeUrl(ev.ticket_url))+'" target="_blank" rel="noopener" style="display:inline-block;background:#F5B800;color:#111;font-weight:700;padding:7px 14px;border-radius:6px;text-decoration:none;font-size:11px;letter-spacing:0.04em;">🎟️ Biglietti</a>';
     }
     var bcolor = oggi ? 'rgba(245,184,0,0.6)' : 'rgba(245,184,0,0.2)';
-    return '<div class="papi-ev-card'+(oggi?' papi-ev-oggi':'')+'" data-papi-ev="'+escHtml(String(ev.id))+'" style="background:#161616;border:1px solid '+bcolor+';border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform 0.2s,border-color 0.2s;'+(past?'opacity:0.94;':'')+'" onmouseenter="this.style.transform=\'translateY(-3px)\';this.style.borderColor=\'rgba(245,184,0,0.5)\'" onmouseleave="this.style.transform=\'\';this.style.borderColor=\''+bcolor+'\'">' +
+    return '<div class="papi-ev-card'+(oggi?' papi-ev-oggi':'')+'" data-papi-ev="'+escHtml(String(ev.id))+'" style="border:1px solid '+bcolor+';overflow:hidden;display:flex;flex-direction:column;transition:transform 0.2s,border-color 0.2s;'+(past?'opacity:0.94;':'')+'" onmouseenter="this.style.transform=\'translateY(-3px)\';this.style.borderColor=\'rgba(245,184,0,0.5)\'" onmouseleave="this.style.transform=\'\';this.style.borderColor=\''+bcolor+'\'">' +
       imgBox +
       '<div style="padding:14px;flex:1;display:flex;flex-direction:column;gap:6px;">' +
         '<div style="font-size:9px;font-family:monospace;color:#F5B800;letter-spacing:0.12em;text-transform:uppercase;">' + (fmtDate(ev.event_date) || 'Prossimo Evento') + '</div>' +
@@ -1393,6 +1393,13 @@ document.addEventListener('keydown', function(e) {
     var st = document.createElement('style');
     st.id = 'papi-events-live-css';
     st.textContent =
+      '.papi-ev-card{position:relative;border-radius:16px;' +
+        'background:linear-gradient(148deg,rgba(26,26,26,0.60) 0%,rgba(10,10,10,0.72) 58%,rgba(6,6,6,0.78) 100%);' +
+        '-webkit-backdrop-filter:blur(22px) saturate(150%);backdrop-filter:blur(22px) saturate(150%);' +
+        'box-shadow:0 24px 60px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.10),' +
+          'inset 0 -1px 0 rgba(0,0,0,0.55);}' +
+      '@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){' +
+        '.papi-ev-card{background:rgba(9,9,9,0.92);}}' +
       '.papi-oggi-badge{position:absolute;top:10px;left:10px;background:#F5B800;color:#111;' +
       'font-family:"Inter",Arial,sans-serif;font-weight:800;font-size:12px;letter-spacing:0.06em;' +
       'padding:5px 12px;border-radius:999px;box-shadow:0 4px 14px rgba(245,184,0,0.5);' +

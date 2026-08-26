@@ -112,17 +112,24 @@
     st.textContent =
       '#papi-ev-modal{position:fixed;inset:0;z-index:99999;display:none;' +
         'align-items:center;justify-content:center;padding:24px;' +
-        'background:rgba(0,0,0,0.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);' +
+        'background:rgba(0,0,0,0.68);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);' +
         'opacity:0;transition:opacity 0.25s ease;}' +
       '#papi-ev-modal.is-open{display:flex;opacity:1;}' +
       /* scrollbar sottile e scura: quella di sistema arrivava bianca e
          spiccava sul pannello nero */
       '#papi-ev-modal-box{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.18) transparent;' +
         'position:relative;width:100%;max-width:880px;max-height:88vh;overflow-y:auto;overscroll-behavior:contain;' +
-        'background:#141414;border:1px solid rgba(245,184,0,0.28);border-radius:18px;' +
-        'box-shadow:0 30px 80px rgba(0,0,0,0.7);' +
+        'background:linear-gradient(148deg,rgba(26,26,26,0.60) 0%,rgba(10,10,10,0.74) 58%,rgba(6,6,6,0.80) 100%);' +
+        '-webkit-backdrop-filter:blur(26px) saturate(150%);backdrop-filter:blur(26px) saturate(150%);' +
+        'border:1px solid rgba(255,255,255,0.09);border-radius:22px;' +
+        'box-shadow:0 30px 80px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.10),' +
+          'inset 0 -1px 0 rgba(0,0,0,0.55);' +
         'transform:translateY(18px) scale(0.98);transition:transform 0.28s cubic-bezier(0.32,0.72,0,1);}' +
       '#papi-ev-modal.is-open #papi-ev-modal-box{transform:none;}' +
+      /* Safari/iOS senza backdrop-filter: fondo pieno, altrimenti il
+         pannello resterebbe troppo trasparente e il testo illeggibile. */
+      '@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){' +
+        '#papi-ev-modal-box{background:rgba(9,9,9,0.96);}}' +
       '#papi-ev-modal-close{position:absolute;top:14px;right:14px;z-index:2;width:38px;height:38px;' +
         'border:0;border-radius:50%;cursor:pointer;background:rgba(0,0,0,0.6);color:#fff;' +
         'font-size:20px;line-height:38px;text-align:center;padding:0;' +
@@ -134,7 +141,7 @@
          copia sfocata della stessa immagine, cosi' i poster verticali non
          lasciano due bande nere. */
       '.papi-ev-cover{position:relative;width:100%;height:min(52vh,420px);' +
-        'overflow:hidden;background:#0a0a0a;border-radius:18px 18px 0 0;}' +
+        'overflow:hidden;background:rgba(10,10,10,0.6);border-radius:22px 22px 0 0;}' +
       '.papi-ev-cover-bg{position:absolute;inset:-8%;width:116%;height:116%;' +
         'object-fit:cover;filter:blur(26px) saturate(130%) brightness(0.45);' +
         'transform:scale(1.06);}' +

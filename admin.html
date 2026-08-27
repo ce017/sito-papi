@@ -13,6 +13,10 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { font-size: 16px; }
     body { background: #0a0a0a; color: #fff; font-family: 'Inter', Arial, sans-serif; min-height: 100vh; }
+    /* Da telefono si deve poter andare solo su e giu'. "clip" invece di
+       "hidden" perche' hidden creerebbe un contenitore di scorrimento e la
+       barra in alto smetterebbe di restare attaccata mentre si scorre. */
+    html { overflow-x: clip; }
 
     /* ── TOP BAR ── */
     .topbar {
@@ -46,7 +50,13 @@
 
     /* ── CHART CARD ── */
     .chart-card { background: #161616; border: 1px solid rgba(245,184,0,0.15); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; }
-    .chart-wrap { position: relative; height: 180px; }
+    /* Chart.js ridisegna la tela dandole una larghezza in pixel. Se quella
+       larghezza supera anche di poco il riquadro, la tela allarga la pagina e
+       da telefono ci si ritrova a scorrere di lato. Tela in posizione
+       assoluta dentro un riquadro relativo: e' il modo previsto da Chart.js
+       per farla rimpicciolire, e il riquadro taglia comunque l'eccesso. */
+    .chart-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; }
+    .chart-wrap canvas { position: absolute; top: 0; left: 0; display: block; max-width: 100%; }
     @media(min-width:600px) { .chart-wrap { height: 220px; } }
 
     /* ── PAGE BREAKDOWN ── */

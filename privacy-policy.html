@@ -1412,10 +1412,14 @@ document.addEventListener('keydown', function(e) {
     menu.innerHTML =
       '<button class="pm-close" id="pm-close" aria-label="Chiudi">&#x2715;</button>' +
       '<nav class="pm-links">' +
+        /* Stesso ordine dei bottoni del desktop, e in italiano come
+           tutto il resto del sito: Home, Eventi, Galleria, Locale,
+           Ristorante, Contatti. */
         '<a href="index.html">Home</a>' +
-        '<a href="events.html">Events</a>' +
-        '<a href="restaurant.html">Restaurant</a>' +
-        '<a href="venue.html">Venue</a>' +
+        '<a href="events.html">Eventi</a>' +
+        '<a href="galleria.html">Galleria</a>' +
+        '<a href="venue.html">Locale</a>' +
+        '<a href="restaurant.html">Ristorante</a>' +
         '<a href="contact.html">Contatti</a>' +
       '</nav>';
     document.body.insertBefore(bar, document.body.firstChild);
@@ -1508,21 +1512,60 @@ document.addEventListener('keydown', function(e) {
 (function() {
   /* Inject a "Galleria" link into the desktop Framer nav and the mobile menu,
      positioned right after the Eventi/Events link. Idempotent + retried. */
+  /* Pagina aperta, senza estensione: su Vercel gli indirizzi sono puliti
+     (/venue, non /venue.html) e il vecchio confronto con "venue.html" non
+     azzeccava mai. Da qui nascevano i due difetti del menu: il clone della
+     Galleria veniva copiato dalla voce accesa e si portava dietro la
+     pastiglia gialla, e sulla pagina Galleria non si accendeva niente. */
+  function paginaCorrente() {
+    return (window.location.pathname.split('/').pop() || 'index').replace(/\.html$/, '') || 'index';
+  }
+  function pagina(href) {
+    return String(href || '').split('/').pop().replace(/[?#].*$/, '').replace(/\.html$/, '') || 'index';
+  }
+
+  /* Ordine dei bottoni: Eventi, Galleria, Locale, Ristorante, Contatti.
+     La Home non c'e' perche' e' il logo a sinistra. */
+  var ORDINE = ['events', 'galleria', 'venue', 'restaurant', 'contact'];
+
+  /* La pastiglia gialla e' una variante del componente Framer: "Simple
+     Selected" accesa, "Simple" spenta. Le classi framer-v-... arrivano
+     dall'export: le rileggiamo dal DOM quando la pagina ne contiene una, e
+     questi valori restano solo come rete di sicurezza. */
+  var CLS_ON = 'framer-v-1xvm83l';
+  var CLS_OFF = 'framer-v-rl8b7d';
+  /* Il giallo della pastiglia non arriva dalla classe: Framer lo scrive
+     direttamente sull'elemento BG quando esporta. Quindi oltre alla variante
+     va messo anche questo, altrimenti sulla pagina Galleria (dove nessuna
+     voce nasce accesa) non si accenderebbe niente. */
+  var ORO = 'rgba(245, 184, 0, 0.8)';
+  var SPENTO = 'rgba(0, 0, 0, 0)';
+
+  function variante(a) {
+    var c = String(a.className || '').split(/\s+/);
+    for (var i = 0; i < c.length; i++) { if (c[i].indexOf('framer-v-') === 0) return c[i]; }
+    return null;
+  }
+
+  function contenitore(a, nav) {
+    var c = a.parentElement;
+    while (c && c.parentElement !== nav) c = c.parentElement;
+    return c;
+  }
+
   function injectDesktop() {
     var navs = document.querySelectorAll('nav[data-framer-name="Links"]');
-    var cur = (window.location.pathname.split('/').pop() || 'index.html');
     for (var i = 0; i < navs.length; i++) {
       var nav = navs[i];
       if (nav.querySelector('a[href="galleria.html"]')) continue;
       var links = nav.querySelectorAll('a');
       if (!links.length) continue;
       var evLink = nav.querySelector('a[href="events.html"]') || links[links.length - 1];
-      var posContainer = evLink.parentElement;
-      while (posContainer && posContainer.parentElement !== nav) posContainer = posContainer.parentElement;
-      var srcLink = evLink;
-      for (var k = 0; k < links.length; k++) { var h = links[k].getAttribute('href'); if (h && h !== cur) { srcLink = links[k]; break; } }
-      var srcContainer = srcLink.parentElement;
-      while (srcContainer && srcContainer.parentElement !== nav) srcContainer = srcContainer.parentElement;
+      var posContainer = contenitore(evLink, nav);
+      /* Si copia una voce spenta, mai quella accesa: altrimenti la Galleria
+         nasce gia' gialla anche dove non dovrebbe. */
+      var srcLink = nav.querySelector('a[data-framer-name="Simple"]') || links[0];
+      var srcContainer = contenitore(srcLink, nav);
       if (!srcContainer || !posContainer) continue;
       var clone = srcContainer.cloneNode(true);
       clone.setAttribute('data-framer-name', 'Gallery');
@@ -1537,6 +1580,58 @@ document.addEventListener('keydown', function(e) {
     }
   }
 
+  /* Rimette le voci nell'ordine voluto. Si tocca il DOM solo se l'ordine e'
+     gia' sbagliato: questa funzione gira ogni 400ms per sopravvivere ai
+     ridisegni di Framer, e spostare i nodi a vuoto farebbe sfarfallare. */
+  function ordina() {
+    var navs = document.querySelectorAll('nav[data-framer-name="Links"]');
+    for (var i = 0; i < navs.length; i++) {
+      var nav = navs[i], voci = [], j;
+      for (j = 0; j < ORDINE.length; j++) {
+        var a = nav.querySelector('a[href="' + ORDINE[j] + '.html"]');
+        var c = a ? contenitore(a, nav) : null;
+        if (c) voci.push(c);
+      }
+      if (voci.length < 2) continue;
+      var attuale = [], figli = nav.children;
+      for (j = 0; j < figli.length; j++) { if (voci.indexOf(figli[j]) >= 0) attuale.push(figli[j]); }
+      var uguale = attuale.length === voci.length;
+      for (j = 0; uguale && j < voci.length; j++) { if (attuale[j] !== voci[j]) uguale = false; }
+      if (uguale) continue;
+      for (j = 0; j < voci.length; j++) nav.appendChild(voci[j]);
+    }
+  }
+
+  /* Accende la voce della pagina aperta e spegne tutte le altre. Lo facciamo
+     noi perche' Framer decide al momento dell'export guardando l'href, e la
+     Galleria nell'export non esiste. */
+  function evidenzia() {
+    var navs = document.querySelectorAll('nav[data-framer-name="Links"]');
+    var qui = paginaCorrente();
+    for (var i = 0; i < navs.length; i++) {
+      var nav = navs[i], v;
+      var accesa = nav.querySelector('a[data-framer-name="Simple Selected"]');
+      var spenta = nav.querySelector('a[data-framer-name="Simple"]');
+      if (accesa && (v = variante(accesa))) CLS_ON = v;
+      if (spenta && (v = variante(spenta))) CLS_OFF = v;
+      var bgAcceso = accesa ? accesa.querySelector('[data-framer-name="BG"]') : null;
+      if (bgAcceso && bgAcceso.style.backgroundColor) ORO = bgAcceso.style.backgroundColor;
+      var voci = nav.querySelectorAll('a[data-framer-name="Simple"], a[data-framer-name="Simple Selected"]');
+      for (var k = 0; k < voci.length; k++) {
+        var a = voci[k];
+        var attiva = pagina(a.getAttribute('href')) === qui;
+        if (attiva === (a.getAttribute('data-framer-name') === 'Simple Selected')) continue;
+        a.classList.remove(attiva ? CLS_OFF : CLS_ON);
+        a.classList.add(attiva ? CLS_ON : CLS_OFF);
+        a.setAttribute('data-framer-name', attiva ? 'Simple Selected' : 'Simple');
+        if (attiva) a.setAttribute('data-framer-page-link-current', 'true');
+        else a.removeAttribute('data-framer-page-link-current');
+        var bg = a.querySelector('[data-framer-name="BG"]');
+        if (bg) bg.style.backgroundColor = attiva ? ORO : SPENTO;
+      }
+    }
+  }
+
   function injectMobile() {
     var links = document.querySelector('#papi-mob-menu .pm-links');
     if (!links) return;
@@ -1546,7 +1641,6 @@ document.addEventListener('keydown', function(e) {
     a.textContent = 'Galleria';
     var afterEv = links.querySelector('a[href="events.html"]');
     if (afterEv && afterEv.nextSibling) links.insertBefore(a, afterEv.nextSibling);
-    else if (afterEv) links.appendChild(a);
     else links.appendChild(a);
     a.addEventListener('click', function() {
       var m = document.getElementById('papi-mob-menu');
@@ -1563,7 +1657,7 @@ document.addEventListener('keydown', function(e) {
     document.head.appendChild(st);
   }
 
-  function run() { injectDesktop(); injectMobile(); ensureStagger(); }
+  function run() { injectDesktop(); ordina(); evidenzia(); injectMobile(); ensureStagger(); }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
   else run();

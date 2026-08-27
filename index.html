@@ -417,6 +417,26 @@ nav [data-framer-name="Primary Button"] { display: none !important; }
 @media (max-width: 700px) {
   .papi-sez { padding-left: 24px; padding-right: 24px; }
 }
+
+/* Claim "La discoteca piu' amata del Pordenonese". La casella di Framer era
+   ferma a 500px: su desktop il testo si spezzava su cinque righe strette
+   mentre a destra restava mezzo schermo vuoto. Ora la casella arriva fino al
+   bordo destro del carosello che sta sotto: quello e' largo 950px fissi ed e'
+   centrato nel contenitore, quindi il suo bordo destro cade sempre a meta'
+   contenitore + 475px. Il min() evita di sforare quando il contenitore e' piu'
+   stretto del carosello (sotto i 1200px il carosello va a tutta larghezza e
+   il titolo lo segue). */
+section[data-framer-name="The Venue"] [data-framer-name="Title"] > [data-framer-name="Title"] {
+  width: min(100%, calc(50% + 475px)) !important;
+  max-width: none !important;
+}
+section[data-framer-name="The Venue"] [data-framer-name="Title"] > [data-framer-name="Title"] > h2 {
+  width: 100% !important;
+}
+/* L'a capo forzato dopo la lineetta ha senso solo dove le due meta' ci stanno
+   ognuna sulla sua riga: sotto i 1200px il testo torna ad andare a capo da
+   solo, altrimenti resterebbero righe monche. */
+@media (max-width: 1279px) { br.papi-claim-br { display: none; } }
 </style>
   <script src="partners.js" defer></script>
   <script src="contatti.js" defer></script>
@@ -1709,9 +1729,26 @@ document.addEventListener('keydown', function(e) {
     });
   }
 
+  /* ── Claim della home su due righe ──
+     L'altro script (papi-global-fixes) scrive questo stesso titolo come testo
+     semplice, quindi l'a capo non puo' stare nella tabella qui sopra: verrebbe
+     sovrascritto, o peggio stampato come tag. Lo rimettiamo qui, partendo dal
+     testo italiano gia' composto, chiunque dei due l'abbia scritto. */
+  var CLAIM_PIATTO = 'La discoteca pi\u00f9 amata del Pordenonese \u2014 musica, energia e notti indimenticabili';
+  var CLAIM_DUE_RIGHE = 'La discoteca pi\u00f9 amata del Pordenonese \u2014' +
+    '<br class="papi-claim-br">musica, energia e notti indimenticabili';
+
+  function applyClaimBreak() {
+    document.querySelectorAll('h2').forEach(function(el) {
+      if (el.textContent.trim() !== CLAIM_PIATTO) return;
+      el.innerHTML = CLAIM_DUE_RIGHE;
+    });
+  }
+
   function runAll() {
     applyHeadings();
     applyParas();
+    applyClaimBreak();
   }
 
   /* Run at multiple delays — Framer hydrates async, keep retrying */

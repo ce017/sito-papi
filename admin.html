@@ -84,6 +84,48 @@
     @media(min-width:600px) { .modal-overlay { align-items: center; padding: 20px; } }
     .modal { background: #161616; border: 1px solid rgba(245,184,0,0.25); width: 100%; min-height: 100vh; padding: 28px 20px 40px; }
     @media(min-width:600px) { .modal { border-radius: 16px; max-width: 520px; min-height: unset; } }
+
+    /* Da computer il pannello era una colonna sola alta piu' dello schermo:
+       per salvare un evento bisognava scorrere fin giu'. Da 900px in su
+       diventa a due colonne e ci sta tutto in una schermata. Nome evento e
+       Visibilita' occupano l'intera larghezza, gli altri campi si accoppiano
+       due a due. Il max-height e' una rete: se lo schermo e' davvero basso
+       scorre il pannello, non la pagina dietro. */
+    @media(min-width:900px) {
+      .modal {
+        max-width: 940px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 22px;
+        align-items: start;
+        padding: 28px 28px 32px;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+      }
+      .modal-title, .form-wide, #modal-err, .modal-actions { grid-column: 1 / -1; }
+    }
+
+    /* Su un portatile lo spazio in altezza e' poco (1440x900 lascia circa
+       760px veri): con due colonne si doveva ancora scorrere. Da 1200px in
+       su le colonne diventano tre e il pannello ci sta tutto. */
+    @media(min-width:1200px) {
+      .modal { max-width: 1180px; grid-template-columns: repeat(3, 1fr); }
+      .form-wide { grid-column: 1 / -1; }
+      /* La Visibilita' e' un interruttore: sta comoda in una colonna sola e
+         cosi' riempie il buco dell'ultima riga invece di aprirne una nuova. */
+      .form-group.form-wide:has(.toggle-row) { grid-column: auto; }
+      /* Su tutta la larghezza il tasto Salva diventava una fascia gialla
+         lunga un metro: qui basta che sia grande, non enorme. */
+      .modal-actions { justify-content: flex-end; }
+      .btn-save { flex: 0 0 auto; padding: 14px 56px; }
+      .modal-title { margin-bottom: 18px; }
+      .form-group { margin-bottom: 14px; }
+      /* I due riquadri di testo piu' bassi: bastano per un paio di righe e
+         tolgono l'altezza che costringeva a scorrere. */
+      textarea.form-input { min-height: 74px; }
+      .upload-area { padding: 14px; }
+      .modal-actions { margin-top: 14px; }
+    }
     .modal-title { font-family: 'Inter', Arial, sans-serif; font-weight: 800; font-size: 20px; color: #F5B800; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 24px; }
     .form-group { margin-bottom: 16px; }
     .form-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.4); margin-bottom: 7px; font-family: 'Inter', Arial, sans-serif; font-weight: 600; }
@@ -185,7 +227,7 @@
   <div class="modal">
     <div class="modal-title" id="modal-title">Nuovo Evento</div>
 
-    <div class="form-group">
+    <div class="form-group form-wide">
       <label class="form-label">Nome Evento *</label>
       <input class="form-input" id="ev-title" type="text" placeholder="es. PAPI NIGHT ESTATE">
     </div>
@@ -253,7 +295,7 @@
       </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group form-wide">
       <label class="form-label">Visibilità</label>
       <div class="toggle-row">
         <span style="font-size:14px;color:rgba(255,255,255,0.55);font-family:'Inter',Arial,sans-serif;">Pubblica sul sito</span>

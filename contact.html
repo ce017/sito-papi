@@ -987,7 +987,9 @@ nav [data-framer-name="Primary Button"]{padding-top:9px !important;padding-botto
       '<div style="max-width:1320px;margin:0 auto;">' +
         '<div class="papi-tag"><span>Il Locale</span></div>' +
         '<h2 class="papi-h">Papi on the Beach</h2>' +
-        '<p style="font-family:Arial,sans-serif;font-size:17px;line-height:1.75;color:rgba(255,255,255,0.75);max-width:680px;margin:0 0 32px;">' +
+        /* Stesso carattere del resto del sito: l'Arial di questo blocco
+           stonava accanto ai testi di Framer, che sono in Inter. */
+        '<p style="font-family:Inter,sans-serif;font-size:16px;line-height:1.6;color:rgba(255,255,255,0.78);max-width:680px;margin:0 0 32px;">' +
           'Un club unico nel suo genere, nato dall\'amore per la musica e lo spirito mediterraneo. ' +
           'Papi on the Beach non &egrave; solo una discoteca: &egrave; un luogo di libert&agrave;, energia e connessione, ' +
           'dove ogni notte diventa un ricordo indelebile. ' +
@@ -1009,6 +1011,50 @@ nav [data-framer-name="Primary Button"]{padding-top:9px !important;padding-botto
         '</div>' +
       '</div>' +
     '</section>';
+
+  /* ── Pagina Locale: "Il Locale / Papi on the Beach" ──
+     Il titolo Framer diceva "Chi siamo / L'esperienza estiva piu' esclusiva
+     del Friuli Venezia Giulia". Al suo posto va la presentazione del locale,
+     con il primo paragrafo del corpo spostato subito sotto il titolo: cosi'
+     eredita il carattere del sito invece dell'Arial dei blocchi aggiunti a
+     mano, e non resta scritto due volte nella stessa pagina. */
+  function sistemaPaginaLocale() {
+    var sez = document.querySelector('#thevenue');
+    if (!sez) return;
+
+    var occhiello = sez.querySelector('h4');
+    if (occhiello && /Chi siamo|About Papi/i.test(occhiello.textContent)) {
+      occhiello.textContent = 'Il Locale';
+    }
+
+    var titolo = sez.querySelector('h2');
+    if (titolo && /esperienza estiva|spirito of estate/i.test(titolo.textContent)) {
+      titolo.textContent = 'Papi on the Beach';
+    }
+
+    /* Il paragrafo di apertura sale sotto al titolo, una volta sola. */
+    var blocco = sez.querySelector('[data-framer-name="Title"]');
+    if (blocco && !blocco.querySelector('[data-papi-intro]')) {
+      var testi = sez.querySelectorAll('p.framer-text');
+      for (var i = 0; i < testi.length; i++) {
+        if (testi[i].textContent.indexOf('una delle discoteche') < 0) continue;
+        var p = testi[i];
+        p.setAttribute('data-papi-intro', '1');
+        /* 924px e' la larghezza della colonna di testo gia' usata in questa
+           pagina: cosi' la riga resta leggibile invece di stirarsi su tutto
+           il contenitore. */
+        p.style.maxWidth = '924px';
+        p.style.marginTop = '18px';
+        blocco.appendChild(p);
+        break;
+      }
+    }
+
+    /* Il riquadro in fondo ripeteva parola per parola lo stesso testo: qui
+       non serve piu', l'indirizzo resta nel fondo pagina. */
+    var doppione = document.querySelector('#papi-club-info');
+    if (doppione) doppione.parentNode.removeChild(doppione);
+  }
 
   function globalFixes(){
     /* ── 1. Replace sponsors section with club info ── */
@@ -1083,24 +1129,13 @@ nav [data-framer-name="Primary Button"]{padding-top:9px !important;padding-botto
       el.style.fontSize = '14px';
     });
 
-    /* ── 7. Fix venue page: add header if missing ── */
-    /* "#thevenue" non e' solo della pagina Locale: il template Framer usa
-       lo stesso id anche in Contatti e Ristorante, e li' finiva un'intestazione
-       "IL NOSTRO SPAZIO" che non c'entrava niente. */
+    /* ── 7. Pagina Locale: intestazione e presentazione ── */
+    /* Prima qui sopra la pagina veniva infilata una seconda intestazione
+       ("Il Locale / Il Nostro Spazio"), che diceva le stesse cose del titolo
+       Framer subito sotto. Tolta: la pagina apre direttamente con il titolo
+       vero, riscritto qui sotto. */
     var _pgV = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
-    var venue = (_pgV === 'venue') ? document.querySelector('#thevenue') : null;
-    if (venue && !document.querySelector('#papi-venue-header')) {
-      var hdr = document.createElement('section');
-      hdr.id = 'papi-venue-header';
-      hdr.style.cssText = 'padding:120px 40px 60px;background:transparent;';
-      hdr.innerHTML =
-        '<div style="max-width:1320px;margin:0 auto;">' +
-          '<div class="papi-tag"><span>Il Locale</span></div>' +
-          '<h1 class="papi-h">Il Nostro Spazio</h1>' +
-          '<p style="font-family:Arial,sans-serif;font-size:17px;color:rgba(255,255,255,0.7);max-width:600px;line-height:1.7;margin:0;">Un\'esperienza unica in un ambiente esclusivo. Papi on the Beach offre spazi Tavoli, piste da ballo e un\'atmosfera che non dimenticherai.</p>' +
-        '</div>';
-      venue.parentNode.insertBefore(hdr, venue);
-    }
+    if (_pgV === 'venue') sistemaPaginaLocale();
 
     /* ── 8. Fix restaurant page: inject header ── */
     if (window.location.pathname.indexOf('restaurant') >= 0) {

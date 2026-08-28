@@ -115,7 +115,10 @@ create policy "Admin full access events" on public.events
 
 Spegnere *"Allow new users to sign up"* resta comunque consigliato: non è più
 una questione di sicurezza, ma evita che qualcuno riempia `auth.users` di
-registrazioni inutili.
+registrazioni inutili. **Fatto il 28/08/2026.** Da ora un amministratore
+nuovo non può registrarsi da solo: va creato dalla dashboard
+(**Authentication → Users → Add user**) e poi aggiunto alla tabella `admins`
+con la query qui sopra.
 
 ### 2. Chiunque può riempire la tabella `analytics`
 
@@ -157,13 +160,43 @@ Da solo il tetto per sessione non ferma chi cambia `session_id` a ogni
 richiesta, ma insieme alla pulizia periodica toglie il danno: la tabella non
 cresce all'infinito.
 
-### 3. Protezione password compromesse (spenta)
+### 3. Protezione password compromesse: non si può, siamo sul piano gratuito
 
-Il controllo di Supabase la segnala. In **Authentication → Policies** accendere
-*"Leaked password protection"*: rifiuta le password già finite in violazioni
-note. Già che ci siamo, attivare anche l'**MFA** sull'account admin.
+Il controllo di Supabase la segnala e continuerà a segnalarla, ma
+*"Prevent use of leaked passwords"* (il confronto con l'archivio
+HaveIBeenPwned) **esiste solo dal piano Pro in su**. Sul piano gratuito
+l'interruttore non compare proprio: non è nascosto, non c'è. Quella riga
+dell'avviso si può ignorare finché restiamo su Free.
 
-### 4. Lo script esterno non è bloccato a una versione
+Quello che si può fare lo stesso, tutto in **Authentication → Sign In /
+Providers → Email** (sta dentro le impostazioni del provider Email, non nella
+pagina generale):
+
+- **Minimum password length**: almeno 12. Sotto gli 8 è da evitare.
+- **Password Requirements**: chiedere cifre, minuscole, maiuscole e simboli.
+
+E le due cose che contano davvero, che non costano niente:
+
+- **Password lunga e casuale** presa da un gestore di password per l'account
+  admin. Una password generata a caso non finisce negli archivi delle
+  violazioni: è esattamente il problema che il controllo Pro andrebbe a
+  coprire.
+- **MFA sull'account Supabase** (Account Settings → Multi-Factor
+  Authentication). Questa è gratuita ed è l'unica difesa che regge anche se
+  la password scappa.
+
+### 4. Due avvisi su `is_admin()`: si possono ignorare
+
+Il controllo segnala che `public.is_admin()` è eseguibile da chiunque, anche
+senza essere registrati. **Non è un buco.** Quella funzione risponde solo
+*"chi sta chiedendo è un amministratore?"*: chiamandola da fuori si ottiene
+`false` e nient'altro, nessun dato esce.
+
+E soprattutto non va "sistemata": togliendole il permesso di esecuzione si
+romperebbero le policy che la usano, cioè il pannello admin smetterebbe di
+funzionare.
+
+### 5. Lo script esterno non è bloccato a una versione
 
 Tutte le pagine caricano `@supabase/supabase-js@2` da jsDelivr. Quel `@2` vuol
 dire **l'ultima 2.x, qualunque sia**: se un giorno quel pacchetto venisse

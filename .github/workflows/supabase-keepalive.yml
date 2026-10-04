@@ -1,6 +1,6 @@
 name: Supabase keepalive
 
-# Impedisce la pausa automatica del progetto Supabase "papi-on-the-beach".
+# Impedisce la pausa automatica dei progetti Supabase "papi-on-the-beach" e "clout".
 # I progetti free vengono messi in pausa dopo 7 giorni senza richieste API:
 # questo workflow fa un ping al giorno, con ampio margine.
 
@@ -39,6 +39,25 @@ jobs:
             exit 1
           fi
           echo "Progetto Supabase raggiungibile."
+
+      # Stesso trucco per il progetto Supabase "clout" (app Clout): anche lui
+      # e' sul piano free e va in pausa dopo 7 giorni senza richieste.
+      - name: Ping Supabase REST API (Clout)
+        env:
+          SUPABASE_URL: https://ppkpdmilbuudfebjihtl.supabase.co
+          SUPABASE_KEY: sb_publishable_YKyJjAhz9n5YDeAQJBV3ag_mJJ9pN13
+        run: |
+          # "shop_items" e' leggibile senza login; se la rinomini, cambia il path.
+          code=$(curl -sS -o /dev/null -w '%{http_code}' \
+            "$SUPABASE_URL/rest/v1/shop_items?select=id&limit=1" \
+            -H "apikey: $SUPABASE_KEY")
+
+          echo "HTTP $code"
+          if [ "$code" != "200" ]; then
+            echo "::error::Ping Clout fallito (HTTP $code). Il progetto potrebbe essere gia' in pausa, oppure la chiave/tabella e' cambiata."
+            exit 1
+          fi
+          echo "Progetto Clout raggiungibile."
 
       # GitHub disattiva i workflow schedulati dopo 60 giorni di INATTIVITA' del
       # repository (i run schedulati da soli non contano). Un commit settimanale
